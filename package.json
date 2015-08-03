@@ -8,7 +8,6 @@
     "prepublish": "./node_modules/browserify/bin/cmd.js --transform [ babelify ] --plugin [ minifyify --no-map ] --no-builtins --standalone astring --require ./src/index.js:astring --outfile dist/astring.min.js",
     "build-dev": "./node_modules/watchify/bin/cmd.js --transform [ babelify ] --no-builtins --debug --verbose --standalone astring --require ./src/index.js:astring --outfile dist/astring.js",
     "build": "./node_modules/browserify/bin/cmd.js --transform [ babelify ] --no-builtins --verbose --standalone astring --require ./src/index.js:astring --outfile dist/astring.js"
-
   },
   "keywords": [
     "ast",
@@ -19,7 +18,7 @@
     "url": "https://github.com/davidbonnet/astring.git"
   },
   "author": "David Bonnet <david@bonnet.cc>",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "acorn": "^2.1.0",
     "babelify": "^6.1.3",
@@ -28,6 +27,7 @@
     "escodegen": "^1.6.1",
     "esotope": "^1.4.5",
     "minifyify": "^7.0.3",
+    "mocha": "^2.2.5",
     "watchify": "^3.3.1"
   }
 }
