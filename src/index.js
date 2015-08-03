@@ -94,7 +94,7 @@ const OPERATORS_PRECEDENCE = {
 }
 
 
-var ForInStatement, FunctionDeclaration, RestElement, BinaryExpression
+var ForInStatement, FunctionDeclaration, RestElement, BinaryExpression, AssignmentExpression, ObjectExpression, ArrayExpression
 
 
 var visitors = {
@@ -436,12 +436,6 @@ var visitors = {
 		formatParameters( code, node.value.params, state )
 		visitors[ node.value.body.type ]( node.value.body, state )
 	},
-	ArrayPattern: function( node, state ) {
-		visitors.ArrayExpression( node, state )
-	},
-	ObjectPattern: function( node, state ) {
-		visitors.ObjectExpression( node, state )
-	},
 	ClassExpression: function( node, state ) {
 		visitors.ClassDeclaration( node, state )
 	},
@@ -489,7 +483,7 @@ var visitors = {
 		visitors[ node.tag.type ]( node.tag, state )
 		visitors[ node.quasi.type ]( node.quasi, state )
 	},
-	ArrayExpression: function( node, state ) {
+	ArrayExpression: ArrayExpression = function( node, state ) {
 		const { code } = state
 		code.push( '[' )
 		if ( node.elements.length !== 0 ) {
@@ -502,7 +496,8 @@ var visitors = {
 		}
 		code.push( ']' )
 	},
-	ObjectExpression: function( node, state ) {
+	ArrayPattern: ArrayExpression,
+	ObjectExpression: ObjectExpression = function( node, state ) {
 		const indent = state.indent.repeat( state.indentLevel++ )
 		const { lineEnd, code } = state
 		const propertyIndent = indent + state.indent
@@ -527,6 +522,7 @@ var visitors = {
 		state.indentLevel--
 		code.push( indent, '}' )
 	},
+	ObjectPattern: ObjectExpression,
 	FunctionExpression: FunctionDeclaration,
 	SequenceExpression: function( node, state ) {
 		const { code } = state
@@ -558,11 +554,12 @@ var visitors = {
 			state.code.push( node.operator )	
 		}
 	},
-	AssignmentExpression: function( node, state ) {
+	AssignmentExpression: AssignmentExpression = function( node, state ) {
 		visitors[ node.left.type ]( node.left, state )
 		state.code.push( ' ', node.operator, ' ' )
 		visitors[ node.right.type ]( node.right, state )
 	},
+	AssignmentPattern: AssignmentExpression,
 	BinaryExpression: BinaryExpression = function( node, state ) {
 		const { code } = state
 		const { operator } = node

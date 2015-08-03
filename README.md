@@ -76,7 +76,8 @@ else
 
 
 
-## Caveats
+## TODO
 
-Testing is not done yet (undergoing).
+- Exhaustive testing
+- Comments generation
 
