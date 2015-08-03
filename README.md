@@ -16,7 +16,7 @@ Key features:
 
 If you haven't already, install the [Node Package Manager](http://nodejs.org/download/).
 
-Checkout this repository, then run from withing the repository, run:
+Checkout this repository, then run from withing the repository:
 
 ```bash
 npm install
