@@ -13,7 +13,7 @@ var options = {
 	sourceType: 'module'
 }
 
-describe( 'Testing code generation:', function() {
+describe( 'Code generation', function() {
 	files.forEach( function( filename ) {
 		var code = fs.readFileSync( path.join( dirname, filename ), 'utf8' )
 		var ast = acorn.parse( code, options )

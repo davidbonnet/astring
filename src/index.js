@@ -406,7 +406,7 @@ var visitors = {
 			}
 			code.push( '}' )
 			if ( node.source ) {
-				code.push( ' from ' + node.source.raw )
+				code.push( ' from ', node.source.raw )
 			}
 			code.push( ';' )
 		}
@@ -421,7 +421,7 @@ var visitors = {
 		switch (node.kind) {
 			case 'get':
 			case 'set':
-				code.push( ' ' + node.kind )
+				code.push( node.kind, ' ' )
 				break
 			default:
 				break
@@ -433,7 +433,7 @@ var visitors = {
 		} else {
 			code.push( node.key.name )
 		}
-		formatParameters( code, node.params, state )
+		formatParameters( code, node.value.params, state )
 		visitors[ node.value.body.type ]( node.value.body, state )
 	},
 	ArrayPattern: function( node, state ) {
