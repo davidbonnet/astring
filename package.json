@@ -1,0 +1,29 @@
+{
+  "name": "astring",
+  "version": "0.0.1",
+  "description": "JavaScript code generator from an ESTree-formatted AST node.",
+  "main": "./dist/astring.min.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepublish": "./node_modules/browserify/bin/cmd.js --transform [ babelify ] --plugin [ minifyify --no-map ] --no-builtins --standalone astring --require ./src/index.js:astring --outfile dist/astring.min.js",
+    "build-dev": "./node_modules/watchify/bin/cmd.js --transform [ babelify ] --no-builtins --debug --verbose --standalone astring --require ./src/index.js:astring --outfile dist/astring.js",
+    "build": "./node_modules/browserify/bin/cmd.js --transform [ babelify ] --no-builtins --verbose --standalone astring --require ./src/index.js:astring --outfile dist/astring.js"
+
+  },
+  "keywords": [
+    "ast",
+    "code generator"
+  ],
+  "author": "David Bonnet <david@bonnet.cc>",
+  "license": "ISC",
+  "devDependencies": {
+    "acorn": "^2.1.0",
+    "babelify": "^6.1.3",
+    "benchmark": "^1.0.0",
+    "browserify": "^11.0.1",
+    "escodegen": "^1.6.1",
+    "esotope": "^1.4.5",
+    "minifyify": "^7.0.3",
+    "watchify": "^3.3.1"
+  }
+}
