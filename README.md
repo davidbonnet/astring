@@ -45,7 +45,7 @@ The `options` are:
 
 ### Example
 
-This example use uses [Acorn](https://github.com/marijnh/acorn), a blazingly fast JavaScript parser and AST producer. It is the perfect companion of Astring.
+This example uses [Acorn](https://github.com/marijnh/acorn), a blazingly fast JavaScript parser and AST producer. It is the perfect companion of Astring.
 
 ```javascript
 // Import modules
