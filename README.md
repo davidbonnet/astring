@@ -14,6 +14,14 @@ Key features:
 
 ## Installation
 
+Checkout this repository, then run from the main directory:
+
+```bash
+npm install
+```
+
+Alternatively, install it with the Node Package Manager:
+
 ```bash
 npm install astring
 ```
