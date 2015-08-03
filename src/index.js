@@ -332,39 +332,46 @@ var visitors = {
 	ImportDeclaration: function( node, state ) {
 		const { code } = state
 		code.push( 'import ' )
-		const {specifiers} = node
+		const { specifiers } = node
 		const { length } = specifiers
 		if ( length > 0 ) {
-			let i = 0, specifier = specifiers[0]
-			switch (specifier.type) {
-				case 'ImportDefaultSpecifier':
-					code.push( specifier.local.name )
-					i++
-					break
-				case 'ImportNamespaceSpecifier':
-					code.push( '* as ' + specifier.local.name )
-					i++
-					break
-				default:
-					break
+			let i = 0, specifier
+			importSpecifiers: while ( i < length ) {
+				specifier = specifiers[ i ]
+				switch (specifier.type) {
+					case 'ImportDefaultSpecifier':
+						code.push( specifier.local.name )
+						i++
+						break
+					case 'ImportNamespaceSpecifier':
+						code.push( '* as ', specifier.local.name )
+						i++
+						break
+					default:
+						break importSpecifiers
+				}
+				code.push( ', ' )
 			}
 			if ( i < length ) {
-				if ( i > 0 ) code.push( ', ' )
 				code.push( '{' )
-				for (; i < length; i++) {
-					let specifier = specifiers[i]
-					let {name} = specifier.imported
+				while (i < length) {
+					specifier = specifiers[i]
+					let { name } = specifier.imported
 					code.push( name )
 					if ( name !== specifier.local.name ) {
-						code.push( ' as ' + specifier.local.name )
+						code.push( ' as ', specifier.local.name )
 					}
 					code.push( ', ' )
+					i++
 				}
 				// Remove trailing comma
 				code.pop()
-				code.push( '} ' )
+				code.push( '}' )
+			} else {
+				// Remove trailing comma
+				code.pop()
 			}
-			code.push( 'from ' )
+			code.push( ' from ' )
 		}
 		code.push( node.source.raw )
 		code.push( ';' )
@@ -380,30 +387,29 @@ var visitors = {
 		code.push( 'export ' )
 		if ( node.declaration ) {
 			visitors[ node.declaration.type ]( node.declaration, state )
-			if ( node.declaration.type === 'VariableDeclaration' ) {
-				// Remove inserted semicolon
-				state.code.pop()
-			}
 		} else {
 			code.push( '{' )
-			const {specifiers} = node
-			for (let i = 0, { length } = specifiers; i < length; i++) {
-				let specifier = specifiers[i]
-				let {name} = specifier.local
-				code.push( name )
-				if ( name !== specifier.exported.name ) {
-					code.push( ' as ' + specifier.exported.name )
+			const { specifiers } = node
+			const { length } = specifiers
+			if ( length > 0 ) {
+				for (let i = 0; i < length; i++) {
+					let specifier = specifiers[i]
+					let {name} = specifier.local
+					code.push( name )
+					if ( name !== specifier.exported.name ) {
+						code.push( ' as ' + specifier.exported.name )
+					}
+					code.push( ', ' )
 				}
-				code.push( ', ' )
+				// Remove trailing comma
+				code.pop()
 			}
-			// Remove trailing comma
-			code.pop()
 			code.push( '}' )
+			if ( node.source ) {
+				code.push( ' from ' + node.source.raw )
+			}
+			code.push( ';' )
 		}
-		if ( node.source ) {
-			code.push( ' from ' + node.source.raw )
-		}
-		code.push( ';' )
 	},
 	ExportAllDeclaration: function( node, state ) {
 		state.code.push( 'export * from ', node.source.raw, ';' )
