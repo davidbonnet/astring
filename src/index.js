@@ -535,14 +535,22 @@ var visitors = {
 		}
 	},
 	UnaryExpression: function( node, state ) {
-		if ( node.prefix ) state.code.push( node.operator )
-		visitors[ node.argument.type ]( node.argument, state )
-		if ( !node.prefix ) state.code.push( node.operator )
+		if ( node.prefix ) {
+			state.code.push( node.operator, ' ' )
+			visitors[ node.argument.type ]( node.argument, state )
+		} else {
+			visitors[ node.argument.type ]( node.argument, state )
+			state.code.push( node.operator )
+		}
 	},
 	UpdateExpression: function( node, state ) {
-		if ( node.prefix ) state.code.push( node.operator )
-		visitors[ node.argument.type ]( node.argument, state )
-		if ( !node.prefix ) state.code.push( node.operator )
+		if ( node.prefix ) {
+			state.code.push( node.operator )
+			visitors[ node.argument.type ]( node.argument, state )
+		} else {
+			visitors[ node.argument.type ]( node.argument, state )
+			state.code.push( node.operator )	
+		}
 	},
 	AssignmentExpression: function( node, state ) {
 		visitors[ node.left.type ]( node.left, state )
