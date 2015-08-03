@@ -154,6 +154,8 @@ var visitors = {
 		visitors[ node.label.type ]( node.label, state )
 		state.code.push( ':', state.lineEnd )
 		visitors.Statement( node.body, state )
+		// Remove line end
+		state.code.pop()
 	},
 	BreakStatement: function( node, state ) {
 		const { code } = state
@@ -183,7 +185,9 @@ var visitors = {
 	SwitchStatement: function( node, state ) {
 		const indent = state.indent.repeat( state.indentLevel++ )
 		const { lineEnd, code } = state
-		const statementIndent = indent + state.indent
+		state.indentLevel++
+		const caseIndent = indent + state.indent
+		const statementIndent = caseIndent + state.indent
 		code.push( 'switch (' )
 		visitors[ node.discriminant.type ]( node.discriminant, state )
 		code.push(') {', lineEnd)
@@ -191,19 +195,19 @@ var visitors = {
 		for (let i = 0, { length } = cases; i < length; i++) {
 			let check = cases[i];
 			if ( check.test ) {
-				code.push( indent, 'case ' )
+				code.push( caseIndent, 'case ' )
 				visitors[ check.test.type ]( check.test, state )
 				code.push( ':', lineEnd )
 			} else {
-				code.push( indent, 'default:', lineEnd )
+				code.push( caseIndent, 'default:', lineEnd )
 			}
-			let { consquent } = check
+			let { consequent } = check
 			for (let i = 0, { length } = consequent; i < length; i++) {
 				code.push( statementIndent )
 				visitors.Statement( consequent[ i ], state )
 			}
 		}
-		state.indentLevel--
+		state.indentLevel -= 2
 		code.push( indent, '}' )
 	},
 	ReturnStatement: function( node, state ) {
