@@ -14,6 +14,10 @@
     "ast",
     "code generator"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/davidbonnet/astring.git"
+  },
   "author": "David Bonnet <david@bonnet.cc>",
   "license": "ISC",
   "devDependencies": {

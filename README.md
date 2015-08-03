@@ -14,7 +14,9 @@ Key features:
 
 ## Installation
 
-Checkout this repository, then run from the main directory:
+If you haven't already, install the [Node Package Manager](http://nodejs.org/download/).
+
+Checkout this repository, then run from withing the repository, run:
 
 ```bash
 npm install
@@ -30,7 +32,20 @@ npm install astring
 
 ## Usage
 
-Astring is the perfect companion of [Acorn](https://github.com/marijnh/acorn), a blazingly fast JavaScript parser.
+The path to the module file is `dist/astring.min.js` and works both in a browser or Node environment. When run in a browser, it creates a global variable `astring`.
+
+The `astring` module consists of a function that takes two arguments `node` and `options`. It returns a string representing the rendered code of the provided AST `node`.
+The `options` are:
+
+- `indent`: string to use for indentation (defaults to `\t`)
+- `lineEnd`: string to use for line endings (defaults to `\n`)
+- `startingIndentLevel`: indent level to start from (defaults to `0`)
+
+
+
+### Example
+
+This example use uses [Acorn](https://github.com/marijnh/acorn), a blazingly fast JavaScript parser and AST producer. It is the perfect companion of Astring.
 
 ```javascript
 // Import modules
@@ -58,13 +73,6 @@ if ( code === result )
 else
 	console.log( 'Something went wrong…' )
 ```
-
-The exported function returns a string representing the rendered code of the provided AST `node`.
-The `options` are:
-
-- `indent`: string to use for indentation (defaults to `\t`)
-- `lineEnd`: string to use for line endings (defaults to `\n`)
-- `startingIndentLevel`: indent level to start from (default to `0`)
 
 
 
