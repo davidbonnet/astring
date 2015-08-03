@@ -1,6 +1,6 @@
 # Astring
 
-A tiny and fast [ESTree](https://github.com/estree/estree) formatted AST to JavaScript code generator.
+A tiny and fast JavaScript code generator from an [ESTree](https://github.com/estree/estree) formatted AST.
 
 Key features:
 
