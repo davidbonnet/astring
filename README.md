@@ -45,7 +45,7 @@ node = acorn.parse( code, { ecmaVersion: 6 } )
 // Set formatting options
 options = {
 	indent: '   ',
-	lineEnd: 
+	lineEnd: '\n'
 }
 
 // Format it
