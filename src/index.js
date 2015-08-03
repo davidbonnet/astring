@@ -94,7 +94,7 @@ const OPERATORS_PRECEDENCE = {
 }
 
 
-var ForInStatement, FunctionDeclaration, RestElement, BinaryExpression, AssignmentExpression, ObjectExpression, ArrayExpression
+var ForInStatement, FunctionDeclaration, RestElement, BinaryExpression, AssignmentExpression, ArrayExpression
 
 
 var visitors = {
@@ -301,7 +301,7 @@ var visitors = {
 	},
 	VariableDeclaration: function( node, state ) {
 		const { code } = state
-		const {declarations} = node
+		const { declarations } = node
 		code.push( node.kind, ' ' )
 		for (let i = 0, { length } = declarations; i < length; i++) {
 			let declaration = declarations[i]
@@ -497,15 +497,15 @@ var visitors = {
 		code.push( ']' )
 	},
 	ArrayPattern: ArrayExpression,
-	ObjectExpression: ObjectExpression = function( node, state ) {
+	ObjectExpression: function( node, state ) {
 		const indent = state.indent.repeat( state.indentLevel++ )
 		const { lineEnd, code } = state
 		const propertyIndent = indent + state.indent
 		const comma = ', ' + lineEnd
 		code.push( '{', lineEnd )
 		if ( node.properties.length !== 0 ) {
-			for (let i = 0, {properties} = node, { length } = properties; i < length; i++) {
-				let property = properties[i]
+			for ( let i = 0, { properties } = node, { length } = properties; i < length; i++ ) {
+				let property = properties[ i ]
 				code.push( propertyIndent )
 				if ( property.computed ) code.push( '[' )
 				visitors[ property.key.type ]( property.key, state )
@@ -522,7 +522,30 @@ var visitors = {
 		state.indentLevel--
 		code.push( indent, '}' )
 	},
-	ObjectPattern: ObjectExpression,
+	ObjectPattern: function( node, state ) {
+		const { code } = state
+		code.push( '{' )
+		if ( node.properties.length !== 0 ) {
+			for ( let i = 0, { properties } = node, { length } = properties; i < length; i++ ) {
+				let property = properties[ i ]
+				if ( property.computed ) {
+					code.push( '[' )
+					visitors[ property.key.type ]( property.key, state )
+					code.push( ']' )
+				} else {
+					visitors[ property.key.type ]( property.key, state )
+				}
+				if ( !property.shorthand ) {
+					code.push( ': ' )
+					visitors[ property.value.type ]( property.value, state )
+				}
+				code.push( ', ' )
+			}
+			// Removing trailing comma
+			code.pop()
+		}
+		code.push( '}' )
+	},
 	FunctionExpression: FunctionDeclaration,
 	SequenceExpression: function( node, state ) {
 		const { code } = state
