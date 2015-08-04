@@ -16,8 +16,8 @@ var options = {
 describe( 'Code generation', function() {
 	files.forEach( function( filename ) {
 		var code = fs.readFileSync( path.join( dirname, filename ), 'utf8' )
-		var ast = acorn.parse( code, options )
 		it( filename, function() {
+			var ast = acorn.parse( code, options )
 			assert.equal( astring( ast ), code )		
 		} )
 	} )

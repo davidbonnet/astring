@@ -10,6 +10,7 @@ function h(a, b = 1, c = 2) {
 function i(a = 1, b, c) {
 	return null;
 }
+function j(...a) {}
 function k() {}
 var l = function () {};
 var m = function (a = 1, b, c) {};

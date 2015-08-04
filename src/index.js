@@ -55,6 +55,7 @@ function formatBinarySideExpression( code, node, operator, state ) {
 			visitors[ node.type ]( node, state )
 			break
 		case 'BinaryExpression':
+		case 'LogicalExpression':
 			if ( OPERATORS_PRECEDENCE[ node.operator ] >= OPERATORS_PRECEDENCE[ operator ] ) {
 				visitors[ node.type ]( node, state )
 				break
@@ -382,7 +383,8 @@ var visitors = {
 		const { code } = state
 		code.push( 'export default ' )
 		visitors[ node.declaration.type ]( node.declaration, state )
-		code.push( ';' )
+		if ( node.declaration.type.substr( -10 ) === 'Expression' )
+			code.push( ';' )
 	},
 	ExportNamedDeclaration: function( node, state ) {
 		const { code } = state
@@ -398,9 +400,8 @@ var visitors = {
 					let specifier = specifiers[i]
 					let {name} = specifier.local
 					code.push( name )
-					if ( name !== specifier.exported.name ) {
+					if ( name !== specifier.exported.name )
 						code.push( ' as ' + specifier.exported.name )
-					}
 					code.push( ', ' )
 				}
 				// Remove trailing comma
@@ -621,6 +622,8 @@ var visitors = {
 			case 'Literal':
 			case 'MemberExpression':
 			case 'CallExpression':
+			case 'Super':
+			case 'ThisExpression':
 				visitors[ node.callee.type ]( node.callee, state )
 				break
 			default:
