@@ -94,7 +94,7 @@ const OPERATORS_PRECEDENCE = {
 }
 
 
-var ForInStatement, FunctionDeclaration, RestElement, BinaryExpression, AssignmentExpression, ArrayExpression
+var ForInStatement, FunctionDeclaration, RestElement, BinaryExpression, ArrayExpression
 
 
 var visitors = {
@@ -277,10 +277,10 @@ var visitors = {
 		const { code } = state
 		code.push( 'for (' )
 		visitors.ForInit( node.left, state )
-		code.push( node.type === 'ForInStatement' ? ' in ' : ' of ' )
+		code.push( node.type[ 3 ] === 'I' ? ' in ' : ' of ' )
 		visitors[ node.right.type ]( node.right, state )
 		code.push( ') ' )
-		visitors.Statement( node.body, state )
+		visitors[ node.body.type ]( node.body, state )
 	},
 	ForOfStatement: ForInStatement,
 	ForInit: function( node, state ) {
@@ -295,9 +295,7 @@ var visitors = {
 	},
 	FunctionDeclaration: FunctionDeclaration = function( node, state ) {
 		const { code } = state
-		code.push( 'function ' )
-		if ( node.generator )
-			code.push( '*' )
+		code.push( node.generator ? 'function* ' : 'function ' )
 		if ( node.id )
 			code.push( node.id.name )
 		formatParameters( code, node.params, state )
@@ -447,7 +445,12 @@ var visitors = {
 		const { code } = state
 		formatParameters( code, node.params, state )
 		code.push( '=> ' )
-		visitors[ node.body.type ]( node.body, state )
+		if ( node.body.type === 'ObjectExpression') {
+			code.push( '(' )
+			visitors.ObjectExpression( node.body, state )	
+			code.push( ')' )
+		} else
+			visitors[ node.body.type ]( node.body, state )
 	},
 	ThisExpression: function( node, state ) {
 		state.code.push( 'this' )
@@ -467,7 +470,6 @@ var visitors = {
 			code.push( ' ' )
 			visitors[ node.argument.type ]( node.argument, state )
 		}
-		code.push( ';' )
 	},
 	TemplateLiteral: function( node, state ) {
 		const { code } = state
@@ -505,9 +507,10 @@ var visitors = {
 		const indent = state.indent.repeat( state.indentLevel++ )
 		const { lineEnd, code } = state
 		const propertyIndent = indent + state.indent
-		const comma = ', ' + lineEnd
-		code.push( '{', lineEnd )
+		code.push( '{' )
 		if ( node.properties.length !== 0 ) {
+			const comma = ',' + lineEnd
+			code.push( lineEnd )
 			for ( let i = 0, { properties } = node, { length } = properties; i < length; i++ ) {
 				let property = properties[ i ]
 				code.push( propertyIndent )
@@ -581,12 +584,16 @@ var visitors = {
 			state.code.push( node.operator )	
 		}
 	},
-	AssignmentExpression: AssignmentExpression = function( node, state ) {
+	AssignmentExpression: function( node, state ) {
 		visitors[ node.left.type ]( node.left, state )
 		state.code.push( ' ', node.operator, ' ' )
 		visitors[ node.right.type ]( node.right, state )
 	},
-	AssignmentPattern: AssignmentExpression,
+	AssignmentPattern: function( node, state ) {
+		visitors[ node.left.type ]( node.left, state )
+		state.code.push( ' = ' )
+		visitors[ node.right.type ]( node.right, state )
+	},
 	BinaryExpression: BinaryExpression = function( node, state ) {
 		const { code } = state
 		const { operator } = node
