@@ -53,7 +53,7 @@ acorn = require( 'acorn' )
 astring = require( 'astring' )
 
 // Example code
-code = "let answer = 4 + 7 * 5 + 3;"
+code = "let answer = 4 + 7 * 5 + 3;\n"
 
 // Parse it into an AST
 node = acorn.parse( code, { ecmaVersion: 6 } )
