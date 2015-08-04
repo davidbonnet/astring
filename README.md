@@ -14,7 +14,7 @@ Key features:
 
 ## Installation
 
-If you haven't already, install the [Node Package Manager](http://nodejs.org/download/).
+If you haven't already, install the [Node Package Manager](https://www.npmjs.com).
 
 Checkout this repository, then run from withing the repository:
 
