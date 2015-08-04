@@ -5,7 +5,7 @@ A tiny and fast JavaScript code generator from an [ESTree](https://github.com/es
 Key features:
 
 - Supports ECMAScript versions 5 and 6.
-- Considerably faster than [Escodegen](https://github.com/estools/escodegen) and [Esotope](https://github.com/inikulin/esotope).
+- Considerably faster than [Escodegen](https://github.com/estools/escodegen) and smaller than [Esotope](https://github.com/inikulin/esotope).
 - No dependencies and small footprint (11 KB minified, 3 KB gziped).
 - Output code is readable and executable.
 - Reduced formatting options.

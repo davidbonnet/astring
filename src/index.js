@@ -47,24 +47,19 @@ function formatBinarySideExpression( code, node, operator, state ) {
 	/*
 	Formats into the `code` array a left-hand or right-hand expression `node` from a binary expression applying the provided `operator`.
 	*/
-	switch ( node.type ) {
-		case 'Identifier':
-		case 'Literal':
-		case 'MemberExpression':
-		case 'CallExpression':
+	const needed = PARENTHESIS_NEEDED[ node.type ]
+	if ( needed === 0 ) {
+		visitors[ node.type ]( node, state )
+		return
+	} else if ( needed === 1 ) {
+		if ( OPERATORS_PRECEDENCE[ node.operator ] >= OPERATORS_PRECEDENCE[ operator ] ) {
 			visitors[ node.type ]( node, state )
-			break
-		case 'BinaryExpression':
-		case 'LogicalExpression':
-			if ( OPERATORS_PRECEDENCE[ node.operator ] >= OPERATORS_PRECEDENCE[ operator ] ) {
-				visitors[ node.type ]( node, state )
-				break
-			}
-		default:
-			code.push( '(' )
-			visitors[ node.type ]( node, state )
-			code.push( ')' )
+			return
+		}
 	}
+	code.push( '(' )
+	visitors[ node.type ]( node, state )
+	code.push( ')' )
 }
 
 
@@ -93,6 +88,22 @@ const OPERATORS_PRECEDENCE = {
 	'%': 12,
 	'/': 12
 }
+
+
+const PARENTHESIS_NEEDED = {
+	// Not needed
+	Identifier: 0,
+	Literal: 0,
+	MemberExpression: 0,
+	CallExpression: 0,
+	Super: 0,
+	ThisExpression: 0,
+	// Check
+	BinaryExpression: 1,
+	LogicalExpression: 1
+}
+
+
 
 
 var ForInStatement, FunctionDeclaration, RestElement, BinaryExpression, ArrayExpression
@@ -446,7 +457,7 @@ var visitors = {
 		const { code } = state
 		formatParameters( code, node.params, state )
 		code.push( '=> ' )
-		if ( node.body.type === 'ObjectExpression') {
+		if ( node.body.type === 'ObjectExpression' ) {
 			code.push( '(' )
 			visitors.ObjectExpression( node.body, state )	
 			code.push( ')' )
@@ -617,19 +628,12 @@ var visitors = {
 	},
 	CallExpression: function( node, state ) {
 		const { code } = state
-		switch ( node.callee.type ) {
-			case 'Identifier':
-			case 'Literal':
-			case 'MemberExpression':
-			case 'CallExpression':
-			case 'Super':
-			case 'ThisExpression':
-				visitors[ node.callee.type ]( node.callee, state )
-				break
-			default:
-				code.push( '(' )
-				visitors[ node.callee.type ]( node.callee, state )
-				code.push( ')' )
+		if ( PARENTHESIS_NEEDED[ node.callee.type ] === 0 ) {
+			visitors[ node.callee.type ]( node.callee, state )
+		} else {
+			code.push( '(' )
+			visitors[ node.callee.type ]( node.callee, state )
+			code.push( ')' )
 		}
 		code.push( '(' )
 		const args = node[ 'arguments' ]
