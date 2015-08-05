@@ -49,30 +49,31 @@ The `options` are:
 This example uses [Acorn](https://github.com/marijnh/acorn), a blazingly fast JavaScript parser and AST producer. It is the perfect companion of Astring.
 
 ```javascript
-// Import modules
-acorn = require( 'acorn' )
-astring = require( 'astring' )
+// Import modules (unecessary when run in a browser)
+acorn = require( 'acorn' );
+astring = require( 'astring' );
 
 // Example code
-code = "let answer = 4 + 7 * 5 + 3;\n"
+var code = "let answer = 4 + 7 * 5 + 3;\n";
 
 // Parse it into an AST
-node = acorn.parse( code, { ecmaVersion: 6 } )
+var ast = acorn.parse( code, { ecmaVersion: 6 } );
 
 // Set formatting options
-options = {
+var options = {
 	indent: '   ',
 	lineEnd: '\n'
-}
+};
 
 // Format it
-result = astring( node, options )
+result = astring( ast, options );
 
 // Check it
-if ( code === result )
-	console.log( 'It works !' )
-else
-	console.log( 'Something went wrong…' )
+if ( code === result ) {
+	console.log( 'It works !' );
+} else {
+	console.log( 'Something went wrong…' );
+}
 ```
 
 
