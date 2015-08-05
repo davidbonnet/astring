@@ -1,5 +1,7 @@
 # Astring
 
+[![Build Status](https://travis-ci.org/davidbonnet/astring.svg?branch=master)](https://travis-ci.org/davidbonnet/astring)
+
 A tiny and fast JavaScript code generator from an [ESTree](https://github.com/estree/estree)-formatted AST.
 
 Key features:
