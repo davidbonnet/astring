@@ -1,6 +1,7 @@
 # Astring
 
 [![Build Status](https://travis-ci.org/davidbonnet/astring.svg?branch=master)](https://travis-ci.org/davidbonnet/astring)
+[![NPM Version](https://img.shields.io/npm/v/astring.svg)](https://www.npmjs.org/package/astring)
 
 A tiny and fast JavaScript code generator from an [ESTree](https://github.com/estree/estree)-formatted AST.
 
