@@ -11,21 +11,22 @@ Key features:
 - Reduced formatting options.
 
 
-
 ## Installation
 
 If you haven't already, install the [Node Package Manager](https://www.npmjs.com).
 
-Checkout this repository, then run from withing the repository:
-
-```bash
-npm install
-```
-
-Alternatively, install it with the Node Package Manager:
+The easiest way is to install it with the Node Package Manager:
 
 ```bash
 npm install astring
+```
+
+Alternatively, checkout this repository and install the development dependencies:
+
+```bash
+git clone https://github.com/davidbonnet/astring.git
+cd astring
+npm install
 ```
 
 
@@ -78,6 +79,6 @@ else
 
 ## TODO
 
-- Exhaustive testing
 - Comments generation
+- More tests
 

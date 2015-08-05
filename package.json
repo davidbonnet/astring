@@ -2,7 +2,7 @@
   "name": "astring",
   "version": "0.0.9",
   "description": "JavaScript code generator from an ESTree-formatted AST node.",
-  "main": "./dist/astring.min.js",
+  "main": "dist/astring.min.js",
   "scripts": {
     "test": "./node_modules/mocha/bin/mocha test/index.js",
     "prepublish": "./node_modules/browserify/bin/cmd.js --transform [ babelify ] --plugin [ minifyify --no-map ] --no-builtins --standalone astring --require ./src/index.js:astring --outfile dist/astring.min.js",
