@@ -69,7 +69,7 @@ var options = {
 };
 
 // Format it
-result = astring( ast, options );
+var result = astring( ast, options );
 
 // Check it
 if ( code === result ) {
