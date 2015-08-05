@@ -3,7 +3,12 @@ var assert = require( 'assert' )
 var fs = require( 'fs' )
 var path = require( 'path' )
 var acorn = require( 'acorn' )
-var astring = require( '../dist/astring' )
+var astring
+try {
+	astring = require( '../dist/astring' )
+} catch ( error ) {
+	astring = require( '../dist/astring.min' )
+}
 
 
 var dirname = path.join( __dirname, 'checks' )
