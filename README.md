@@ -38,7 +38,7 @@ npm install
 
 The path to the module file is `dist/astring.min.js` and works both in a browser or Node environment. When run in a browser, it creates a global variable `astring`.
 
-The `astring` module consists of a function that takes two arguments `node` and `options`. It returns a string representing the rendered code of the provided AST `node`.
+The `astring` module consists of a function that takes two arguments: `node` and `options`. It returns a string representing the rendered code of the provided AST `node`.
 The `options` are:
 
 - `indent`: string to use for indentation (defaults to `\t`)
