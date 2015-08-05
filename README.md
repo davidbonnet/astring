@@ -48,7 +48,6 @@ The `options` are:
 - `startingIndentLevel`: indent level to start from (defaults to `0`)
 
 
-
 ### Example
 
 This example uses [Acorn](https://github.com/marijnh/acorn), a blazingly fast JavaScript parser and AST producer. It is the perfect companion of Astring.
@@ -82,10 +81,19 @@ if ( code === result ) {
 ```
 
 
+### Benchmark
+
+From the repository, you can run benchmarks that compare Astring against Escodegen and Esotope:
+
+```bash
+npm run benchmark
+```
+
+
 
 ## TODO
 
-- CLI
+- Command line interface
 - Comments generation
 - More tests
 
