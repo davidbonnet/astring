@@ -92,13 +92,13 @@ The utility reads the AST from `stdin` or from a provided list of files, and pri
 
 ### Example
 
-As in the previous example, we use [Acorn](https://github.com/marijnh/acorn) to get the JSON-formatted AST. This snippets shows how to pipe the AST output by acorn to astring in order to obtain the formatted JavaScript code:
+As in the previous example, we use [Acorn](https://github.com/marijnh/acorn) to get the JSON-formatted AST. This command pipes the AST output by acorn to astring in order to obtain the formatted JavaScript code:
 
 ```bash
 acorn --ecma6 script.js | astring --indent "  " > result.js
 ```
 
-Here is another example that reads the AST from a file:
+This command does the same, but reads the AST from an intermediary file:
 ```bash
 acorn --ecma6 script.js > ast.json
 astring --indent "  " ast.json > result.js
