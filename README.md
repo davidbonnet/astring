@@ -99,7 +99,7 @@ The utility reads the AST from `stdin` or from a provided list of files, and pri
 
 ### Example
 
-As in the previous example, we use [Acorn](https://github.com/marijnh/acorn) to get the JSON-formatted AST. This command pipes the AST output by acorn to astring in order to obtain the formatted JavaScript code:
+As in the previous example, these examples use [Acorn](https://github.com/marijnh/acorn) to get the JSON-formatted AST. This command pipes the AST output by Acorn from a `script.js` file to Astring and writes the formatted JavaScript code into a `result.js` file:
 
 ```bash
 acorn --ecma6 script.js | astring --indent "  " > result.js
