@@ -8,6 +8,7 @@ A tiny and fast JavaScript code generator from an [ESTree](https://github.com/es
 Key features:
 
 - Supports ECMAScript versions 5 and 6.
+- Works both in a browser and in [Node](http://nodejs.org).
 - Considerably faster than [Escodegen](https://github.com/estools/escodegen).
 - Smaller than [Esotope](https://github.com/inikulin/esotope) and faster for small ASTs.
 - No dependencies and small footprint (12 KB minified, 3 KB gziped).
@@ -32,11 +33,15 @@ cd astring
 npm install
 ```
 
+The path to the module file is `dist/astring.min.js` and can be linked to from an HTML webpage. When used in a browser environment, the module exposes a global variable `astring`:
+
+```html
+<script src="astring.min.js" type="text/javascript"></script>
+```
+
 
 
 ## Usage
-
-The path to the module file is `dist/astring.min.js` and works both in a browser or Node environment. When run in a browser, it creates a global variable `astring`.
 
 The `astring` module consists of a function that takes two arguments: `node` and `options`. It returns a string representing the rendered code of the provided AST `node`.
 The `options` are:
