@@ -18,9 +18,7 @@ Key features:
 
 ## Installation
 
-If you haven't already, install the [Node Package Manager](https://www.npmjs.com).
-
-The easiest way is to install it with the Node Package Manager:
+The easiest way is to install it with the [Node Package Manager](https://www.npmjs.com):
 
 ```bash
 npm install astring
@@ -43,8 +41,8 @@ The path to the module file is `dist/astring.min.js` and works both in a browser
 The `astring` module consists of a function that takes two arguments: `node` and `options`. It returns a string representing the rendered code of the provided AST `node`.
 The `options` are:
 
-- `indent`: string to use for indentation (defaults to `\t`)
-- `lineEnd`: string to use for line endings (defaults to `\n`)
+- `indent`: string to use for indentation (defaults to `"\t"`)
+- `lineEnd`: string to use for line endings (defaults to `"\n"`)
 - `startingIndentLevel`: indent level to start from (defaults to `0`)
 
 
@@ -81,7 +79,34 @@ if ( code === result ) {
 ```
 
 
-### Benchmark
+## Command line interface
+
+The `bin/astring` utility can be used to convert a JSON-formatted ESTree compliant AST of a JavaScript code. It accepts the following arguments:
+
+- `--indent`: string to use as indentation (defaults to `"\t"`)
+- `--lineEnd`: string to use for line endings (defaults to `"\n"`)
+- `--startingIndentLevel`: indent level to start from (defaults to `0`)
+
+The utility reads the AST from `stdin` or from a provided list of files, and prints out the resulting code.
+
+
+### Example
+
+As in the previous example, we use [Acorn](https://github.com/marijnh/acorn) to get the JSON-formatted AST. This snippets shows how to pipe the AST output by acorn to astring in order to obtain the formatted JavaScript code:
+
+```bash
+acorn --ecma6 script.js | astring --indent "  " > result.js
+```
+
+Here is another example that reads the AST from a file:
+```bash
+acorn --ecma6 script.js > ast.json
+astring --indent "  " ast.json > result.js
+```
+
+
+
+## Benchmark
 
 From the repository, you can run benchmarks that compare Astring against Escodegen and Esotope:
 
@@ -93,7 +118,6 @@ npm run benchmark
 
 ## TODO
 
-- Command line interface
-- Comments generation
-- More tests
+- Comments generation (version 0.3.x)
+- More tests (patches)
 

@@ -1,0 +1,103 @@
+#!/usr/bin/env node
+
+var astring
+try {
+	astring = require( '../dist/astring' )
+} catch ( error ) {
+	astring = require( '../dist/astring.min' )
+}
+var fs = require( 'fs' )
+var path = require( 'path' )
+var argv = process.argv.slice( 2 )
+var length = argv.length
+
+var options = {
+	indent: '\t',
+	lindeEnd: '\n',
+	startingIndentLevel: 0
+}
+
+var files = []
+
+function printHelp( status ) {
+	var print = status === 0 ? console.log : console.error
+	print( 'Usage: ' + path.basename( process.argv[ 1 ] ) + ' [--indent INDENT] [--lineEnd LINE_END] [--startingIndentLevel LEVEL] files...' )
+}
+
+function emptyStdinAndExitWith( status ) {
+	// Exhaust any stdin input and exit
+	process.stdin.read(0)
+	process.stdin
+	.on( 'dataready', function() {
+		process.stdin.read()
+	} )
+	.on( 'end', function () {
+		process.exit( status )
+	} )
+}
+
+var status = null
+
+for ( var i = 0; i < length; i++ ) {
+	var arg = argv[ i ]
+	if ( arg.substr( 0, 2 ) === '--' ) {
+		switch ( arg.substr( 2 ) ) {
+			case 'indent':
+				options.indent = argv[ ++i ]
+				break
+			case 'lineEnd':
+				options.lineEnd = argv[ ++i ]
+				break
+			case 'startingIndentLevel':
+				options.startingIndentLevel = parseInt( argv[ ++i ] )
+				break
+			case 'help':
+				status = 0
+				break
+			default:
+				console.error( 'Option "' + arg + '" not supported.' )
+				status = 1
+				break
+		}		
+	} else {
+		files.push( arg )
+	}
+}
+
+if ( status !== null ) {
+	printHelp( status )
+	emptyStdinAndExitWith( status )
+} else {
+	if ( files.length === 0 ) {
+		var data = []
+		process.stdin.setEncoding( 'utf8' )
+		process.stdin
+		.on( 'readable', function() {
+			var chunk = process.stdin.read()
+			if ( chunk == null )
+				process.stdin.pause()
+			else {
+				data.push( chunk )
+			}
+		} )
+		.on( 'end', function() {
+			try {
+				console.log( astring( JSON.parse( data.join( '' ) ), options ) )				
+			} catch ( error ) {
+				console.error( 'Error: ' + error.message )
+				process.exit( 1 )
+			}
+		} )
+	} else {
+		length = files.length
+		for ( var i = 0; i < length; i++ ) {
+			try {
+				console.log( astring( JSON.parse( fs.readFileSync( file, 'utf8' ) ), options ) )				
+			} catch ( error ) {
+				console.error( 'Error: ' + error.message )
+				emptyStdinAndExitWith( 1 )
+			}
+		}
+	}
+}
+
