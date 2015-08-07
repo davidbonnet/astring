@@ -21,13 +21,13 @@ Key features:
 
 ## Installation
 
-The easiest way is to install it with the [Node Package Manager](https://www.npmjs.com):
+The easiest way is to install it with the [Node Package Manager](https://www.npmjs.com/package/astring):
 
 ```bash
 npm install astring
 ```
 
-Alternatively, checkout this repository and install the development dependencies:
+Alternatively, checkout this repository and install the development dependencies to build the module file:
 
 ```bash
 git clone https://github.com/davidbonnet/astring.git
@@ -51,6 +51,7 @@ The `options` are:
 - `indent`: string to use for indentation (defaults to `"\t"`)
 - `lineEnd`: string to use for line endings (defaults to `"\n"`)
 - `startingIndentLevel`: indent level to start from (defaults to `0`)
+- `comments`: generate comments
 
 
 ### Example
@@ -119,6 +120,32 @@ From the repository, you can run benchmarks that compare Astring against Escodeg
 
 ```bash
 npm run benchmark
+```
+
+
+
+## Build system
+
+The source of Astring is written in JavaScript 6 and located at `src/astring.js`. It is compiled down to (slower) JavaScript 5 file located at `dist/astring.min.js` using [Browserify](http://browserify.org) and [Babel](http://babeljs.io/) by running:
+```bash
+npm install
+```
+
+If you are already using a JavaScript 6 to 5 compiler for your project, or a JavaScript 6 compliant interpreter, you can include the `src/acorn.js` file directly.
+
+If you are working on Astring, you can use [Watchify](https://github.com/substack/watchify) to build automatically at each modification a non-minified version (along with a source map for easy debugging) located at `dist/astring.debug.js` by running:
+```bash
+npm start
+```
+
+Finally, a non-minified version without a source map can be obtained by running:
+```bash
+npm run build
+```
+
+While making changes to Astring, make sure it passes the tests by running:
+```bash
+npm test
 ```
 
 

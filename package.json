@@ -9,7 +9,8 @@
   "scripts": {
     "test": "./node_modules/mocha/bin/mocha test/index.js",
     "prepublish": "./node_modules/browserify/bin/cmd.js --transform [ babelify ] --plugin [ minifyify --no-map ] --no-builtins --standalone astring --require ./src/astring.js:astring --outfile dist/astring.min.js",
-    "start": "./node_modules/watchify/bin/cmd.js --transform [ babelify ] --no-builtins --debug --verbose --standalone astring --require ./src/astring.js:astring --outfile dist/astring.js",
+    "build": "./node_modules/browserify/bin/cmd.js --transform [ babelify ] --no-builtins --standalone astring --require ./src/astring.js:astring --outfile dist/astring.js",
+    "start": "./node_modules/watchify/bin/cmd.js --transform [ babelify ] --no-builtins --debug --verbose --standalone astring --require ./src/astring.js:astring --outfile dist/astring.debug.js",
     "benchmark": "node ./test/performance.js"
   },
   "keywords": [

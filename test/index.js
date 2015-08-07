@@ -5,7 +5,7 @@ var path = require( 'path' )
 var acorn = require( 'acorn' )
 var astring
 try {
-	astring = require( '../dist/astring' )
+	astring = require( '../dist/astring.debug' )
 } catch ( error ) {
 	astring = require( '../dist/astring.min' )
 }
