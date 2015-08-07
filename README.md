@@ -126,7 +126,7 @@ npm run benchmark
 
 ## Build system
 
-The source of Astring is written in JavaScript 6 and located at `src/astring.js`. It is compiled down to (slower) JavaScript 5 file located at `dist/astring.min.js` using [Browserify](http://browserify.org) and [Babel](http://babeljs.io/) by running:
+The source of Astring is written in JavaScript 6 and located at `src/astring.js`. It is compiled down to a (slower) JavaScript 5 file located at `dist/astring.min.js` using [Browserify](http://browserify.org) and [Babel](http://babeljs.io/) by running:
 ```bash
 npm install
 ```
