@@ -11,3 +11,4 @@ a = 1.1.toString();
 b = new A().toString();
 c = new x.A().toString();
 d = new x.y().z();
+var r = /ab+c/i.exec('abc');
