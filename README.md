@@ -138,7 +138,7 @@ If you are working on Astring, you can use [Watchify](https://github.com/substac
 npm start
 ```
 
-Finally, a non-minified version without a source map can be obtained by running:
+Finally, a non-minified and source map free version can be obtained at `dist/astring.js` by running:
 ```bash
 npm run build
 ```
