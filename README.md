@@ -5,17 +5,17 @@
 [![Dependency Status](https://david-dm.org/davidbonnet/astring.svg)](https://david-dm.org/davidbonnet/astring)
 [![devDependency Status](https://david-dm.org/davidbonnet/astring/dev-status.svg)](https://david-dm.org/davidbonnet/astring#info=devDependencies)
 
-A tiny and fast JavaScript code generator from an [ESTree](https://github.com/estree/estree)-formatted AST.
+A tiny and fast JavaScript code generator from an [ESTree](https://github.com/estree/estree)-compliant AST.
 
 Key features:
 
 - Supports ECMAScript versions 5 and 6.
-- Works both in a browser and in [Node](http://nodejs.org).
+- Works on [ESTree](https://github.com/estree/estree)-compliant ASTs such as the ones produced by [Acorn](https://github.com/marijnh/acorn).
+- Runs both in a browser and in [Node](http://nodejs.org).
 - Considerably faster than [Escodegen](https://github.com/estools/escodegen).
 - Smaller than [Esotope](https://github.com/inikulin/esotope) and faster for small ASTs.
-- No dependencies and small footprint (12 KB minified, 3 KB gziped).
+- No dependencies and small footprint (~12 KB minified, ~3 KB gziped).
 - Output code is readable and executable.
-- Reduced formatting options.
 
 
 
