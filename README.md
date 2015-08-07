@@ -58,7 +58,7 @@ The `options` are:
 This example uses [Acorn](https://github.com/marijnh/acorn), a blazingly fast JavaScript parser and AST producer. It is the perfect companion of Astring.
 
 ```javascript
-// Import modules (unecessary when run in a browser)
+// Import modules (unnecessary when run in a browser)
 acorn = require( 'acorn' );
 astring = require( 'astring' );
 
