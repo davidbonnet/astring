@@ -131,7 +131,7 @@ The source of Astring is written in JavaScript 6 and located at `src/astring.js`
 npm install
 ```
 
-If you are already using a JavaScript 6 to 5 compiler for your project, or a JavaScript 6 compliant interpreter, you can include the `src/acorn.js` file directly.
+If you are already using a JavaScript 6 to 5 compiler for your project, or a JavaScript 6 compliant interpreter, you can include the `src/astring.js` file directly.
 
 If you are working on Astring, you can use [Watchify](https://github.com/substack/watchify) to build automatically at each modification a non-minified version (along with a source map for easy debugging) located at `dist/astring.debug.js` by running:
 ```bash
