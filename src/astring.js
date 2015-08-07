@@ -118,7 +118,7 @@ var visitors = {
 			code.push( indent )
 			let statement = statements[i]
 			if ( state.comments ) {}
-			visitors[ statement.type ]( statement, state )
+			self[ statement.type ]( statement, state )
 			code.push( lineEnd )
 		}
 	},
@@ -136,7 +136,7 @@ var visitors = {
 				if ( state.comments ) {
 					const { comments } = state
 				}
-				visitors[ statement.type ]( statement, state )
+				self[ statement.type ]( statement, state )
 				code.push( lineEnd )
 			}
 			code.push( indent )
@@ -145,31 +145,31 @@ var visitors = {
 		state.indentLevel--
 	},
 	Statement: function( node, state ) {
-		visitors[ node.type ]( node, state )
+		self[ node.type ]( node, state )
 		state.code.push( state.lineEnd )
 	},
 	EmptyStatement: function( node, state ) {
 		state.code.push( ';' )
 	},
 	ExpressionStatement: function( node, state ) {
-		visitors[ node.expression.type ]( node.expression, state )
+		self[ node.expression.type ]( node.expression, state )
 		state.code.push( ';' )
 	},
 	IfStatement: function( node, state ) {
 		const { code } = state
 		code.push( 'if (' )
-		visitors[ node.test.type ]( node.test, state )
+		self[ node.test.type ]( node.test, state )
 		code.push( ') ' )
-		visitors[ node.consequent.type ]( node.consequent, state )
+		self[ node.consequent.type ]( node.consequent, state )
 		if ( node.alternate != null ) {
 			code.push( ' else ' )
-			visitors[ node.alternate.type ]( node.alternate, state )
+			self[ node.alternate.type ]( node.alternate, state )
 		}
 	},
 	LabeledStatement: function( node, state ) {
-		visitors[ node.label.type ]( node.label, state )
+		self[ node.label.type ]( node.label, state )
 		state.code.push( ':', state.lineEnd )
-		visitors.Statement( node.body, state )
+		self.Statement( node.body, state )
 		// Remove line end
 		state.code.pop()
 	},
@@ -178,7 +178,7 @@ var visitors = {
 		code.push( 'break' )
 		if ( node.label ) {
 			code.push( ' ' )
-			visitors[ node.label.type ]( node.label, state )
+			self[ node.label.type ]( node.label, state )
 		}
 		code.push( ';' )
 	},
@@ -187,16 +187,16 @@ var visitors = {
 		code.push( 'continue' )
 		if ( node.label ) {
 			code.push( ' ' )
-			visitors[ node.label.type ]( node.label, state )
+			self[ node.label.type ]( node.label, state )
 		}
 		code.push( ';' )
 	},
 	WithStatement: function( node, state ) {
 		const { code } = state
 		code.push( 'with (' )
-		visitors[ node.object.type ]( node.object, state )
+		self[ node.object.type ]( node.object, state )
 		code.push( ') ' )
-		visitors.Statement( node.body, state )
+		self.Statement( node.body, state )
 	},
 	SwitchStatement: function( node, state ) {
 		const indent = state.indent.repeat( state.indentLevel++ )
@@ -205,14 +205,14 @@ var visitors = {
 		const caseIndent = indent + state.indent
 		const statementIndent = caseIndent + state.indent
 		code.push( 'switch (' )
-		visitors[ node.discriminant.type ]( node.discriminant, state )
+		self[ node.discriminant.type ]( node.discriminant, state )
 		code.push(') {', lineEnd)
 		const {cases} = node;
 		for (let i = 0, { length } = cases; i < length; i++) {
 			let check = cases[i];
 			if ( check.test ) {
 				code.push( caseIndent, 'case ' )
-				visitors[ check.test.type ]( check.test, state )
+				self[ check.test.type ]( check.test, state )
 				code.push( ':', lineEnd )
 			} else {
 				code.push( caseIndent, 'default:', lineEnd )
@@ -220,7 +220,7 @@ var visitors = {
 			let { consequent } = check
 			for (let i = 0, { length } = consequent; i < length; i++) {
 				code.push( statementIndent )
-				visitors.Statement( consequent[ i ], state )
+				self.Statement( consequent[ i ], state )
 			}
 		}
 		state.indentLevel -= 2
@@ -231,76 +231,76 @@ var visitors = {
 		code.push( 'return' )
 		if ( node.argument ) {
 			code.push( ' ' )
-			visitors[ node.argument.type ]( node.argument, state )
+			self[ node.argument.type ]( node.argument, state )
 		}
 		code.push( ';' )
 	},
 	ThrowStatement: function( node, state ) {
 		const { code } = state
 		code.push( 'throw ' )
-		visitors[ node.argument.type ]( node.argument, state )
+		self[ node.argument.type ]( node.argument, state )
 		code.push( ';' )
 	},
 	TryStatement: function( node, state ) {
 		const { code } = state
 		code.push( 'try ' )
-		visitors[ node.block.type ]( node.block, state )
+		self[ node.block.type ]( node.block, state )
 		if ( node.handler ) {
 			let { handler } = node
 			code.push( ' catch (' )
-			visitors[ handler.param.type ]( handler.param, state )
+			self[ handler.param.type ]( handler.param, state )
 			code.push( ') ' )
-			visitors[ handler.body.type ]( handler.body, state )
+			self[ handler.body.type ]( handler.body, state )
 		}
 		if ( node.finalizer ) {
 			code.push( ' finally ' )
-			visitors[ node.finalizer.type ]( node.finalizer, state )
+			self[ node.finalizer.type ]( node.finalizer, state )
 		}
 	},
 	WhileStatement: function( node, state ) {
 		const { code } = state
 		code.push( 'while (' )
-		visitors[ node.test.type ]( node.test, state )
+		self[ node.test.type ]( node.test, state )
 		code.push( ') ' )
-		visitors[ node.body.type ]( node.body, state )
+		self[ node.body.type ]( node.body, state )
 	},
 	DoWhileStatement: function( node, state ) {
 		const { code } = state
 		code.push( 'do ' )
-		visitors[ node.body.type ]( node.body, state )
+		self[ node.body.type ]( node.body, state )
 		code.push( ' while (' )
-		visitors[ node.test.type ]( node.test, state )
+		self[ node.test.type ]( node.test, state )
 		code.push( ');' )
 	},
 	ForStatement: function( node, state ) {
 		const { code } = state
 		code.push( 'for (' )
 		if ( node.init ) {
-			visitors.ForInit( node.init, state )
+			self.ForInit( node.init, state )
 		}
 		code.push( '; ' )
 		if ( node.test ) {
-			visitors[ node.test.type ]( node.test, state )
+			self[ node.test.type ]( node.test, state )
 		}
 		code.push( '; ' )
 		if ( node.update ) {
-			visitors[ node.update.type ]( node.update, state )
+			self[ node.update.type ]( node.update, state )
 		}
 		code.push( ') ' )
-		visitors[ node.body.type ]( node.body, state )
+		self[ node.body.type ]( node.body, state )
 	},
 	ForInStatement: ForInStatement = function( node, state ) {
 		const { code } = state
 		code.push( 'for (' )
-		visitors.ForInit( node.left, state )
+		self.ForInit( node.left, state )
 		code.push( node.type[ 3 ] === 'I' ? ' in ' : ' of ' )
-		visitors[ node.right.type ]( node.right, state )
+		self[ node.right.type ]( node.right, state )
 		code.push( ') ' )
-		visitors[ node.body.type ]( node.body, state )
+		self[ node.body.type ]( node.body, state )
 	},
 	ForOfStatement: ForInStatement,
 	ForInit: function( node, state ) {
-		visitors[ node.type ]( node, state )
+		self[ node.type ]( node, state )
 		if ( node.type === 'VariableDeclaration' ) {
 			// Remove inserted semicolon
 			state.code.pop()
@@ -315,7 +315,7 @@ var visitors = {
 		if ( node.id )
 			code.push( node.id.name )
 		formatParameters( code, node.params, state )
-		visitors[ node.body.type ]( node.body, state )
+		self[ node.body.type ]( node.body, state )
 	},
 	VariableDeclaration: function( node, state ) {
 		const { code } = state
@@ -323,10 +323,10 @@ var visitors = {
 		code.push( node.kind, ' ' )
 		for (let i = 0, { length } = declarations; i < length; i++) {
 			let declaration = declarations[i]
-			visitors[ declaration.id.type ]( declaration.id, state )
+			self[ declaration.id.type ]( declaration.id, state )
 			if ( declaration.init ) {
 				code.push( ' = ' )
-				visitors[ declaration.init.type ]( declaration.init, state )
+				self[ declaration.init.type ]( declaration.init, state )
 			}
 			code.push( ', ' )
 		}
@@ -342,10 +342,10 @@ var visitors = {
 		}
 		if ( node.superClass ) {
 			code.push( 'extends ' )
-			visitors[ node.superClass.type ]( node.superClass, state )
+			self[ node.superClass.type ]( node.superClass, state )
 			code.push( ' ' )
 		}
-		visitors.BlockStatement( node.body, state )
+		self.BlockStatement( node.body, state )
 	},
 	ImportDeclaration: function( node, state ) {
 		const { code } = state
@@ -397,7 +397,7 @@ var visitors = {
 	ExportDefaultDeclaration: function( node, state ) {
 		const { code } = state
 		code.push( 'export default ' )
-		visitors[ node.declaration.type ]( node.declaration, state )
+		self[ node.declaration.type ]( node.declaration, state )
 		if ( node.declaration.type.substr( -10 ) === 'Expression' )
 			code.push( ';' )
 	},
@@ -405,7 +405,7 @@ var visitors = {
 		const { code } = state
 		code.push( 'export ' )
 		if ( node.declaration ) {
-			visitors[ node.declaration.type ]( node.declaration, state )
+			self[ node.declaration.type ]( node.declaration, state )
 		} else {
 			code.push( '{' )
 			const { specifiers } = node
@@ -446,16 +446,16 @@ var visitors = {
 		}
 		if ( node.computed ) {
 			code.push( '[' )
-			visitors[ node.key.type ]( node.key, state )
+			self[ node.key.type ]( node.key, state )
 			code.push( ']' )
 		} else {
 			code.push( node.key.name )
 		}
 		formatParameters( code, node.value.params, state )
-		visitors[ node.value.body.type ]( node.value.body, state )
+		self[ node.value.body.type ]( node.value.body, state )
 	},
 	ClassExpression: function( node, state ) {
-		visitors.ClassDeclaration( node, state )
+		self.ClassDeclaration( node, state )
 	},
 	ArrowFunctionExpression: function( node, state ) {
 		const { code } = state
@@ -463,10 +463,10 @@ var visitors = {
 		code.push( '=> ' )
 		if ( node.body.type === 'ObjectExpression' ) {
 			code.push( '(' )
-			visitors.ObjectExpression( node.body, state )	
+			self.ObjectExpression( node.body, state )	
 			code.push( ')' )
 		} else
-			visitors[ node.body.type ]( node.body, state )
+			self[ node.body.type ]( node.body, state )
 	},
 	ThisExpression: function( node, state ) {
 		state.code.push( 'this' )
@@ -476,7 +476,7 @@ var visitors = {
 	},
 	RestElement: RestElement = function( node, state ) {
 		state.code.push( '...' )
-		visitors[ node.argument.type ]( node.argument, state )
+		self[ node.argument.type ]( node.argument, state )
 	},
 	SpreadElement: RestElement,
 	YieldExpression: function( node, state ) {
@@ -484,7 +484,7 @@ var visitors = {
 		code.push( 'yield' )
 		if ( node.argument ) {
 			code.push( ' ' )
-			visitors[ node.argument.type ]( node.argument, state )
+			self[ node.argument.type ]( node.argument, state )
 		}
 	},
 	TemplateLiteral: function( node, state ) {
@@ -495,15 +495,15 @@ var visitors = {
 			let expression = expressions[ i ]
 			code.push( quasis[i].value.raw )
 			code.push( '${' )
-			visitors[ expression.type ]( expression, state )
+			self[ expression.type ]( expression, state )
 			code.push( '}' )
 		}
 		code.push( quasis[quasis.length-1].value.raw )
 		code.push( '`' )
 	},
 	TaggedTemplateExpression: function( node, state ) {
-		visitors[ node.tag.type ]( node.tag, state )
-		visitors[ node.quasi.type ]( node.quasi, state )
+		self[ node.tag.type ]( node.tag, state )
+		self[ node.quasi.type ]( node.quasi, state )
 	},
 	ArrayExpression: ArrayExpression = function( node, state ) {
 		const { code } = state
@@ -511,7 +511,7 @@ var visitors = {
 		if ( node.elements.length !== 0 ) {
 			for (let i = 0, {elements} = node, { length } = elements; i < length; i++) {
 				let element = elements[ i ]
-				visitors[ element.type ]( element, state )
+				self[ element.type ]( element, state )
 				code.push( ', ' )
 			}
 			code.pop()
@@ -531,11 +531,11 @@ var visitors = {
 				let property = properties[ i ]
 				code.push( propertyIndent )
 				if ( property.computed ) code.push( '[' )
-				visitors[ property.key.type ]( property.key, state )
+				self[ property.key.type ]( property.key, state )
 				if ( property.computed ) code.push( ']' )
 				if ( !property.shorthand ) {
 					code.push( ': ' )
-					visitors[ property.value.type ]( property.value, state )
+					self[ property.value.type ]( property.value, state )
 					code.push( comma )
 				}
 			}
@@ -553,14 +553,14 @@ var visitors = {
 				let property = properties[ i ]
 				if ( property.computed ) {
 					code.push( '[' )
-					visitors[ property.key.type ]( property.key, state )
+					self[ property.key.type ]( property.key, state )
 					code.push( ']' )
 				} else {
-					visitors[ property.key.type ]( property.key, state )
+					self[ property.key.type ]( property.key, state )
 				}
 				if ( !property.shorthand ) {
 					code.push( ': ' )
-					visitors[ property.value.type ]( property.value, state )
+					self[ property.value.type ]( property.value, state )
 				}
 				code.push( ', ' )
 			}
@@ -576,7 +576,7 @@ var visitors = {
 		if ( expressions.length !== 0 ) {
 			for (let i = 0, { length } = expressions; i < length; i++) {
 				let expression = expressions[ i ]
-				visitors[ expression.type ]( expression, state )
+				self[ expression.type ]( expression, state )
 				code.push( ', ' )
 			}
 			code.pop()
@@ -585,30 +585,30 @@ var visitors = {
 	UnaryExpression: function( node, state ) {
 		if ( node.prefix ) {
 			state.code.push( node.operator, ' ' )
-			visitors[ node.argument.type ]( node.argument, state )
+			self[ node.argument.type ]( node.argument, state )
 		} else {
-			visitors[ node.argument.type ]( node.argument, state )
+			self[ node.argument.type ]( node.argument, state )
 			state.code.push( node.operator )
 		}
 	},
 	UpdateExpression: function( node, state ) {
 		if ( node.prefix ) {
 			state.code.push( node.operator )
-			visitors[ node.argument.type ]( node.argument, state )
+			self[ node.argument.type ]( node.argument, state )
 		} else {
-			visitors[ node.argument.type ]( node.argument, state )
+			self[ node.argument.type ]( node.argument, state )
 			state.code.push( node.operator )	
 		}
 	},
 	AssignmentExpression: function( node, state ) {
-		visitors[ node.left.type ]( node.left, state )
+		self[ node.left.type ]( node.left, state )
 		state.code.push( ' ', node.operator, ' ' )
-		visitors[ node.right.type ]( node.right, state )
+		self[ node.right.type ]( node.right, state )
 	},
 	AssignmentPattern: function( node, state ) {
-		visitors[ node.left.type ]( node.left, state )
+		self[ node.left.type ]( node.left, state )
 		state.code.push( ' = ' )
-		visitors[ node.right.type ]( node.right, state )
+		self[ node.right.type ]( node.right, state )
 	},
 	BinaryExpression: BinaryExpression = function( node, state ) {
 		const { code } = state
@@ -620,23 +620,23 @@ var visitors = {
 	LogicalExpression: BinaryExpression,
 	ConditionalExpression: function( node, state ) {
 		const { code } = state
-		visitors[ node.test.type ]( node.test, state )
+		self[ node.test.type ]( node.test, state )
 		code.push( ' ? ' )
-		visitors[ node.consequent.type ]( node.consequent, state )
+		self[ node.consequent.type ]( node.consequent, state )
 		code.push( ' : ' )
-		visitors[ node.alternate.type ]( node.alternate, state )
+		self[ node.alternate.type ]( node.alternate, state )
 	},
 	NewExpression: function( node, state ) {
 		state.code.push( 'new ' )
-		visitors.CallExpression( node, state )
+		self.CallExpression( node, state )
 	},
 	CallExpression: function( node, state ) {
 		const { code } = state
 		if ( PARENTHESIS_NEEDED[ node.callee.type ] === 0 ) {
-			visitors[ node.callee.type ]( node.callee, state )
+			self[ node.callee.type ]( node.callee, state )
 		} else {
 			code.push( '(' )
-			visitors[ node.callee.type ]( node.callee, state )
+			self[ node.callee.type ]( node.callee, state )
 			code.push( ')' )
 		}
 		code.push( '(' )
@@ -644,7 +644,7 @@ var visitors = {
 		if ( args.length !== 0 ) {
 			for (let i = 0, { length } = args; i < length; i++) {
 				let arg = args[ i ]
-				visitors[ arg.type ]( arg, state )
+				self[ arg.type ]( arg, state )
 				code.push( ', ' )
 			}
 			code.pop()
@@ -653,14 +653,14 @@ var visitors = {
 	},
 	MemberExpression: function( node, state ) {
 		const { code } = state
-		visitors[ node.object.type ]( node.object, state )
+		self[ node.object.type ]( node.object, state )
 		if ( node.computed ) {
 			code.push( '[' )
-			visitors[ node.property.type ]( node.property, state )
+			self[ node.property.type ]( node.property, state )
 			code.push( ']' )
 		} else {
 			code.push( '.' )
-			visitors[ node.property.type ]( node.property, state )
+			self[ node.property.type ]( node.property, state )
 		}
 	},
 	Identifier: function( node, state ) {
