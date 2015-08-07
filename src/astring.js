@@ -117,6 +117,7 @@ var visitors = {
 		for (var i = 0, { length } = statements; i < length; i++) {
 			code.push( indent )
 			let statement = statements[i]
+			if ( state.comments ) {}
 			visitors[ statement.type ]( statement, state )
 			code.push( lineEnd )
 		}
@@ -132,6 +133,9 @@ var visitors = {
 			for (var i = 0, { length } = statements; i < length; i++) {
 				code.push( statementIndent )
 				let statement = statements[ i ]
+				if ( state.comments ) {
+					const { comments } = state
+				}
 				visitors[ statement.type ]( statement, state )
 				code.push( lineEnd )
 			}
@@ -682,14 +686,16 @@ export default function( node, options ) {
 		code: [],
 		indent: "\t",
 		lineEnd: "\n",
-		indentLevel: 0
+		indentLevel: 0,
+		comments: null
 	} : {
 		// Will contain the resulting code as an array of code strings
 		code: [],
 		// Formating options
 		indent: options.indent != null ? options.indent : "\t",
 		lineEnd: options.lineEnd != null ? options.lineEnd : "\n",
-		indentLevel: options.startingIndentLevel != null ? options.startingIndentLevel : 0
+		indentLevel: options.startingIndentLevel != null ? options.startingIndentLevel : 0,
+		comments: options.comments ? options.comments : null
 	};
 	// Walk through the AST node and generate the code
 	visitors[ node.type ]( node, state )
