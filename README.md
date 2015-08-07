@@ -126,27 +126,15 @@ npm run benchmark
 
 ## Build system
 
-The source of Astring is written in JavaScript 6 and located at `src/astring.js`. It is compiled down to a (slower) JavaScript 5 file located at `dist/astring.min.js` using [Browserify](http://browserify.org) and [Babel](http://babeljs.io/) by running:
-```bash
-npm install
-```
+The source of Astring is written in JavaScript 6 and located at `src/astring.js`. It is compiled down to a (slower) JavaScript 5 file located at `dist/astring.min.js` using [Browserify](http://browserify.org) and [Babel](http://babeljs.io/). This is achieved by running `npm install`.
 
 If you are already using a JavaScript 6 to 5 compiler for your project, or a JavaScript 6 compliant interpreter, you can include the `src/astring.js` file directly.
 
-If you are working on Astring, you can use [Watchify](https://github.com/substack/watchify) to build automatically at each modification a non-minified version (along with a source map for easy debugging) located at `dist/astring.debug.js` by running:
-```bash
-npm start
-```
+If you are working on Astring, you can use [Watchify](https://github.com/substack/watchify) to build automatically at each modification a non-minified version (along with a source map for easy debugging) located at `dist/astring.debug.js` by running `npm start`.
 
-Finally, a non-minified and source map free version can be obtained at `dist/astring.js` by running:
-```bash
-npm run build
-```
+Finally, a non-minified and source map free version can be obtained at `dist/astring.js` by running `npm run build`.
 
-While making changes to Astring, make sure it passes the tests by running:
-```bash
-npm test
-```
+While making changes to Astring, make sure it passes the tests by running `npm test`.
 
 
 
