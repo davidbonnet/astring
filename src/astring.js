@@ -25,25 +25,24 @@ if ( !String.prototype.repeat ) {
 }
 
 
-function formatParameters( code, params, state ) {
+function formatParameters( code, params, state, visitors ) {
 	/*
 	Formats function parameters provided in `params` into the `code` array.
 	*/
 	code.push( '(' )
 	if ( params != null && params.length !== 0 ) {
-		for (let i = 0, { length } = params; i < length; i++) {
+		visitors[ params[ 0 ].type ]( params[ 0 ], state )
+		for (let i = 1, { length } = params; i < length; i++) {
 			let param = params[ i ]
-			visitors[ param.type ]( param, state )
 			code.push( ', ' )
+			visitors[ param.type ]( param, state )
 		}
-		// Remove trailing comma
-		code.pop()
 	}
 	code.push( ') ' )
 }
 
 
-function formatBinarySideExpression( code, node, operator, state ) {
+function formatBinarySideExpression( code, node, operator, state, visitors ) {
 	/*
 	Formats into the `code` array a left-hand or right-hand expression `node` from a binary expression applying the provided `operator`.
 	*/
@@ -308,7 +307,7 @@ var visitors = {
 		code.push( node.generator ? 'function* ' : 'function ' )
 		if ( node.id )
 			code.push( node.id.name )
-		formatParameters( code, node.params, state )
+		formatParameters( code, node.params, state, this )
 		this[ node.body.type ]( node.body, state )
 	},
 	VariableDeclaration: function( node, state ) {
@@ -445,7 +444,7 @@ var visitors = {
 		} else {
 			code.push( node.key.name )
 		}
-		formatParameters( code, node.value.params, state )
+		formatParameters( code, node.value.params, state, this )
 		this[ node.value.body.type ]( node.value.body, state )
 	},
 	ClassExpression: function( node, state ) {
@@ -453,7 +452,7 @@ var visitors = {
 	},
 	ArrowFunctionExpression: function( node, state ) {
 		const { code } = state
-		formatParameters( code, node.params, state )
+		formatParameters( code, node.params, state, this )
 		code.push( '=> ' )
 		if ( node.body.type === 'ObjectExpression' ) {
 			code.push( '(' )
@@ -607,9 +606,9 @@ var visitors = {
 	BinaryExpression: BinaryExpression = function( node, state ) {
 		const { code } = state
 		const { operator } = node
-		formatBinarySideExpression( code, node.left, operator, state )
+		formatBinarySideExpression( code, node.left, operator, state, this )
 		code.push( ' ', node.operator, ' ' )
-		formatBinarySideExpression( code, node.right, operator, state )
+		formatBinarySideExpression( code, node.right, operator, state, this )
 	},
 	LogicalExpression: BinaryExpression,
 	ConditionalExpression: function( node, state ) {
@@ -636,12 +635,12 @@ var visitors = {
 		code.push( '(' )
 		const args = node[ 'arguments' ]
 		if ( args.length !== 0 ) {
-			for (let i = 0, { length } = args; i < length; i++) {
+			this[ args[ 0 ].type ]( args[ 0 ], state )
+			for (let i = 1, { length } = args; i < length; i++) {
 				let arg = args[ i ]
-				this[ arg.type ]( arg, state )
 				code.push( ', ' )
+				this[ arg.type ]( arg, state )
 			}
-			code.pop()
 		}
 		code.push( ')' )
 	},
