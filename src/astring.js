@@ -104,8 +104,6 @@ const PARENTHESIS_NEEDED = {
 }
 
 
-
-
 var ForInStatement, FunctionDeclaration, RestElement, BinaryExpression, ArrayExpression
 
 
@@ -144,10 +142,6 @@ var visitors = {
 		code.push( '}' )
 		state.indentLevel--
 	},
-	Statement: function( node, state ) {
-		this[ node.type ]( node, state )
-		state.code.push( state.lineEnd )
-	},
 	EmptyStatement: function( node, state ) {
 		state.code.push( ';' )
 	},
@@ -169,9 +163,7 @@ var visitors = {
 	LabeledStatement: function( node, state ) {
 		this[ node.label.type ]( node.label, state )
 		state.code.push( ':', state.lineEnd )
-		this.Statement( node.body, state )
-		// Remove line end
-		state.code.pop()
+		this[ node.body.type ]( node.body, state )
 	},
 	BreakStatement: function( node, state ) {
 		const { code } = state
@@ -196,7 +188,7 @@ var visitors = {
 		code.push( 'with (' )
 		this[ node.object.type ]( node.object, state )
 		code.push( ') ' )
-		this.Statement( node.body, state )
+		this[ node.body.type ]( node.body, state )
 	},
 	SwitchStatement: function( node, state ) {
 		const indent = state.indent.repeat( state.indentLevel++ )
@@ -219,8 +211,10 @@ var visitors = {
 			}
 			let { consequent } = check
 			for (let i = 0, { length } = consequent; i < length; i++) {
+				let statement = consequent[ i ]
 				code.push( statementIndent )
-				this.Statement( consequent[ i ], state )
+				this[ statement.type ]( statement, state )
+				code.push( lineEnd )
 			}
 		}
 		state.indentLevel -= 2
@@ -681,8 +675,9 @@ export default function( node, options ) {
 	- `indent`: string to use for indentation (defaults to `\t`)
 	- `lineEnd`: string to use for line endings (defaults to `\n`)
 	- `startingIndentLevel`: indent level to start from (default to `0`)
+	- `comments`: generate comments if `true` (defaults to `false`)
 	*/
-	var state = (options == null) ? {
+	const state = (options == null) ? {
 		code: [],
 		indent: "\t",
 		lineEnd: "\n",
@@ -696,7 +691,7 @@ export default function( node, options ) {
 		lineEnd: options.lineEnd != null ? options.lineEnd : "\n",
 		indentLevel: options.startingIndentLevel != null ? options.startingIndentLevel : 0,
 		comments: options.comments ? options.comments : false
-	};
+	}
 	// Walk through the AST node and generate the code
 	visitors[ node.type ]( node, state )
 	return state.code.join( '' )
