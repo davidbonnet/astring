@@ -9,7 +9,7 @@ A tiny and fast JavaScript code generator from an [ESTree](https://github.com/es
 
 Key features:
 
-- Supports ECMAScript versions 5 and 6.
+- Generates JavaScript code up to [version 6](http://www.ecma-international.org/ecma-262/6.0/index.html).
 - Works on [ESTree](https://github.com/estree/estree)-compliant ASTs such as the ones produced by [Acorn](https://github.com/marijnh/acorn).
 - Runs both in a browser and in [Node](http://nodejs.org).
 - Considerably faster than [Escodegen](https://github.com/estools/escodegen).
