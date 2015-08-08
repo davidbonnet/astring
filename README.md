@@ -126,7 +126,7 @@ npm run benchmark
 
 ## Building
 
-All building scripts are defined in the `package.json` file and rely on the [Node Package Manager](https://www.npmjs.com/).
+All building scripts are defined in the `package.json` file and rely on the [Node Package Manager](https://www.npmjs.com/). All commands must be run from within the root repository folder.
 
 ### Production
 
