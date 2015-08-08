@@ -32,7 +32,7 @@ function formatParameters( code, params, state, visitors ) {
 	code.push( '(' )
 	if ( params != null && params.length !== 0 ) {
 		visitors[ params[ 0 ].type ]( params[ 0 ], state )
-		for (let i = 1, { length } = params; i < length; i++) {
+		for (let i = 1, { length } = params; i < length; i++ ) {
 			let param = params[ i ]
 			code.push( ', ' )
 			visitors[ param.type ]( param, state )
@@ -111,7 +111,7 @@ var visitors = {
 		const indent = state.indent.repeat( state.indentLevel )
 		const { lineEnd, code } = state
 		let statements = node.body
-		for (var i = 0, { length } = statements; i < length; i++) {
+		for (var i = 0, { length } = statements; i < length; i++ ) {
 			code.push( indent )
 			let statement = statements[i]
 			if ( state.comments ) {}
@@ -127,7 +127,7 @@ var visitors = {
 		var statements = node.body
 		if ( statements != null && statements.length !== 0 ) {
 			code.push( lineEnd );
-			for (var i = 0, { length } = statements; i < length; i++) {
+			for (var i = 0, { length } = statements; i < length; i++ ) {
 				code.push( statementIndent )
 				let statement = statements[ i ]
 				if ( state.comments ) {
@@ -199,7 +199,7 @@ var visitors = {
 		this[ node.discriminant.type ]( node.discriminant, state )
 		code.push(') {', lineEnd)
 		const {cases} = node;
-		for (let i = 0, { length } = cases; i < length; i++) {
+		for (let i = 0, { length } = cases; i < length; i++ ) {
 			let check = cases[i];
 			if ( check.test ) {
 				code.push( caseIndent, 'case ' )
@@ -209,7 +209,7 @@ var visitors = {
 				code.push( caseIndent, 'default:', lineEnd )
 			}
 			let { consequent } = check
-			for (let i = 0, { length } = consequent; i < length; i++) {
+			for (let i = 0, { length } = consequent; i < length; i++ ) {
 				let statement = consequent[ i ]
 				code.push( statementIndent )
 				this[ statement.type ]( statement, state )
@@ -314,7 +314,7 @@ var visitors = {
 		const { code } = state
 		const { declarations } = node
 		code.push( node.kind, ' ' )
-		for (let i = 0, { length } = declarations; i < length; i++) {
+		for (let i = 0, { length } = declarations; i < length; i++ ) {
 			let declaration = declarations[i]
 			this[ declaration.id.type ]( declaration.id, state )
 			if ( declaration.init ) {
@@ -404,7 +404,7 @@ var visitors = {
 			const { specifiers } = node
 			const { length } = specifiers
 			if ( length > 0 ) {
-				for (let i = 0; i < length; i++) {
+				for (let i = 0; i < length; i++ ) {
 					let specifier = specifiers[i]
 					let {name} = specifier.local
 					code.push( name )
@@ -484,7 +484,7 @@ var visitors = {
 		const { code } = state
 		const {quasis, expressions} = node
 		code.push( '`' )
-		for (let i = 0, { length } = expressions; i < length; i++) {
+		for (let i = 0, { length } = expressions; i < length; i++ ) {
 			let expression = expressions[ i ]
 			code.push( quasis[i].value.raw )
 			code.push( '${' )
@@ -502,7 +502,7 @@ var visitors = {
 		const { code } = state
 		code.push( '[' )
 		if ( node.elements.length !== 0 ) {
-			for (let i = 0, {elements} = node, { length } = elements; i < length; i++) {
+			for (let i = 0, {elements} = node, { length } = elements; i < length; i++ ) {
 				let element = elements[ i ]
 				this[ element.type ]( element, state )
 				code.push( ', ' )
@@ -567,7 +567,7 @@ var visitors = {
 		const { code } = state
 		const {expressions} = node
 		if ( expressions.length !== 0 ) {
-			for (let i = 0, { length } = expressions; i < length; i++) {
+			for (let i = 0, { length } = expressions; i < length; i++ ) {
 				let expression = expressions[ i ]
 				this[ expression.type ]( expression, state )
 				code.push( ', ' )
@@ -636,7 +636,7 @@ var visitors = {
 		const args = node[ 'arguments' ]
 		if ( args.length !== 0 ) {
 			this[ args[ 0 ].type ]( args[ 0 ], state )
-			for (let i = 1, { length } = args; i < length; i++) {
+			for (let i = 1, { length } = args; i < length; i++ ) {
 				let arg = args[ i ]
 				code.push( ', ' )
 				this[ arg.type ]( arg, state )
