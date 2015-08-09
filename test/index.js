@@ -21,9 +21,15 @@ var options = {
 describe( 'Code generation', function() {
 	files.forEach( function( filename ) {
 		var code = fs.readFileSync( path.join( dirname, filename ), 'utf8' )
-		it( filename, function() {
+		it( filename.split( '.' )[ 0 ], function() {
 			var ast = acorn.parse( code, options )
-			assert.equal( astring( ast ), code )		
+			assert.equal( astring( ast ), code )
 		} )
 	} )
+	var code = "with (a) {\n\tb = 1;\n\tc = 2;\n}\n"
+	it( 'with', function () {
+		var ast = acorn.parse( code, { ecmaVersion: 5 } )
+		assert.equal( astring( ast ), code )
+	} )
 } )
+

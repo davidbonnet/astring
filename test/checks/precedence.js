@@ -7,6 +7,7 @@ e = (x | y) ^ z;
 a = true || false && null;
 b = c == d || e != f;
 c = x instanceof y || x instanceof z;
+d = x == y && y != z;
 a = 1.1.toString();
 b = new A().toString();
 c = new x.A().toString();

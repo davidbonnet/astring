@@ -114,16 +114,6 @@ astring --indent "  " ast.json > result.js
 
 
 
-## Benchmark
-
-From the repository, you can run benchmarks that compare Astring against Escodegen and Esotope:
-
-```bash
-npm run benchmark
-```
-
-
-
 ## Building
 
 All building scripts are defined in the `package.json` file and rely on the [Node Package Manager](https://www.npmjs.com/). All commands must be run from within the root repository folder.
@@ -153,6 +143,15 @@ While making changes to Astring, make sure it passes the tests by running:
 ```bash
 npm test
 ```
+
+### Benchmark
+
+You can run benchmarks that compare Astring against Escodegen and Esotope:
+
+```bash
+npm run benchmark
+```
+
 
 
 
