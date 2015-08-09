@@ -1,3 +1,12 @@
+// Astring is a tiny and fast JavaScript code generator from an ESTree-compliant AST.
+//
+// Astring was written by David Bonnet and released under an MIT license.
+//
+// The Git repository for Astring is available at:
+// https://github.com/davidbonnet/astring.git
+//
+// Please use the GitHub bug tracker to report issues:
+// https://github.com/davidbonnet/astring/issues
 
 
 // Polyfill for non-ES6 interpreters
@@ -696,7 +705,7 @@ export default function( node, options ) {
 		indent: "\t",
 		lineEnd: "\n",
 		indentLevel: 0,
-		comments: false
+		writeComments: false
 	} : {
 		// Will contain the resulting code as an array of code strings
 		code: [],
@@ -704,7 +713,7 @@ export default function( node, options ) {
 		indent: options.indent != null ? options.indent : "\t",
 		lineEnd: options.lineEnd != null ? options.lineEnd : "\n",
 		indentLevel: options.startingIndentLevel != null ? options.startingIndentLevel : 0,
-		comments: options.comments ? options.comments : false
+		writeComments: options.comments ? options.comments : false
 	}
 	// Walk through the AST node and generate the code
 	visitors[ node.type ]( node, state )
