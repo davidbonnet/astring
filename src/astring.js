@@ -105,7 +105,7 @@ function formatComments( code, comments, indent, lineEnd ) {
 			code.push( '// ', comment.value.trim(), "\n" )
 		else
 			// Block comment
-			code.push( '/*', lineEnd, reindent( comment ), lineEnd, indent, '*/', lineEnd )
+			code.push( '/*', lineEnd, reindent( comment, indent ), lineEnd, indent, '*/', lineEnd )
 	}
 }
 
