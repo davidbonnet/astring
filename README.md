@@ -12,7 +12,7 @@ Key features:
 - Generates JavaScript code up to [version 6](http://www.ecma-international.org/ecma-262/6.0/index.html).
 - Works on [ESTree](https://github.com/estree/estree)-compliant ASTs such as the ones produced by [Acorn](https://github.com/marijnh/acorn).
 - Runs both in a browser and in [Node](http://nodejs.org).
-- Considerably faster than [Escodegen](https://github.com/estools/escodegen) (up to 10⨉) and [Esotope](https://github.com/inikulin/esotope) (up to 3⨉).
+- Considerably faster than [Escodegen](https://github.com/estools/escodegen) (up to 10×)and [Esotope](https://github.com/inikulin/esotope) (up to 3×).
 - No dependencies and small footprint (≈ 12 KB minified, ≈ 3 KB gziped).
 - Output code is readable and executable.
 
@@ -157,4 +157,3 @@ npm run benchmark
 
 - Comments generation (version 0.3.x)
 - More tests (patches)
-
