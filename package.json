@@ -15,7 +15,8 @@
   },
   "keywords": [
     "ast",
-    "code generator"
+    "code generator",
+    "estree"
   ],
   "repository": {
     "type": "git",

@@ -2,7 +2,12 @@ var Benchmark = require( 'benchmark' )
 var acorn = require( 'acorn' )
 var escodegen = require( 'escodegen' ).generate
 var esotope = require( 'esotope' ).generate
-var astring = require( '../dist/astring' )
+var astring
+try {
+	astring = require( '../dist/astring.debug' )
+} catch ( error ) {
+	astring = require( '../dist/astring.min' )
+}
 var fs = require( 'fs' )
 var path = require( 'path' )
 

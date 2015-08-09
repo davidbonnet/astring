@@ -34,40 +34,79 @@ if ( !String.prototype.repeat ) {
 }
 
 
-function formatParameters( code, params, state, visitors ) {
+function reindent( text, indentation ) {
+	/*
+	Returns the `text` string reindented with the provided `indentation`.
+	*/
+	text = text.trim()
+	let indents = '\n'
+	let secondLine = false
+	for ( let i = 0, { length } = text; i < length; i++ ) {
+		let char = text[ i ]
+		if ( secondLine ) {
+			if ( char === ' ' || char === '\t' ) {
+				indents += char
+			} else {
+				return indentation + text.split( indents ).join( '\n' + indentation )
+			}
+		} else {
+			if ( char === '\n' ) {
+				secondLine = true
+			}
+		}
+	}
+	return indentation + text
+}
+
+
+function formatParameters( code, params, state, traveller ) {
 	/*
 	Formats function parameters provided in `params` into the `code` array.
 	*/
 	code.push( '(' )
 	if ( params != null && params.length !== 0 ) {
-		visitors[ params[ 0 ].type ]( params[ 0 ], state )
+		traveller[ params[ 0 ].type ]( params[ 0 ], state )
 		for ( let i = 1, { length } = params; i < length; i++ ) {
 			let param = params[ i ]
 			code.push( ', ' )
-			visitors[ param.type ]( param, state )
+			traveller[ param.type ]( param, state )
 		}
 	}
 	code.push( ') ' )
 }
 
 
-function formatBinarySideExpression( code, node, operator, state, visitors ) {
+function formatBinarySideExpression( code, node, operator, state, traveller ) {
 	/*
 	Formats into the `code` array a left-hand or right-hand expression `node` from a binary expression applying the provided `operator`.
 	*/
 	const needed = PARENTHESIS_NEEDED[ node.type ]
 	if ( needed === 0 ) {
-		visitors[ node.type ]( node, state )
+		traveller[ node.type ]( node, state )
 		return
 	} else if ( needed === 1 ) {
 		if ( OPERATORS_PRECEDENCE[ node.operator ] >= OPERATORS_PRECEDENCE[ operator ] ) {
-			visitors[ node.type ]( node, state )
+			traveller[ node.type ]( node, state )
 			return
 		}
 	}
 	code.push( '(' )
-	visitors[ node.type ]( node, state )
+	traveller[ node.type ]( node, state )
 	code.push( ')' )
+}
+
+
+function formatComments( code, comments, indent, lineEnd ) {
+	for ( let i = 0, { length } = comments; i < length; i++ ) {
+		let comment = comments[ i ]
+		code.push( indent )
+		if ( comment.type[ 0 ] === 'L' )
+			// Line comment
+			code.push( '// ', comment.value.trim(), "\n" )
+		else
+			// Block comment
+			code.push( '/*', lineEnd, reindent( comment ), lineEnd, indent, '*/', lineEnd )
+	}
 }
 
 
@@ -115,29 +154,15 @@ const PARENTHESIS_NEEDED = {
 var ForInStatement, FunctionDeclaration, RestElement, BinaryExpression, ArrayExpression
 
 
-let visitors = {
+let traveller = {
 	Program: function( node, state ) {
 		const indent = state.indent.repeat( state.indentLevel )
 		const { lineEnd, code, writeComments } = state
 		let statements = node.body
 		for ( let i = 0, { length } = statements; i < length; i++ ) {
 			let statement = statements[ i ]
-			if ( writeComments ) {
-				// Heading comments
-				if ( statement.comments != null ) {
-					let { comments } = statement
-					for ( let i = 0, { length } = comments; i < length; i++ ) {
-						let comment = comments[ i ]
-						code.push( indent )
-						if ( comment.type[ 0 ] === 'L' )
-							// Line comment
-							code.push( '// ', comment.value.trim(), lineEnd )
-						else
-							// Block comment
-							code.push( '/*', lineEnd, comment.value.trim(), lineEnd, indent, '*/', lineEnd )
-					}
-				}
-			}
+			if ( writeComments && statement.comments != null )
+				formatComments( code, statement.comments, indent, lineEnd )
 			code.push( indent )
 			this[ statement.type ]( statement, state )
 			code.push( lineEnd )
@@ -154,9 +179,8 @@ let visitors = {
 			for ( let i = 0, { length } = statements; i < length; i++ ) {
 				code.push( statementIndent )
 				let statement = statements[ i ]
-				if ( state.comments ) {
-					const { comments } = state
-				}
+				if ( writeComments && statement.comments != null )
+					formatComments( code, statement.comments, indent, lineEnd )
 				this[ statement.type ]( statement, state )
 				code.push( lineEnd )
 			}
@@ -221,10 +245,10 @@ let visitors = {
 		const statementIndent = caseIndent + state.indent
 		code.push( 'switch (' )
 		this[ node.discriminant.type ]( node.discriminant, state )
-		code.push(') {', lineEnd)
-		const {cases} = node;
+		code.push( ') {', lineEnd )
+		const { cases } = node;
 		for ( let i = 0, { length } = cases; i < length; i++ ) {
-			let check = cases[i];
+			let check = cases[ i ];
 			if ( check.test ) {
 				code.push( caseIndent, 'case ' )
 				this[ check.test.type ]( check.test, state )
@@ -339,7 +363,7 @@ let visitors = {
 		const { declarations } = node
 		code.push( node.kind, ' ' )
 		for ( let i = 0, { length } = declarations; i < length; i++ ) {
-			let declaration = declarations[i]
+			let declaration = declarations[ i ]
 			this[ declaration.id.type ]( declaration.id, state )
 			if ( declaration.init ) {
 				code.push( ' = ' )
@@ -373,7 +397,7 @@ let visitors = {
 			let i = 0, specifier
 			importSpecifiers: while ( i < length ) {
 				specifier = specifiers[ i ]
-				switch (specifier.type) {
+				switch ( specifier.type ) {
 					case 'ImportDefaultSpecifier':
 						code.push( specifier.local.name )
 						i++
@@ -389,8 +413,8 @@ let visitors = {
 			}
 			if ( i < length ) {
 				code.push( '{' )
-				while (i < length) {
-					specifier = specifiers[i]
+				while ( i < length ) {
+					specifier = specifiers[ i ]
 					let { name } = specifier.imported
 					code.push( name )
 					if ( name !== specifier.local.name ) {
@@ -429,8 +453,8 @@ let visitors = {
 			const { length } = specifiers
 			if ( length > 0 ) {
 				for ( let i = 0; i < length; i++ ) {
-					let specifier = specifiers[i]
-					let {name} = specifier.local
+					let specifier = specifiers[ i ]
+					let { name } = specifier.local
 					code.push( name )
 					if ( name !== specifier.exported.name )
 						code.push( ' as ' + specifier.exported.name )
@@ -453,7 +477,7 @@ let visitors = {
 		const { code } = state
 		if ( node.static )
 			code.push( 'static ' )
-		switch (node.kind) {
+		switch ( node.kind ) {
 			case 'get':
 			case 'set':
 				code.push( node.kind, ' ' )
@@ -506,16 +530,16 @@ let visitors = {
 	},
 	TemplateLiteral: function( node, state ) {
 		const { code } = state
-		const {quasis, expressions} = node
+		const { quasis, expressions } = node
 		code.push( '`' )
 		for ( let i = 0, { length } = expressions; i < length; i++ ) {
 			let expression = expressions[ i ]
-			code.push( quasis[i].value.raw )
+			code.push( quasis[ i ].value.raw )
 			code.push( '${' )
 			this[ expression.type ]( expression, state )
 			code.push( '}' )
 		}
-		code.push( quasis[quasis.length-1].value.raw )
+		code.push( quasis[ quasis.length - 1 ].value.raw )
 		code.push( '`' )
 	},
 	TaggedTemplateExpression: function( node, state ) {
@@ -526,7 +550,7 @@ let visitors = {
 		const { code } = state
 		code.push( '[' )
 		if ( node.elements.length !== 0 ) {
-			for ( let i = 0, {elements} = node, { length } = elements; i < length; i++ ) {
+			for ( let i = 0, { elements } = node, { length } = elements; i < length; i++ ) {
 				let element = elements[ i ]
 				this[ element.type ]( element, state )
 				code.push( ', ' )
@@ -538,7 +562,7 @@ let visitors = {
 	ArrayPattern: ArrayExpression,
 	ObjectExpression: function( node, state ) {
 		const indent = state.indent.repeat( state.indentLevel++ )
-		const { lineEnd, code } = state
+		const { lineEnd, code, writeComments } = state
 		const propertyIndent = indent + state.indent
 		code.push( '{' )
 		if ( node.properties.length !== 0 ) {
@@ -546,6 +570,8 @@ let visitors = {
 			code.push( lineEnd )
 			for ( let i = 0, { properties } = node, { length } = properties; i < length; i++ ) {
 				let property = properties[ i ]
+				if ( writeComments && property.comments != null )
+					formatComments( code, property.comments, propertyIndent, lineEnd )
 				code.push( propertyIndent )
 				if ( property.computed ) code.push( '[' )
 				this[ property.key.type ]( property.key, state )
@@ -589,7 +615,7 @@ let visitors = {
 	FunctionExpression: FunctionDeclaration,
 	SequenceExpression: function( node, state ) {
 		const { code } = state
-		const {expressions} = node
+		const { expressions } = node
 		if ( expressions.length !== 0 ) {
 			for ( let i = 0, { length } = expressions; i < length; i++ ) {
 				let expression = expressions[ i ]
@@ -715,8 +741,8 @@ export default function( node, options ) {
 		indentLevel: options.startingIndentLevel != null ? options.startingIndentLevel : 0,
 		writeComments: options.comments ? options.comments : false
 	}
-	// Walk through the AST node and generate the code
-	visitors[ node.type ]( node, state )
+	// Travel through the AST node and generate the code
+	traveller[ node.type ]( node, state )
 	return state.code.join( '' )
 }
 
