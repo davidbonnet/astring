@@ -166,4 +166,5 @@ npm run benchmark
 ## TODO
 
 - Comments generation (version 0.3.x)
-- More tests (patches)
+- Add comment generation tests
+- More code generation tests (patches)
