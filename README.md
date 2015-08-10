@@ -68,10 +68,7 @@ var code = "let answer = 4 + 7 * 5 + 3;\n";
 var ast = acorn.parse( code, { ecmaVersion: 6 } );
 
 // Format it into a code string
-var result = astring( ast, {
-	indent: '   ',
-	lineEnd: '\n'
-} );
+var result = astring( ast, { indent: '   ', lineEnd: '\n' } );
 
 // Check it
 if ( code === result ) {

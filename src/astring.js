@@ -167,6 +167,8 @@ let traveller = {
 			this[ statement.type ]( statement, state )
 			code.push( lineEnd )
 		}
+		if ( writeComments && node.trailingComments != null )
+			formatComments( code, node.trailingComments, indent, lineEnd )
 	},
 	BlockStatement: function( node, state ) {
 		const indent = state.indent.repeat( state.indentLevel++ )
@@ -175,17 +177,28 @@ let traveller = {
 		code.push( '{' )
 		let statements = node.body
 		if ( statements != null && statements.length !== 0 ) {
-			code.push( lineEnd );
+			code.push( lineEnd )
+			if ( writeComments && node.comments != null ) {
+				formatComments( code, node.comments, statementIndent, lineEnd )
+			}
 			for ( let i = 0, { length } = statements; i < length; i++ ) {
-				code.push( statementIndent )
 				let statement = statements[ i ]
 				if ( writeComments && statement.comments != null )
-					formatComments( code, statement.comments, indent, lineEnd )
+					formatComments( code, statement.comments, statementIndent, lineEnd )
+				code.push( statementIndent )
 				this[ statement.type ]( statement, state )
 				code.push( lineEnd )
 			}
 			code.push( indent )
+		} else {
+			if ( writeComments && node.comments != null ) {
+				code.push( lineEnd )
+				formatComments( code, node.comments, statementIndent, lineEnd )
+				code.push( indent )
+			}
 		}
+		if ( writeComments && node.trailingComments != null )
+			formatComments( code, node.trailingComments, statementIndent, lineEnd )
 		code.push( '}' )
 		state.indentLevel--
 	},
@@ -239,16 +252,18 @@ let traveller = {
 	},
 	SwitchStatement: function( node, state ) {
 		const indent = state.indent.repeat( state.indentLevel++ )
-		const { lineEnd, code } = state
+		const { lineEnd, code, writeComments } = state
 		state.indentLevel++
 		const caseIndent = indent + state.indent
 		const statementIndent = caseIndent + state.indent
 		code.push( 'switch (' )
 		this[ node.discriminant.type ]( node.discriminant, state )
 		code.push( ') {', lineEnd )
-		const { cases } = node;
+		const { cases } = node
 		for ( let i = 0, { length } = cases; i < length; i++ ) {
 			let check = cases[ i ];
+			if ( writeComments && check.comments != null )
+				formatComments( code, check.comments, caseIndent, lineEnd )
 			if ( check.test ) {
 				code.push( caseIndent, 'case ' )
 				this[ check.test.type ]( check.test, state )
@@ -259,6 +274,8 @@ let traveller = {
 			let { consequent } = check
 			for ( let i = 0, { length } = consequent; i < length; i++ ) {
 				let statement = consequent[ i ]
+				if ( writeComments && statement.comments != null )
+					formatComments( code, statement.comments, statementIndent, lineEnd )
 				code.push( statementIndent )
 				this[ statement.type ]( statement, state )
 				code.push( lineEnd )
@@ -566,8 +583,11 @@ let traveller = {
 		const propertyIndent = indent + state.indent
 		code.push( '{' )
 		if ( node.properties.length !== 0 ) {
-			const comma = ',' + lineEnd
 			code.push( lineEnd )
+			if ( writeComments && node.comments != null ) {
+				formatComments( code, node.comments, propertyIndent, lineEnd )
+			}
+			const comma = ',' + lineEnd
 			for ( let i = 0, { properties } = node, { length } = properties; i < length; i++ ) {
 				let property = properties[ i ]
 				if ( writeComments && property.comments != null )
@@ -584,6 +604,12 @@ let traveller = {
 			}
 			code.pop()
 			code.push( lineEnd )
+		} else {
+			if ( writeComments && node.comments != null ) {
+				code.push( lineEnd )
+				formatComments( code, node.comments, propertyIndent, lineEnd )
+				code.push( indent )
+			}
 		}
 		state.indentLevel--
 		code.push( indent, '}' )
