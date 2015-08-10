@@ -161,10 +161,3 @@ npm run benchmark
 ```
 
 
-
-
-## TODO
-
-- Comments generation (version 0.3.x)
-- Add comment generation tests
-- More code generation tests (patches)
