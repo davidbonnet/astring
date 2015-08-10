@@ -83,7 +83,7 @@ var astring = require("astring");
 var code = [
 	"// Compute the answer to everything",
 	"let answer = 4 + 7 * 5 + 3;",
-	"// Display it"
+	"// Display it",
 	"console.log(answer);\n"
 ].join('\n')
 // Parse it into an AST and retrieve the list of comments
