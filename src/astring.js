@@ -158,6 +158,8 @@ let traveller = {
 	Program: function( node, state ) {
 		const indent = state.indent.repeat( state.indentLevel )
 		const { lineEnd, code, writeComments } = state
+		if ( writeComments && node.comments != null )
+			formatComments( code, node.comments, indent, lineEnd )
 		let statements = node.body
 		for ( let i = 0, { length } = statements; i < length; i++ ) {
 			let statement = statements[ i ]

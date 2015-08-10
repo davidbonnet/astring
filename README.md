@@ -49,7 +49,7 @@ The `options` are:
 - `indent`: string to use for indentation (defaults to `"\t"`)
 - `lineEnd`: string to use for line endings (defaults to `"\n"`)
 - `startingIndentLevel`: indent level to start from (defaults to `0`)
-- `comments`: generate comments
+- `comments`: generate comments if `true` (defaults to `false`)
 
 ### Example
 
@@ -71,7 +71,7 @@ console.log((code === formattedCode) ? 'It works !' : 'Something went wrong…')
 
 ### Generating comments
 
-Astring supports comment generation, provided they are stored on the AST. To do so, this example uses [Astravel](https://github.com/davidbonnet/astravel), a fast AST traveller and modifier.
+Astring supports comment generation, provided they are stored on the AST nodes. To do so, this example uses [Astravel](https://github.com/davidbonnet/astravel), a fast AST traveller and modifier.
 
 ```javascript
 // Import modules (unnecessary when run in a browser)
