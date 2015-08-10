@@ -54,7 +54,7 @@ The `options` are:
 
 ### Example
 
-This example uses [Acorn](https://github.com/marijnh/acorn), a blazingly fast JavaScript parser and AST producer. It is the perfect companion of Astring.
+This example uses [Acorn](https://github.com/marijnh/acorn), a blazingly fast JavaScript AST producer and therefore the perfect companion of Astring.
 
 ```javascript
 // Import modules (unnecessary when run in a browser)
@@ -67,14 +67,11 @@ var code = "let answer = 4 + 7 * 5 + 3;\n";
 // Parse it into an AST
 var ast = acorn.parse( code, { ecmaVersion: 6 } );
 
-// Set formatting options
-var options = {
+// Format it into a code string
+var result = astring( ast, {
 	indent: '   ',
 	lineEnd: '\n'
-};
-
-// Format it
-var result = astring( ast, options );
+} );
 
 // Check it
 if ( code === result ) {
