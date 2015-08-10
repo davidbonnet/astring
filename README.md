@@ -51,32 +51,51 @@ The `options` are:
 - `startingIndentLevel`: indent level to start from (defaults to `0`)
 - `comments`: generate comments
 
-
 ### Example
 
 This example uses [Acorn](https://github.com/marijnh/acorn), a blazingly fast JavaScript AST producer and therefore the perfect companion of Astring.
 
 ```javascript
 // Import modules (unnecessary when run in a browser)
-acorn = require( 'acorn' );
-astring = require( 'astring' );
-
-// Example code
+var acorn = require("acorn");
+var astring = require("astring");
+// Set example code
 var code = "let answer = 4 + 7 * 5 + 3;\n";
-
 // Parse it into an AST
-var ast = acorn.parse( code, { ecmaVersion: 6 } );
-
+var ast = acorn.parse(code, {ecmaVersion: 6});
 // Format it into a code string
-var result = astring( ast, { indent: '   ', lineEnd: '\n' } );
-
+var formattedCode = astring(ast, {indent: '   ', lineEnd: '\n'});
 // Check it
-if ( code === result ) {
-	console.log( 'It works !' );
-} else {
-	console.log( 'Something went wrong…' );
-}
+console.log((code === formattedCode) ? 'It works !' : 'Something went wrong…');
 ```
+
+### Generating comments
+
+Astring supports comment generation, provided they are stored on the AST. To do so, this example uses [Astravel](https://github.com/davidbonnet/astravel), a fast AST traveller and modifier.
+
+```javascript
+// Import modules (unnecessary when run in a browser)
+var acorn = require("acorn");
+var astravel = require("astravel");
+var astring = require("astring");
+// Set example code
+var code = [
+	"// Compute the answer to everything",
+	"let answer = 4 + 7 * 5 + 3;",
+	"// Display it"
+	"console.log(answer);\n"
+].join('\n')
+// Parse it into an AST and retrieve the list of comments
+var comments = [];
+var ast = acorn.parse(code, {ecmaVersion: 6, locations: true, onComment: comments});
+// Attach comments to AST nodes
+astravel.attachComments(ast, comments);
+// Format it into a code string
+var formattedCode = astring(ast, {indent: '   ', lineEnd: '\n', comments: true});
+// Check it
+console.log((code === formattedCode) ? 'It works !' : 'Something went wrong…');
+```
+
 
 
 ## Command line interface
@@ -88,7 +107,6 @@ The `bin/astring` utility can be used to convert a JSON-formatted ESTree complia
 - `--startingIndentLevel`: indent level to start from (defaults to `0`)
 
 The utility reads the AST from `stdin` or from a provided list of files, and prints out the resulting code.
-
 
 ### Example
 
@@ -136,9 +154,7 @@ While making changes to Astring, make sure it passes the tests by running:
 npm test
 ```
 
-### Benchmark
-
-You can run benchmarks that compare Astring against Escodegen and Esotope:
+Also, make sure that the modifications don't alter the performance by running benchmarks that compare Astring against Escodegen and Esotope:
 
 ```bash
 npm run benchmark
