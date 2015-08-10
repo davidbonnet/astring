@@ -13,7 +13,8 @@ Key features:
 - Works on [ESTree](https://github.com/estree/estree)-compliant ASTs such as the ones produced by [Acorn](https://github.com/marijnh/acorn).
 - Runs both in a browser and in [Node](http://nodejs.org).
 - Considerably faster than [Escodegen](https://github.com/estools/escodegen) (up to 10×) and [Esotope](https://github.com/inikulin/esotope) (up to 3×).
-- No dependencies and small footprint (≈ 12 KB minified, ≈ 3 KB gziped).
+- No dependencies and small footprint (≈ 13 KB minified, ≈ 4 KB gziped).
+- Supports comment generation with [Astravel](https://github.com/davidbonnet/astravel).
 - Output code is readable and executable.
 
 
