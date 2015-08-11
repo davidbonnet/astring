@@ -16,6 +16,7 @@ function g() {
 	/*
 	Block comment for instructino 2…
 	…with a quote:
+	
 		What was that?
 	*/
 	instruction2;

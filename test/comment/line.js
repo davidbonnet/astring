@@ -21,6 +21,12 @@ function g() {
 		default:
 			break;
 	}
+	var point = {
+		// Line comment for property x:
+		x: 0,
+		// Line comment for property y:
+		y: 1
+	};
 	instruction6;
 	// Several line comments
 	// …for…
