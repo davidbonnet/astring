@@ -21,7 +21,7 @@ var files = []
 
 function printHelp( status ) {
 	var print = status === 0 ? console.log : console.error
-	print( 'Usage: ' + path.basename( process.argv[ 1 ] ) + ' [--indent INDENT] [--lineEnd LINE_END] [--startingIndentLevel LEVEL] files...' )
+	print( 'Usage: ' + path.basename( process.argv[ 1 ] ) + ' [--help] [--indent INDENT] [--lineEnd LINE_END] [--startingIndentLevel LEVEL] files...' )
 }
 
 function emptyStdinAndExitWith( status ) {

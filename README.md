@@ -106,6 +106,7 @@ The `bin/astring` utility can be used to convert a JSON-formatted ESTree complia
 - `--indent`: string to use as indentation (defaults to `"\t"`)
 - `--lineEnd`: string to use for line endings (defaults to `"\n"`)
 - `--startingIndentLevel`: indent level to start from (defaults to `0`)
+- `--help`: print a usage message and exit
 
 The utility reads the AST from `stdin` or from a provided list of files, and prints out the resulting code.
 
