@@ -84,8 +84,8 @@ var code = [
 	"// Compute the answer to everything",
 	"let answer = 4 + 7 * 5 + 3;",
 	"// Display it",
-	"console.log(answer);\n"
-].join('\n');
+	"console.log(answer);"
+].join('\n') + '\n';
 // Parse it into an AST and retrieve the list of comments
 var comments = [];
 var ast = acorn.parse(code, {ecmaVersion: 6, locations: true, onComment: comments});
