@@ -57,9 +57,7 @@ The `options` are:
 This example uses [Acorn](https://github.com/marijnh/acorn), a blazingly fast JavaScript AST producer and therefore the perfect companion of Astring.
 
 ```javascript
-// Import modules (unnecessary when run in a browser)
-var acorn = require("acorn");
-var astring = require("astring");
+// Make sure acorn and astring modules are imported
 // Set example code
 var code = "let answer = 4 + 7 * 5 + 3;\n";
 // Parse it into an AST
@@ -75,10 +73,7 @@ console.log((code === formattedCode) ? 'It works !' : 'Something went wrong…')
 Astring supports comment generation, provided they are stored on the AST nodes. To do so, this example uses [Astravel](https://github.com/davidbonnet/astravel), a fast AST traveller and modifier.
 
 ```javascript
-// Import modules (unnecessary when run in a browser)
-var acorn = require("acorn");
-var astravel = require("astravel");
-var astring = require("astring");
+// Make sure acorn, astravel and astring modules are imported
 // Set example code
 var code = [
 	"// Compute the answer to everything",
@@ -161,5 +156,3 @@ Also, make sure that the modifications don't alter the performance by running be
 ```bash
 npm run benchmark
 ```
-
-
