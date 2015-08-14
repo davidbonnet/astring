@@ -34,6 +34,43 @@ if ( !String.prototype.repeat ) {
 }
 
 
+function formatParameters( code, params, state, traveler ) {
+	/*
+	Formats function parameters provided in `params` into the `code` array.
+	*/
+	code.push( '(' )
+	if ( params != null && params.length !== 0 ) {
+		traveler[ params[ 0 ].type ]( params[ 0 ], state )
+		for ( let i = 1, { length } = params; i < length; i++ ) {
+			let param = params[ i ]
+			code.push( ', ' )
+			traveler[ param.type ]( param, state )
+		}
+	}
+	code.push( ') ' )
+}
+
+
+function formatBinarySideExpression( code, node, operator, state, traveler ) {
+	/*
+	Formats into the `code` array a left-hand or right-hand expression `node` from a binary expression applying the provided `operator`.
+	*/
+	const needed = PARENTHESIS_NEEDED[ node.type ]
+	if ( needed === 0 ) {
+		traveler[ node.type ]( node, state )
+		return
+	} else if ( needed === 1 ) {
+		if ( OPERATORS_PRECEDENCE[ node.operator ] >= OPERATORS_PRECEDENCE[ operator ] ) {
+			traveler[ node.type ]( node, state )
+			return
+		}
+	}
+	code.push( '(' )
+	traveler[ node.type ]( node, state )
+	code.push( ')' )
+}
+
+
 function reindent( text, indentation ) {
 	/*
 	Returns the `text` string reindented with the provided `indentation`.
@@ -59,44 +96,11 @@ function reindent( text, indentation ) {
 }
 
 
-function formatParameters( code, params, state, traveller ) {
-	/*
-	Formats function parameters provided in `params` into the `code` array.
-	*/
-	code.push( '(' )
-	if ( params != null && params.length !== 0 ) {
-		traveller[ params[ 0 ].type ]( params[ 0 ], state )
-		for ( let i = 1, { length } = params; i < length; i++ ) {
-			let param = params[ i ]
-			code.push( ', ' )
-			traveller[ param.type ]( param, state )
-		}
-	}
-	code.push( ') ' )
-}
-
-
-function formatBinarySideExpression( code, node, operator, state, traveller ) {
-	/*
-	Formats into the `code` array a left-hand or right-hand expression `node` from a binary expression applying the provided `operator`.
-	*/
-	const needed = PARENTHESIS_NEEDED[ node.type ]
-	if ( needed === 0 ) {
-		traveller[ node.type ]( node, state )
-		return
-	} else if ( needed === 1 ) {
-		if ( OPERATORS_PRECEDENCE[ node.operator ] >= OPERATORS_PRECEDENCE[ operator ] ) {
-			traveller[ node.type ]( node, state )
-			return
-		}
-	}
-	code.push( '(' )
-	traveller[ node.type ]( node, state )
-	code.push( ')' )
-}
-
-
 function formatComments( code, comments, indent, lineEnd ) {
+	/*
+	Inserts into `code` the provided list of `comments`, with the given `indent` and `lineEnd` strings.
+	Expects to start on a new unindented line.
+	*/
 	for ( let i = 0, { length } = comments; i < length; i++ ) {
 		let comment = comments[ i ]
 		code.push( indent )
@@ -154,7 +158,7 @@ const PARENTHESIS_NEEDED = {
 var ForInStatement, FunctionDeclaration, RestElement, BinaryExpression, ArrayExpression
 
 
-let traveller = {
+let traveler = {
 	Program( node, state ) {
 		const indent = state.indent.repeat( state.indentLevel )
 		const { lineEnd, code, writeComments } = state
@@ -335,37 +339,38 @@ let traveller = {
 	ForStatement( node, state ) {
 		const { code } = state
 		code.push( 'for (' )
-		if ( node.init ) {
-			this.ForInit( node.init, state )
+		if ( node.init != null ) {
+			const { init } = node, { type } = init
+			this[ type ]( init, state )
+			if ( type[ 0 ] === 'V' && type[ 8 ] === 'D' && type.length === 19 ) {
+				// Remove inserted semicolon if VariableDeclaration
+				state.code.pop()
+			}
 		}
 		code.push( '; ' )
-		if ( node.test ) {
+		if ( node.test )
 			this[ node.test.type ]( node.test, state )
-		}
 		code.push( '; ' )
-		if ( node.update ) {
+		if ( node.update )
 			this[ node.update.type ]( node.update, state )
-		}
 		code.push( ') ' )
 		this[ node.body.type ]( node.body, state )
 	},
 	ForInStatement: ForInStatement = function( node, state ) {
 		const { code } = state
 		code.push( 'for (' )
-		this.ForInit( node.left, state )
+		const { left } = node, { type } = left
+		this[ type ]( left, state )
+		if ( type[ 0 ] === 'V' && type[ 8 ] === 'D' && type.length === 19 ) {
+			// Remove inserted semicolon if VariableDeclaration
+			state.code.pop()
+		}
 		code.push( node.type[ 3 ] === 'I' ? ' in ' : ' of ' )
 		this[ node.right.type ]( node.right, state )
 		code.push( ') ' )
 		this[ node.body.type ]( node.body, state )
 	},
 	ForOfStatement: ForInStatement,
-	ForInit( node, state ) {
-		this[ node.type ]( node, state )
-		if ( node.type === 'VariableDeclaration' ) {
-			// Remove inserted semicolon
-			state.code.pop()
-		}
-	},
 	DebuggerStatement( node, state ) {
 		state.code.push( 'debugger;', state.lineEnd )
 	},
@@ -381,18 +386,22 @@ let traveller = {
 		const { code } = state
 		const { declarations } = node
 		code.push( node.kind, ' ' )
-		for ( let i = 0, { length } = declarations; i < length; i++ ) {
-			let declaration = declarations[ i ]
-			this[ declaration.id.type ]( declaration.id, state )
-			if ( declaration.init ) {
-				code.push( ' = ' )
-				this[ declaration.init.type ]( declaration.init, state )
+		const { length } = declarations
+		if ( length > 0 ) {
+			this.VariableDeclarator( declarations[ 0 ], state )
+			for ( let i = 1; i < length; i++ ) {
+				code.push( ', ' )
+				this.VariableDeclarator( declarations[ i ], state )
 			}
-			code.push( ', ' )
 		}
-		// Remove trailing comma
-		code.pop()
 		code.push( ';' )
+	},
+	VariableDeclarator( node, state ) {
+		this[ node.id.type ]( node.id, state )
+		if ( node.init != null ) {
+			state.code.push( ' = ' )
+			this[ node.init.type ]( node.init, state )
+		}
 	},
 	ClassDeclaration( node, state ) {
 		const { code } = state
@@ -470,16 +479,18 @@ let traveller = {
 			code.push( '{' )
 			const { specifiers } = node, { length } = specifiers
 			if ( length > 0 ) {
-				for ( let i = 0; i < length; i++ ) {
+				let i = 0
+				for ( ; ; ) {
 					let specifier = specifiers[ i ]
 					let { name } = specifier.local
 					code.push( name )
 					if ( name !== specifier.exported.name )
 						code.push( ' as ' + specifier.exported.name )
-					code.push( ', ' )
+					if ( ++i < length )
+						code.push( ', ' )
+					else
+						break
 				}
-				// Remove trailing comma
-				code.pop()
 			}
 			code.push( '}' )
 			if ( node.source ) {
@@ -520,12 +531,13 @@ let traveller = {
 		const { code } = state
 		formatParameters( code, node.params, state, this )
 		code.push( '=> ' )
-		if ( node.body.type === 'ObjectExpression' ) {
+		if ( node.body.type[ 0 ] === 'O' ) {
 			code.push( '(' )
 			this.ObjectExpression( node.body, state )	
 			code.push( ')' )
-		} else
+		} else {
 			this[ node.body.type ]( node.body, state )
+		}
 	},
 	ThisExpression( node, state ) {
 		state.code.push( 'this' )
@@ -568,12 +580,16 @@ let traveller = {
 		const { code } = state
 		code.push( '[' )
 		if ( node.elements.length !== 0 ) {
-			for ( let i = 0, { elements } = node, { length } = elements; i < length; i++ ) {
+			const { elements } = node, { length } = elements
+			let i = 0
+			for ( ; ; ) {
 				let element = elements[ i ]
 				this[ element.type ]( element, state )
-				code.push( ', ' )
+				if ( ++i < length )
+					code.push( ', ' )
+				else
+					break
 			}
-			code.pop()
 		}
 		code.push( ']' )
 	},
@@ -585,57 +601,69 @@ let traveller = {
 		code.push( '{' )
 		if ( node.properties.length !== 0 ) {
 			code.push( lineEnd )
-			if ( writeComments && node.comments != null ) {
+			if ( writeComments && node.comments != null )
 				formatComments( code, node.comments, propertyIndent, lineEnd )
-			}
-			const comma = ',' + lineEnd
-			for ( let i = 0, { properties } = node, { length } = properties; i < length; i++ ) {
+			const comma = ',' + lineEnd, { properties } = node, { length } = properties
+			let i = 0
+			for ( ; ; ) {
 				let property = properties[ i ]
 				if ( writeComments && property.comments != null )
 					formatComments( code, property.comments, propertyIndent, lineEnd )
 				code.push( propertyIndent )
-				if ( property.computed ) code.push( '[' )
-				this[ property.key.type ]( property.key, state )
-				if ( property.computed ) code.push( ']' )
-				if ( !property.shorthand ) {
-					code.push( ': ' )
-					this[ property.value.type ]( property.value, state )
+				this.Property( property, state )
+				if ( ++i < length )
 					code.push( comma )
-				}
+				else
+					break
 			}
-			code.pop()
 			code.push( lineEnd )
-		} else {
-			if ( writeComments && node.comments != null ) {
+			if ( writeComments && node.trailingComments != null )
+				formatComments( code, node.trailingComments, propertyIndent, lineEnd )
+			code.push( indent, '}' )
+		} else if ( writeComments ) {
+			if ( node.comments != null ) {
 				code.push( lineEnd )
 				formatComments( code, node.comments, propertyIndent, lineEnd )
-				code.push( indent )
+				if ( node.trailingComments != null )
+					formatComments( code, node.trailingComments, propertyIndent, lineEnd )
+				code.push( indent, '}' )
+			} else if ( node.trailingComments != null ) {
+				code.push( lineEnd )
+				formatComments( code, node.trailingComments, propertyIndent, lineEnd )
+				code.push( indent, '}' )
 			}
+		} else {
+			code.push( '}' )
 		}
 		state.indentLevel--
-		code.push( indent, '}' )
+	},
+	Property( node, state ) {
+		const { code } = state
+		if ( node.computed ) {
+			code.push( '[' )
+			this[ node.key.type ]( node.key, state )
+			code.push( ']' )
+		} else {
+			this[ node.key.type ]( node.key, state )
+		}
+		if ( !node.shorthand ) {
+			code.push( ': ' )
+			this[ node.value.type ]( node.value, state )
+		}
 	},
 	ObjectPattern( node, state ) {
 		const { code } = state
 		code.push( '{' )
 		if ( node.properties.length !== 0 ) {
-			for ( let i = 0, { properties } = node, { length } = properties; i < length; i++ ) {
-				let property = properties[ i ]
-				if ( property.computed ) {
-					code.push( '[' )
-					this[ property.key.type ]( property.key, state )
-					code.push( ']' )
-				} else {
-					this[ property.key.type ]( property.key, state )
-				}
-				if ( !property.shorthand ) {
-					code.push( ': ' )
-					this[ property.value.type ]( property.value, state )
-				}
-				code.push( ', ' )
+			const { properties } = node, { length } = properties
+			let i = 0
+			for ( ; ; ) {
+				this.Property( properties[ i ], state )
+				if ( ++i < length )
+					code.push( ', ' )
+				else
+					break
 			}
-			// Removing trailing comma
-			code.pop()
 		}
 		code.push( '}' )
 	},
@@ -644,12 +672,16 @@ let traveller = {
 		const { code } = state
 		const { expressions } = node
 		if ( expressions.length !== 0 ) {
-			for ( let i = 0, { length } = expressions; i < length; i++ ) {
+			const { length } = expressions
+			let i = 0
+			for ( ; ; ) {
 				let expression = expressions[ i ]
 				this[ expression.type ]( expression, state )
-				code.push( ', ' )
+				if ( ++i < length )
+					code.push( ', ' )
+				else
+					break
 			}
-			code.pop()
 		}
 	},
 	UnaryExpression( node, state ) {
@@ -769,7 +801,7 @@ export default function( node, options ) {
 		writeComments: options.comments ? options.comments : false
 	}
 	// Travel through the AST node and generate the code
-	traveller[ node.type ]( node, state )
+	traveler[ node.type ]( node, state )
 	return state.code.join( '' )
 }
 

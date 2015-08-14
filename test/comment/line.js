@@ -26,6 +26,7 @@ function g() {
 		x: 0,
 		// Line comment for property y:
 		y: 1
+		// Trailing line comment of point object
 	};
 	instruction6;
 	// Several line comments
