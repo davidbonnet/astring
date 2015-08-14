@@ -155,7 +155,7 @@ var ForInStatement, FunctionDeclaration, RestElement, BinaryExpression, ArrayExp
 
 
 let traveller = {
-	Program: function( node, state ) {
+	Program( node, state ) {
 		const indent = state.indent.repeat( state.indentLevel )
 		const { lineEnd, code, writeComments } = state
 		if ( writeComments && node.comments != null )
@@ -172,7 +172,7 @@ let traveller = {
 		if ( writeComments && node.trailingComments != null )
 			formatComments( code, node.trailingComments, indent, lineEnd )
 	},
-	BlockStatement: function( node, state ) {
+	BlockStatement( node, state ) {
 		const indent = state.indent.repeat( state.indentLevel++ )
 		const { lineEnd, code, writeComments } = state
 		const statementIndent = indent + state.indent
@@ -204,14 +204,14 @@ let traveller = {
 		code.push( '}' )
 		state.indentLevel--
 	},
-	EmptyStatement: function( node, state ) {
+	EmptyStatement( node, state ) {
 		state.code.push( ';' )
 	},
-	ExpressionStatement: function( node, state ) {
+	ExpressionStatement( node, state ) {
 		this[ node.expression.type ]( node.expression, state )
 		state.code.push( ';' )
 	},
-	IfStatement: function( node, state ) {
+	IfStatement( node, state ) {
 		const { code } = state
 		code.push( 'if (' )
 		this[ node.test.type ]( node.test, state )
@@ -222,12 +222,12 @@ let traveller = {
 			this[ node.alternate.type ]( node.alternate, state )
 		}
 	},
-	LabeledStatement: function( node, state ) {
+	LabeledStatement( node, state ) {
 		this[ node.label.type ]( node.label, state )
 		state.code.push( ':', state.lineEnd )
 		this[ node.body.type ]( node.body, state )
 	},
-	BreakStatement: function( node, state ) {
+	BreakStatement( node, state ) {
 		const { code } = state
 		code.push( 'break' )
 		if ( node.label ) {
@@ -236,7 +236,7 @@ let traveller = {
 		}
 		code.push( ';' )
 	},
-	ContinueStatement: function( node, state ) {
+	ContinueStatement( node, state ) {
 		const { code } = state
 		code.push( 'continue' )
 		if ( node.label ) {
@@ -245,14 +245,14 @@ let traveller = {
 		}
 		code.push( ';' )
 	},
-	WithStatement: function( node, state ) {
+	WithStatement( node, state ) {
 		const { code } = state
 		code.push( 'with (' )
 		this[ node.object.type ]( node.object, state )
 		code.push( ') ' )
 		this[ node.body.type ]( node.body, state )
 	},
-	SwitchStatement: function( node, state ) {
+	SwitchStatement( node, state ) {
 		const indent = state.indent.repeat( state.indentLevel++ )
 		const { lineEnd, code, writeComments } = state
 		state.indentLevel++
@@ -286,7 +286,7 @@ let traveller = {
 		state.indentLevel -= 2
 		code.push( indent, '}' )
 	},
-	ReturnStatement: function( node, state ) {
+	ReturnStatement( node, state ) {
 		const { code } = state
 		code.push( 'return' )
 		if ( node.argument ) {
@@ -295,13 +295,13 @@ let traveller = {
 		}
 		code.push( ';' )
 	},
-	ThrowStatement: function( node, state ) {
+	ThrowStatement( node, state ) {
 		const { code } = state
 		code.push( 'throw ' )
 		this[ node.argument.type ]( node.argument, state )
 		code.push( ';' )
 	},
-	TryStatement: function( node, state ) {
+	TryStatement( node, state ) {
 		const { code } = state
 		code.push( 'try ' )
 		this[ node.block.type ]( node.block, state )
@@ -317,14 +317,14 @@ let traveller = {
 			this[ node.finalizer.type ]( node.finalizer, state )
 		}
 	},
-	WhileStatement: function( node, state ) {
+	WhileStatement( node, state ) {
 		const { code } = state
 		code.push( 'while (' )
 		this[ node.test.type ]( node.test, state )
 		code.push( ') ' )
 		this[ node.body.type ]( node.body, state )
 	},
-	DoWhileStatement: function( node, state ) {
+	DoWhileStatement( node, state ) {
 		const { code } = state
 		code.push( 'do ' )
 		this[ node.body.type ]( node.body, state )
@@ -332,7 +332,7 @@ let traveller = {
 		this[ node.test.type ]( node.test, state )
 		code.push( ');' )
 	},
-	ForStatement: function( node, state ) {
+	ForStatement( node, state ) {
 		const { code } = state
 		code.push( 'for (' )
 		if ( node.init ) {
@@ -359,14 +359,14 @@ let traveller = {
 		this[ node.body.type ]( node.body, state )
 	},
 	ForOfStatement: ForInStatement,
-	ForInit: function( node, state ) {
+	ForInit( node, state ) {
 		this[ node.type ]( node, state )
 		if ( node.type === 'VariableDeclaration' ) {
 			// Remove inserted semicolon
 			state.code.pop()
 		}
 	},
-	DebuggerStatement: function( node, state ) {
+	DebuggerStatement( node, state ) {
 		state.code.push( 'debugger;', state.lineEnd )
 	},
 	FunctionDeclaration: FunctionDeclaration = function( node, state ) {
@@ -377,7 +377,7 @@ let traveller = {
 		formatParameters( code, node.params, state, this )
 		this[ node.body.type ]( node.body, state )
 	},
-	VariableDeclaration: function( node, state ) {
+	VariableDeclaration( node, state ) {
 		const { code } = state
 		const { declarations } = node
 		code.push( node.kind, ' ' )
@@ -394,7 +394,7 @@ let traveller = {
 		code.pop()
 		code.push( ';' )
 	},
-	ClassDeclaration: function( node, state ) {
+	ClassDeclaration( node, state ) {
 		const { code } = state
 		code.push( 'class ' )
 		if ( node.id ) {
@@ -407,7 +407,7 @@ let traveller = {
 		}
 		this.BlockStatement( node.body, state )
 	},
-	ImportDeclaration: function( node, state ) {
+	ImportDeclaration( node, state ) {
 		const { code } = state
 		code.push( 'import ' )
 		const { specifiers } = node
@@ -454,22 +454,21 @@ let traveller = {
 		code.push( node.source.raw )
 		code.push( ';' )
 	},
-	ExportDefaultDeclaration: function( node, state ) {
+	ExportDefaultDeclaration( node, state ) {
 		const { code } = state
 		code.push( 'export default ' )
 		this[ node.declaration.type ]( node.declaration, state )
 		if ( node.declaration.type.substr( -10 ) === 'Expression' )
 			code.push( ';' )
 	},
-	ExportNamedDeclaration: function( node, state ) {
+	ExportNamedDeclaration( node, state ) {
 		const { code } = state
 		code.push( 'export ' )
 		if ( node.declaration ) {
 			this[ node.declaration.type ]( node.declaration, state )
 		} else {
 			code.push( '{' )
-			const { specifiers } = node
-			const { length } = specifiers
+			const { specifiers } = node, { length } = specifiers
 			if ( length > 0 ) {
 				for ( let i = 0; i < length; i++ ) {
 					let specifier = specifiers[ i ]
@@ -489,10 +488,10 @@ let traveller = {
 			code.push( ';' )
 		}
 	},
-	ExportAllDeclaration: function( node, state ) {
+	ExportAllDeclaration( node, state ) {
 		state.code.push( 'export * from ', node.source.raw, ';' )
 	},
-	MethodDefinition: function( node, state ) {
+	MethodDefinition( node, state ) {
 		const { code } = state
 		if ( node.static )
 			code.push( 'static ' )
@@ -514,10 +513,10 @@ let traveller = {
 		formatParameters( code, node.value.params, state, this )
 		this[ node.value.body.type ]( node.value.body, state )
 	},
-	ClassExpression: function( node, state ) {
+	ClassExpression( node, state ) {
 		this.ClassDeclaration( node, state )
 	},
-	ArrowFunctionExpression: function( node, state ) {
+	ArrowFunctionExpression( node, state ) {
 		const { code } = state
 		formatParameters( code, node.params, state, this )
 		code.push( '=> ' )
@@ -528,10 +527,10 @@ let traveller = {
 		} else
 			this[ node.body.type ]( node.body, state )
 	},
-	ThisExpression: function( node, state ) {
+	ThisExpression( node, state ) {
 		state.code.push( 'this' )
 	},
-	Super: function( node, state ) {
+	Super( node, state ) {
 		state.code.push( 'super' )
 	},
 	RestElement: RestElement = function( node, state ) {
@@ -539,7 +538,7 @@ let traveller = {
 		this[ node.argument.type ]( node.argument, state )
 	},
 	SpreadElement: RestElement,
-	YieldExpression: function( node, state ) {
+	YieldExpression( node, state ) {
 		const { code } = state
 		code.push( 'yield' )
 		if ( node.argument ) {
@@ -547,7 +546,7 @@ let traveller = {
 			this[ node.argument.type ]( node.argument, state )
 		}
 	},
-	TemplateLiteral: function( node, state ) {
+	TemplateLiteral( node, state ) {
 		const { code } = state
 		const { quasis, expressions } = node
 		code.push( '`' )
@@ -561,7 +560,7 @@ let traveller = {
 		code.push( quasis[ quasis.length - 1 ].value.raw )
 		code.push( '`' )
 	},
-	TaggedTemplateExpression: function( node, state ) {
+	TaggedTemplateExpression( node, state ) {
 		this[ node.tag.type ]( node.tag, state )
 		this[ node.quasi.type ]( node.quasi, state )
 	},
@@ -579,7 +578,7 @@ let traveller = {
 		code.push( ']' )
 	},
 	ArrayPattern: ArrayExpression,
-	ObjectExpression: function( node, state ) {
+	ObjectExpression( node, state ) {
 		const indent = state.indent.repeat( state.indentLevel++ )
 		const { lineEnd, code, writeComments } = state
 		const propertyIndent = indent + state.indent
@@ -616,7 +615,7 @@ let traveller = {
 		state.indentLevel--
 		code.push( indent, '}' )
 	},
-	ObjectPattern: function( node, state ) {
+	ObjectPattern( node, state ) {
 		const { code } = state
 		code.push( '{' )
 		if ( node.properties.length !== 0 ) {
@@ -641,7 +640,7 @@ let traveller = {
 		code.push( '}' )
 	},
 	FunctionExpression: FunctionDeclaration,
-	SequenceExpression: function( node, state ) {
+	SequenceExpression( node, state ) {
 		const { code } = state
 		const { expressions } = node
 		if ( expressions.length !== 0 ) {
@@ -653,7 +652,7 @@ let traveller = {
 			code.pop()
 		}
 	},
-	UnaryExpression: function( node, state ) {
+	UnaryExpression( node, state ) {
 		if ( node.prefix ) {
 			state.code.push( node.operator, ' ' )
 			this[ node.argument.type ]( node.argument, state )
@@ -662,7 +661,7 @@ let traveller = {
 			state.code.push( node.operator )
 		}
 	},
-	UpdateExpression: function( node, state ) {
+	UpdateExpression( node, state ) {
 		if ( node.prefix ) {
 			state.code.push( node.operator )
 			this[ node.argument.type ]( node.argument, state )
@@ -671,12 +670,12 @@ let traveller = {
 			state.code.push( node.operator )	
 		}
 	},
-	AssignmentExpression: function( node, state ) {
+	AssignmentExpression( node, state ) {
 		this[ node.left.type ]( node.left, state )
 		state.code.push( ' ', node.operator, ' ' )
 		this[ node.right.type ]( node.right, state )
 	},
-	AssignmentPattern: function( node, state ) {
+	AssignmentPattern( node, state ) {
 		this[ node.left.type ]( node.left, state )
 		state.code.push( ' = ' )
 		this[ node.right.type ]( node.right, state )
@@ -689,7 +688,7 @@ let traveller = {
 		formatBinarySideExpression( code, node.right, operator, state, this )
 	},
 	LogicalExpression: BinaryExpression,
-	ConditionalExpression: function( node, state ) {
+	ConditionalExpression( node, state ) {
 		const { code } = state
 		this[ node.test.type ]( node.test, state )
 		code.push( ' ? ' )
@@ -697,11 +696,11 @@ let traveller = {
 		code.push( ' : ' )
 		this[ node.alternate.type ]( node.alternate, state )
 	},
-	NewExpression: function( node, state ) {
+	NewExpression( node, state ) {
 		state.code.push( 'new ' )
 		this.CallExpression( node, state )
 	},
-	CallExpression: function( node, state ) {
+	CallExpression( node, state ) {
 		const { code } = state
 		if ( PARENTHESIS_NEEDED[ node.callee.type ] === 0 ) {
 			this[ node.callee.type ]( node.callee, state )
@@ -722,7 +721,7 @@ let traveller = {
 		}
 		code.push( ')' )
 	},
-	MemberExpression: function( node, state ) {
+	MemberExpression( node, state ) {
 		const { code } = state
 		this[ node.object.type ]( node.object, state )
 		if ( node.computed ) {
@@ -734,10 +733,10 @@ let traveller = {
 			this[ node.property.type ]( node.property, state )
 		}
 	},
-	Identifier: function( node, state ) {
+	Identifier( node, state ) {
 		state.code.push( node.name )
 	},
-	Literal: function( node, state ) {
+	Literal( node, state ) {
 		state.code.push( node.raw )
 	}
 }
