@@ -75,16 +75,17 @@ function reindent( text, indentation ) {
 	/*
 	Returns the `text` string reindented with the provided `indentation`.
 	*/
-	text = text.trim()
+	text = text.trimRight()
 	let indents = '\n'
 	let secondLine = false
-	for ( let i = 0, { length } = text; i < length; i++ ) {
+	const { length } = text
+	for ( let i = 0; i < length; i++ ) {
 		let char = text[ i ]
 		if ( secondLine ) {
 			if ( char === ' ' || char === '\t' ) {
 				indents += char
 			} else {
-				return indentation + text.split( indents ).join( '\n' + indentation )
+				return indentation + text.trimLeft().split( indents ).join( '\n' + indentation )
 			}
 		} else {
 			if ( char === '\n' ) {
@@ -92,13 +93,14 @@ function reindent( text, indentation ) {
 			}
 		}
 	}
-	return indentation + text
+	return indentation + text.trimLeft()
 }
 
 
 function formatComments( code, comments, indent, lineEnd ) {
 	/*
 	Inserts into `code` the provided list of `comments`, with the given `indent` and `lineEnd` strings.
+	Line comments will end with `"\n"` regardless of the value of `lineEnd`.
 	Expects to start on a new unindented line.
 	*/
 	for ( let i = 0, { length } = comments; i < length; i++ ) {
@@ -265,19 +267,19 @@ let traveler = {
 		code.push( 'switch (' )
 		this[ node.discriminant.type ]( node.discriminant, state )
 		code.push( ') {', lineEnd )
-		const { cases } = node
-		for ( let i = 0, { length } = cases; i < length; i++ ) {
-			let check = cases[ i ];
-			if ( writeComments && check.comments != null )
-				formatComments( code, check.comments, caseIndent, lineEnd )
-			if ( check.test ) {
+		const { cases: occurences } = node
+		for ( let i = 0, { length } = occurences; i < length; i++ ) {
+			let occurence = occurences[ i ];
+			if ( writeComments && occurence.comments != null )
+				formatComments( code, occurence.comments, caseIndent, lineEnd )
+			if ( occurence.test ) {
 				code.push( caseIndent, 'case ' )
-				this[ check.test.type ]( check.test, state )
+				this[ occurence.test.type ]( occurence.test, state )
 				code.push( ':', lineEnd )
 			} else {
 				code.push( caseIndent, 'default:', lineEnd )
 			}
-			let { consequent } = check
+			let { consequent } = occurence
 			for ( let i = 0, { length } = consequent; i < length; i++ ) {
 				let statement = consequent[ i ]
 				if ( writeComments && statement.comments != null )
@@ -342,7 +344,7 @@ let traveler = {
 		if ( node.init != null ) {
 			const { init } = node, { type } = init
 			this[ type ]( init, state )
-			if ( type[ 0 ] === 'V' && type[ 8 ] === 'D' && type.length === 19 ) {
+			if ( type[ 0 ] === 'V' && type.length === 19 ) {
 				// Remove inserted semicolon if VariableDeclaration
 				state.code.pop()
 			}
@@ -361,7 +363,7 @@ let traveler = {
 		code.push( 'for (' )
 		const { left } = node, { type } = left
 		this[ type ]( left, state )
-		if ( type[ 0 ] === 'V' && type[ 8 ] === 'D' && type.length === 19 ) {
+		if ( type[ 0 ] === 'V' && type.length === 19 ) {
 			// Remove inserted semicolon if VariableDeclaration
 			state.code.pop()
 		}
@@ -479,8 +481,7 @@ let traveler = {
 			code.push( '{' )
 			const { specifiers } = node, { length } = specifiers
 			if ( length > 0 ) {
-				let i = 0
-				for ( ; ; ) {
+				for ( let i = 0; ; ) {
 					let specifier = specifiers[ i ]
 					let { name } = specifier.local
 					code.push( name )
@@ -581,8 +582,7 @@ let traveler = {
 		code.push( '[' )
 		if ( node.elements.length !== 0 ) {
 			const { elements } = node, { length } = elements
-			let i = 0
-			for ( ; ; ) {
+			for ( let i = 0; ; ) {
 				let element = elements[ i ]
 				this[ element.type ]( element, state )
 				if ( ++i < length )
@@ -604,8 +604,7 @@ let traveler = {
 			if ( writeComments && node.comments != null )
 				formatComments( code, node.comments, propertyIndent, lineEnd )
 			const comma = ',' + lineEnd, { properties } = node, { length } = properties
-			let i = 0
-			for ( ; ; ) {
+			for ( let i = 0; ; ) {
 				let property = properties[ i ]
 				if ( writeComments && property.comments != null )
 					formatComments( code, property.comments, propertyIndent, lineEnd )
@@ -656,8 +655,7 @@ let traveler = {
 		code.push( '{' )
 		if ( node.properties.length !== 0 ) {
 			const { properties } = node, { length } = properties
-			let i = 0
-			for ( ; ; ) {
+			for ( let i = 0; ; ) {
 				this.Property( properties[ i ], state )
 				if ( ++i < length )
 					code.push( ', ' )
@@ -673,8 +671,7 @@ let traveler = {
 		const { expressions } = node
 		if ( expressions.length !== 0 ) {
 			const { length } = expressions
-			let i = 0
-			for ( ; ; ) {
+			for ( let i = 0; ; ) {
 				let expression = expressions[ i ]
 				this[ expression.type ]( expression, state )
 				if ( ++i < length )
@@ -745,7 +742,8 @@ let traveler = {
 		const args = node[ 'arguments' ]
 		if ( args.length !== 0 ) {
 			this[ args[ 0 ].type ]( args[ 0 ], state )
-			for ( let i = 1, { length } = args; i < length; i++ ) {
+			const { length } = args
+			for ( let i = 1; i < length; i++ ) {
 				let arg = args[ i ]
 				code.push( ', ' )
 				this[ arg.type ]( arg, state )
