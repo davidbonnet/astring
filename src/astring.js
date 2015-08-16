@@ -39,7 +39,7 @@ function formatParameters( code, params, state, traveler ) {
 	Formats function parameters provided in `params` into the `code` array.
 	*/
 	code.push( '(' )
-	if ( params != null && params.length !== 0 ) {
+	if ( params != null && params.length > 0 ) {
 		traveler[ params[ 0 ].type ]( params[ 0 ], state )
 		for ( let i = 1, { length } = params; i < length; i++ ) {
 			let param = params[ i ]
@@ -184,7 +184,7 @@ let traveler = {
 		const statementIndent = indent + state.indent
 		code.push( '{' )
 		let statements = node.body
-		if ( statements != null && statements.length !== 0 ) {
+		if ( statements != null && statements.length > 0 ) {
 			code.push( lineEnd )
 			if ( writeComments && node.comments != null ) {
 				formatComments( code, node.comments, statementIndent, lineEnd )
@@ -580,7 +580,7 @@ let traveler = {
 	ArrayExpression: ArrayExpression = function( node, state ) {
 		const { code } = state
 		code.push( '[' )
-		if ( node.elements.length !== 0 ) {
+		if ( node.elements.length > 0 ) {
 			const { elements } = node, { length } = elements
 			for ( let i = 0; ; ) {
 				let element = elements[ i ]
@@ -599,7 +599,7 @@ let traveler = {
 		const { lineEnd, code, writeComments } = state
 		const propertyIndent = indent + state.indent
 		code.push( '{' )
-		if ( node.properties.length !== 0 ) {
+		if ( node.properties.length > 0 ) {
 			code.push( lineEnd )
 			if ( writeComments && node.comments != null )
 				formatComments( code, node.comments, propertyIndent, lineEnd )
@@ -653,7 +653,7 @@ let traveler = {
 	ObjectPattern( node, state ) {
 		const { code } = state
 		code.push( '{' )
-		if ( node.properties.length !== 0 ) {
+		if ( node.properties.length > 0 ) {
 			const { properties } = node, { length } = properties
 			for ( let i = 0; ; ) {
 				this.Property( properties[ i ], state )
@@ -669,7 +669,7 @@ let traveler = {
 	SequenceExpression( node, state ) {
 		const { code } = state
 		const { expressions } = node
-		if ( expressions.length !== 0 ) {
+		if ( expressions.length > 0 ) {
 			const { length } = expressions
 			for ( let i = 0; ; ) {
 				let expression = expressions[ i ]
@@ -740,7 +740,7 @@ let traveler = {
 		}
 		code.push( '(' )
 		const args = node[ 'arguments' ]
-		if ( args.length !== 0 ) {
+		if ( args.length > 0 ) {
 			this[ args[ 0 ].type ]( args[ 0 ], state )
 			const { length } = args
 			for ( let i = 1; i < length; i++ ) {
