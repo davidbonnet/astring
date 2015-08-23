@@ -21,7 +21,9 @@ var files = []
 
 function printHelp( status ) {
 	var print = status === 0 ? console.log : console.error
-	print( 'Usage: ' + path.basename( process.argv[ 1 ] ) + ' [--help] [--indent INDENT] [--lineEnd LINE_END] [--startingIndentLevel LEVEL] files...' )
+	var binName = path.basename( process.argv[ 1 ] )
+	print( 'Usage: ' + binName + ' [-h, --help]' )
+	print( '       ' + binName + ' [-i, --indent INDENT] [-l, --lineEnd LINE_END] [-s, --startingIndentLevel LEVEL] files...' )
 }
 
 function emptyStdinAndExitWith( status ) {
@@ -40,25 +42,29 @@ var status = null
 
 for ( var i = 0; i < length; i++ ) {
 	var arg = argv[ i ]
-	if ( arg.substr( 0, 2 ) === '--' ) {
-		switch ( arg.substr( 2 ) ) {
-			case 'indent':
+	if ( arg[ 0 ] === '-' ) {
+		switch ( arg ) {
+			case '-i':
+			case '--indent':
 				options.indent = argv[ ++i ]
 				break
-			case 'lineEnd':
+			case '-l':
+			case '--lineEnd':
 				options.lineEnd = argv[ ++i ]
 				break
-			case 'startingIndentLevel':
+			case '-s':
+			case '--startingIndentLevel':
 				options.startingIndentLevel = parseInt( argv[ ++i ] )
 				break
-			case 'help':
+			case '-h':
+			case '--help':
 				status = 0
 				break
 			default:
 				console.error( 'Option "' + arg + '" not supported.' )
 				status = 1
 				break
-		}		
+		}
 	} else {
 		files.push( arg )
 	}
