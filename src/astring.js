@@ -51,7 +51,7 @@ function formatParameters( code, params, state, traveler ) {
 }
 
 
-function formatBinarySideExpression( code, node, operator, state, traveler ) {
+function formatExpression( code, node, operator, state, traveler ) {
 	/*
 	Formats into the `code` array a left-hand or right-hand expression `node` from a binary expression applying the provided `operator`.
 	*/
@@ -144,14 +144,15 @@ const OPERATORS_PRECEDENCE = {
 
 
 const PARENTHESIS_NEEDED = {
-	// Not needed
+	// Never needed
 	Identifier: 0,
 	Literal: 0,
 	MemberExpression: 0,
 	CallExpression: 0,
 	Super: 0,
 	ThisExpression: 0,
-	// Check
+	UnaryExpression: 0,
+	// Requires precedence check
 	BinaryExpression: 1,
 	LogicalExpression: 1
 }
@@ -682,9 +683,18 @@ let traveler = {
 		}
 	},
 	UnaryExpression( node, state ) {
+		const { code } = state
 		if ( node.prefix ) {
-			state.code.push( node.operator, ' ' )
-			this[ node.argument.type ]( node.argument, state )
+			code.push( node.operator )
+			if ( PARENTHESIS_NEEDED[ node.argument.type ] === 1 ) {
+				code.push( '(' )
+				this[ node.argument.type ]( node.argument, state )
+				code.push( ')' )
+			} else {
+				if ( node.operator.length > 1 )
+					state.code.push( ' ' )
+				this[ node.argument.type ]( node.argument, state )
+			}
 		} else {
 			this[ node.argument.type ]( node.argument, state )
 			state.code.push( node.operator )
@@ -712,9 +722,9 @@ let traveler = {
 	BinaryExpression: BinaryExpression = function( node, state ) {
 		const { code } = state
 		const { operator } = node
-		formatBinarySideExpression( code, node.left, operator, state, this )
+		formatExpression( code, node.left, operator, state, this )
 		code.push( ' ', node.operator, ' ' )
-		formatBinarySideExpression( code, node.right, operator, state, this )
+		formatExpression( code, node.right, operator, state, this )
 	},
 	LogicalExpression: BinaryExpression,
 	ConditionalExpression( node, state ) {
