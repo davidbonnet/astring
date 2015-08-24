@@ -6,6 +6,7 @@ try {
 } catch ( error ) {
 	astring = require( '../dist/astring.min' )
 }
+var version = require( '../package' ).version
 var fs = require( 'fs' )
 var path = require( 'path' )
 var argv = process.argv.slice( 2 )
@@ -22,8 +23,13 @@ var files = []
 function printHelp( status ) {
 	var print = status === 0 ? console.log : console.error
 	var binName = path.basename( process.argv[ 1 ] )
-	print( 'Usage: ' + binName + ' [-h, --help]' )
+	print( 'Usage: ' + binName + ' [-h, --help] [-v, --version]' )
 	print( '       ' + binName + ' [-i, --indent INDENT] [-l, --lineEnd LINE_END] [-s, --startingIndentLevel LEVEL] files...' )
+}
+
+function printVersion() {
+	var print = console.log
+	print( version )
 }
 
 function emptyStdinAndExitWith( status ) {
@@ -38,7 +44,7 @@ function emptyStdinAndExitWith( status ) {
 	} )
 }
 
-var status = null
+var stop = false
 
 for ( var i = 0; i < length; i++ ) {
 	var arg = argv[ i ]
@@ -58,11 +64,21 @@ for ( var i = 0; i < length; i++ ) {
 				break
 			case '-h':
 			case '--help':
-				status = 0
+				printHelp( 0 )
+				emptyStdinAndExitWith( 0 )
+				stop = true
+				break
+			case '-v':
+			case '--version':
+				printVersion()
+				emptyStdinAndExitWith( 0 )
+				stop = true
 				break
 			default:
 				console.error( 'Option "' + arg + '" not supported.' )
-				status = 1
+				printHelp( 1 )
+				emptyStdinAndExitWith( 1 )
+				stop = true
 				break
 		}
 	} else {
@@ -70,10 +86,7 @@ for ( var i = 0; i < length; i++ ) {
 	}
 }
 
-if ( status !== null ) {
-	printHelp( status )
-	emptyStdinAndExitWith( status )
-} else {
+if ( !stop ) {
 	if ( files.length === 0 ) {
 		var data = []
 		process.stdin.setEncoding( 'utf8' )
