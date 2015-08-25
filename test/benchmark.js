@@ -1,5 +1,6 @@
 var Benchmark = require( 'benchmark' )
 var acorn = require( 'acorn' )
+var uglify = require( 'uglify-js' )
 var escodegen = require( 'escodegen' ).generate
 var esotope = require( 'esotope' ).generate
 var astring
@@ -18,8 +19,14 @@ function benchmarkWithCode( code ) {
 		sourceType: 'module'
 	} )
 
+	var uglifyAst = uglify.parse( code )
+	var uglifyOptions = {
+		beautify: true
+	}
+
 	console.log( "\n\nTesting code:" )
 	console.log( astring( ast ) )
+	console.log( uglifyAst.print_to_string( uglifyOptions ) )
 
 	var suite = ( new Benchmark.Suite )
 	.add( 'escodegen', function() {
@@ -30,6 +37,9 @@ function benchmarkWithCode( code ) {
 	} )
 	.add( 'astring', function() {
 		astring( ast )
+	} )
+	.add( 'uglify', function() {
+		uglifyAst.print_to_string( uglifyOptions )
 	} )
 	// add listeners
 	.on( 'cycle', function( event ) {
