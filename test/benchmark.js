@@ -26,7 +26,6 @@ function benchmarkWithCode( code ) {
 
 	console.log( "\n\nTesting code:" )
 	console.log( astring( ast ) )
-	console.log( uglifyAst.print_to_string( uglifyOptions ) )
 
 	var suite = ( new Benchmark.Suite )
 	.add( 'escodegen', function() {

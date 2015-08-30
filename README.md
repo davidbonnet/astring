@@ -99,8 +99,8 @@ console.log((code === formattedCode) ? 'It works !' : 'Something went wrong…')
 The `bin/astring` utility can be used to convert a JSON-formatted ESTree compliant AST of a JavaScript code. It accepts the following arguments:
 
 - `-i`, `--indent`: string to use as indentation (defaults to `"\t"`)
-- `-l`, `--lineEnd`: string to use for line endings (defaults to `"\n"`)
-- `-s`, `--startingIndentLevel`: indent level to start from (defaults to `0`)
+- `-l`, `--line-end`: string to use for line endings (defaults to `"\n"`)
+- `-s`, `--starting-indent-level`: indent level to start from (defaults to `0`)
 - `-h`, `--help`: print a usage message and exit
 - `-v`, `--version`: print package version and exit
 

@@ -24,7 +24,7 @@ function printHelp( status ) {
 	var print = status === 0 ? console.log : console.error
 	var binName = path.basename( process.argv[ 1 ] )
 	print( 'Usage: ' + binName + ' [-h, --help] [-v, --version]' )
-	print( '       ' + binName + ' [-i, --indent INDENT] [-l, --lineEnd LINE_END] [-s, --startingIndentLevel LEVEL] files...' )
+	print( '       ' + binName + ' [-i, --indent INDENT] [-l, --line-end LINE_END] [-s, --starting-indent-level LEVEL] files...' )
 }
 
 function printVersion() {
@@ -55,11 +55,11 @@ for ( var i = 0; i < length; i++ ) {
 				options.indent = argv[ ++i ]
 				break
 			case '-l':
-			case '--lineEnd':
+			case '--line-end':
 				options.lineEnd = argv[ ++i ]
 				break
 			case '-s':
-			case '--startingIndentLevel':
+			case '--starting-indent-level':
 				options.startingIndentLevel = parseInt( argv[ ++i ] )
 				break
 			case '-h':
