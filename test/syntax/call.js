@@ -3,5 +3,8 @@ g(a);
 h(a, b);
 i(a, b, ...c);
 j(...a);
+a.k();
+(a + b).l();
+a.m().n();
 new A();
 new A(a);

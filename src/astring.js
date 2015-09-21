@@ -149,6 +149,7 @@ const PARENTHESIS_NEEDED = {
 	Literal: 0,
 	MemberExpression: 0,
 	CallExpression: 0,
+	NewExpression: 0,
 	Super: 0,
 	ThisExpression: 0,
 	UnaryExpression: 0,
@@ -763,7 +764,13 @@ let traveler = {
 	},
 	MemberExpression( node, state ) {
 		const { code } = state
-		this[ node.object.type ]( node.object, state )
+		if ( PARENTHESIS_NEEDED[ node.object.type ] === 0 ) {
+			this[ node.object.type ]( node.object, state )
+		} else {
+			code.push( '(' )
+			this[ node.object.type ]( node.object, state )
+			code.push( ')' )
+		}
 		if ( node.computed ) {
 			code.push( '[' )
 			this[ node.property.type ]( node.property, state )
