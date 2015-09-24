@@ -116,12 +116,12 @@
               locations: true,
               onComment: comments
             });
+            astravel.attachComments(ast, comments);
             if (astCheckbox.checked) {
               pre.innerHTML = JSON.stringify(ast, null, indent);
               textarea.className = '';
               return;
             }
-            astravel.attachComments(ast, comments);
             var formattedCode = astring(ast, {
               indent: indent,
               comments: true
