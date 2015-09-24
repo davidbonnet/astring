@@ -17,12 +17,13 @@
       -o-border-radius: 5px;
       border-radius: 5px;
       border: 2px solid  #C6C6C6;
-      width: 80%;
+      width: 90%;
       margin: 10px auto 10px auto;
       padding: 10px;
     }
 
     #console {
+      background-color: #FFFFE8;
       resize: vertical;
       outline: none;
       display: block;
@@ -43,7 +44,7 @@
 
     p {
       color: #696969;
-      width: 80%;
+      width: 90%;
       margin: 10px auto 10px auto;
     }
 
@@ -82,8 +83,9 @@
   </p>
   <textarea id="console" rows="10" placeholder="Type your code here"></textarea>
   <p class="settings">
-    <label><input type="checkbox" id="comments" /> Generate comments</label>
-    <label><input type="number" id="indentation" value="3" min="0" step="1" style="width: 3em" /> Indentation level</label>
+    <label><input type="checkbox" id="comments" /> Include comments</label>
+    <label><input type="number" id="indentation" value="3" min="0" step="1" style="width: 3em" /> Indentation spaces</label>
+    <label><input type="checkbox" id="ast" /> Only show the AST</label>
   </p>
   <pre id="output"></pre>
   <script type="text/javascript">
@@ -93,6 +95,7 @@
       var pre = document.getElementById('output');
       var commentsCheckbox = document.getElementById('comments');
       var indentationTextbox = document.getElementById('indentation');
+      var astCheckbox = document.getElementById('ast');
 
       function makeSpaces(amount) {
         var result = '';
@@ -113,6 +116,11 @@
               locations: true,
               onComment: comments
             });
+            if (astCheckbox.checked) {
+              pre.innerHTML = JSON.stringify(ast, null, indent);
+              textarea.className = '';
+              return;
+            }
             astravel.attachComments(ast, comments);
             var formattedCode = astring(ast, {
               indent: indent,
@@ -123,21 +131,28 @@
               ecmaVersion: 6,
               sourceType: 'module'
             });
+            if (astCheckbox.checked) {
+              pre.innerHTML = JSON.stringify(ast, null, indent);
+              textarea.className = '';
+              return;
+            }
             var formattedCode = astring(ast, {
               indent: indent
             });
           }
-          textarea.className = '';
           pre.innerHTML = formattedCode;
         } catch (e) {
           textarea.className = 'invalid';
           pre.innerHTML = e.toString();
+          return;
         }
+        textarea.className = '';
       }
 
       textarea.addEventListener('input', update, false);
       commentsCheckbox.addEventListener('change', update, false);
       indentationTextbox.addEventListener('change', update, false);
+      astCheckbox.addEventListener('change', update, false);
 
     })();
 
