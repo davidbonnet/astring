@@ -1,0 +1,147 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>JavaScript Prettifier</title>
+  <style type="text/css">
+    * {
+      font-size 12px;
+      font-family: Helvetica, sans-serif;
+    }
+
+    #console, #output {
+      font-family: Menlo, 'Bitstream Vera Sans Mono', Courier, monospace;
+      font-size: 12px;
+      -webkit-border-radius: 5px;
+      -moz-border-radius: 5px;
+      -o-border-radius: 5px;
+      border-radius: 5px;
+      border: 2px solid  #C6C6C6;
+      width: 80%;
+      margin: 10px auto 10px auto;
+      padding: 10px;
+    }
+
+    #console {
+      resize: vertical;
+      outline: none;
+      display: block;
+    }
+
+    .invalid {
+      border-color: #F60016 !important;
+    }
+
+    #output {
+      background-color: #EEE;
+      overflow: auto;
+    }
+
+    h1, p {
+      text-align: center;
+    }
+
+    p {
+      color: #696969;
+      width: 80%;
+      margin: 10px auto 10px auto;
+    }
+
+    p.settings {
+      font-size: 0.8em;
+      text-align: left;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+
+    .settings label {
+      padding-right: 2em;
+    }
+
+    a {
+      text-decoration: none;
+      color: #155FCE;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+  <script type="text/javascript" src="../node_modules/acorn/dist/acorn.js"></script>
+  <script type="text/javascript" src="../dist/astring.min.js"></script>
+  <script type="text/javascript" src="../node_modules/astravel/dist/astravel.min.js"></script>
+</head>
+<body>
+  <h1>JavaScript Prettifier</h1>
+  <p>
+    Parses the code with <a href="https://github.com/marijnh/acorn">Acorn</a> and prints it with <a href="https://github.com/davidbonnet/astring">Astring</a>.
+  </p>
+  <textarea id="console" rows="10" placeholder="Type your code here"></textarea>
+  <p class="settings">
+    <label><input type="checkbox" id="comments" /> Generate comments</label>
+    <label><input type="number" id="indentation" value="3" min="0" step="1" style="width: 3em" /> Indentation level</label>
+  </p>
+  <pre id="output"></pre>
+  <script type="text/javascript">
+
+    (function() {
+      var textarea = document.getElementById('console');
+      var pre = document.getElementById('output');
+      var commentsCheckbox = document.getElementById('comments');
+      var indentationTextbox = document.getElementById('indentation');
+
+      function makeSpaces(amount) {
+        var result = '';
+        while (amount-- > 0)
+          result += ' ';
+        return result;
+      }
+
+      function update(event) {
+        try {
+          var indentAmount = parseInt(indentationTextbox.value);
+          var indent = makeSpaces(indentAmount);
+          if (commentsCheckbox.checked) {
+            var comments = [];
+            var ast = acorn.parse(textarea.value, {
+              ecmaVersion: 6,
+              sourceType: 'module',
+              locations: true,
+              onComment: comments
+            });
+            astravel.attachComments(ast, comments);
+            var formattedCode = astring(ast, {
+              indent: indent,
+              comments: true
+            });
+          } else {
+            var ast = acorn.parse(textarea.value, {
+              ecmaVersion: 6,
+              sourceType: 'module'
+            });
+            var formattedCode = astring(ast, {
+              indent: indent
+            });
+          }
+          textarea.className = '';
+          pre.innerHTML = formattedCode;
+        } catch (e) {
+          textarea.className = 'invalid';
+          pre.innerHTML = e.toString();
+        }
+      }
+
+      textarea.addEventListener('input', update, false);
+      commentsCheckbox.addEventListener('change', update, false);
+      indentationTextbox.addEventListener('change', update, false);
+
+    })();
+
+  </script>
+</body>
+</html>
+
