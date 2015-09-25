@@ -642,6 +642,8 @@ let traveler = {
 				code.push( lineEnd )
 				formatComments( code, node.trailingComments, propertyIndent, lineEnd )
 				code.push( indent, '}' )
+			} else {
+				code.push( '}' )
 			}
 		} else {
 			code.push( '}' )

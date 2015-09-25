@@ -28,6 +28,7 @@ function g() {
 		y: 1
 		// Trailing line comment of point object
 	};
+	var object = {};
 	instruction6;
 	// Several line comments
 	// …for…
