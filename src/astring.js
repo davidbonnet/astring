@@ -242,7 +242,7 @@ let traveler = {
 	},
 	LabeledStatement( node, state ) {
 		this[ node.label.type ]( node.label, state )
-		state.code.push( ':', state.lineEnd )
+		state.code.push( ': ' )
 		this[ node.body.type ]( node.body, state )
 	},
 	BreakStatement( node, state ) {
@@ -649,17 +649,21 @@ let traveler = {
 		state.indentLevel--
 	},
 	Property( node, state ) {
-		const { code } = state
-		if ( node.computed ) {
-			code.push( '[' )
-			this[ node.key.type ]( node.key, state )
-			code.push( ']' )
+		if ( node.method ) {
+			this.MethodDefinition( node, state )
 		} else {
-			this[ node.key.type ]( node.key, state )
-		}
-		if ( !node.shorthand ) {
-			code.push( ': ' )
-			this[ node.value.type ]( node.value, state )
+			const { code } = state
+			if ( node.computed ) {
+				code.push( '[' )
+				this[ node.key.type ]( node.key, state )
+				code.push( ']' )
+			} else {
+				this[ node.key.type ]( node.key, state )
+			}
+			if ( !node.shorthand ) {
+				code.push( ': ' )
+				this[ node.value.type ]( node.value, state )
+			}
 		}
 	},
 	ObjectPattern( node, state ) {

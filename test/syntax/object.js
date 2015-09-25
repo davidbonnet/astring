@@ -15,3 +15,10 @@ let d = {
 };
 let e = d.a;
 let f = d["c"];
+let g = {
+	m() {},
+	['m'](a) {},
+	n(a) {
+		return a;
+	}
+};

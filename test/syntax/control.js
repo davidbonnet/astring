@@ -24,12 +24,10 @@ do {
 		continue;
 	}
 } while (g < h);
-label:
-if (a === b) {
+label: if (a === b) {
 	if (b = c) {
 		break label;
 	}
 }
 if (a != b) {}
-endingLabel:
-{}
+endingLabel: {}
