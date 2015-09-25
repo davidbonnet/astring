@@ -141,9 +141,9 @@
             });
           }
           pre.innerHTML = formattedCode;
-        } catch (e) {
+        } catch (error) {
           textarea.className = 'invalid';
-          pre.innerHTML = e.toString();
+          pre.innerHTML = error.toString() + '\n\n' + error.stack;
           return;
         }
         textarea.className = '';
