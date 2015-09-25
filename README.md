@@ -44,7 +44,7 @@ The path to the module file is `dist/astring.min.js` and can be linked to from a
 
 ## Usage
 
-This [simple JavaScript prettifier](http://bonnet.cc/astring/demo.html) demonstrates its use.
+A [live demo](http://bonnet.cc/astring/demo.html) showing Astring in action is available.
 
 The `astring` module consists of a function that takes two arguments: `node` and `options`. It returns a string representing the rendered code of the provided AST `node`.
 The `options` are:
