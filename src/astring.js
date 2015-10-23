@@ -655,17 +655,17 @@ let traveler = {
 			this.MethodDefinition( node, state )
 		} else {
 			const { code } = state
-			if ( node.computed ) {
-				code.push( '[' )
-				this[ node.key.type ]( node.key, state )
-				code.push( ']' )
-			} else {
-				this[ node.key.type ]( node.key, state )
-			}
 			if ( !node.shorthand ) {
+				if ( node.computed ) {
+					code.push( '[' )
+					this[ node.key.type ]( node.key, state )
+					code.push( ']' )
+				} else {
+					this[ node.key.type ]( node.key, state )
+				}
 				code.push( ': ' )
-				this[ node.value.type ]( node.value, state )
 			}
+			this[ node.value.type ]( node.value, state )
 		}
 	},
 	ObjectPattern( node, state ) {
