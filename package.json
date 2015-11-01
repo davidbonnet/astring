@@ -36,5 +36,8 @@
     "mocha": "^2.2.5",
     "uglify-js": "^2.4.24",
     "watchify": "^3.3.1"
+  },
+  "dependencies": {
+    "string.prototype.repeat": "^0.2.0"
   }
 }

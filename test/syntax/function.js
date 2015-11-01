@@ -23,7 +23,7 @@ function* g() {
 	return "answer";
 }
 let h = function* () {};
-let f = (a) => a;
+let f = a => a;
 let g = (a, b) => a + b;
 let h = (a, b = 0) => a + b;
 let i = (a, b) => {};

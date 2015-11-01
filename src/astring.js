@@ -9,45 +9,23 @@
 // https://github.com/davidbonnet/astring/issues
 
 
-// Polyfill for non-ES6 interpreters
-if ( !String.prototype.repeat ) {
-	String.prototype.repeat = function ( count ) {
-		// Perfom some checks first
-		if ( count < 0 ) {
-			throw new RangeError( 'Repeat count must be non-negative' )
-		} else if ( count === Infinity ) {
-			throw new RangeError( 'Repeat count must be less than infinity' )
-		}
-		// Ensure it's an integer
-		count = count | 0
-		if ( this.length * count >= 1 << 28 ) {
-			// From https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/repeat
-			// Most current (August 2014) browsers can't handle strings 1 << 28 chars or longer
-			throw new RangeError( 'Repeat count must not overflow maximum string size' )
-		}
-		var out = []
-		while ( count-- ) {
-			out.push( this )
-		}
-		return out.join( '' )
-	}
-}
+import 'string.prototype.repeat'
 
 
-function formatParameters( code, params, state, traveler ) {
+function formatSequence( code, expressions, state, traveler ) {
 	/*
-	Formats function parameters provided in `params` into the `code` array.
+	Formats a sequence of `expressions` into the `code` array.
 	*/
 	code.push( '(' )
-	if ( params != null && params.length > 0 ) {
-		traveler[ params[ 0 ].type ]( params[ 0 ], state )
-		for ( let i = 1, { length } = params; i < length; i++ ) {
-			let param = params[ i ]
+	if ( expressions != null && expressions.length > 0 ) {
+		traveler[ expressions[ 0 ].type ]( expressions[ 0 ], state )
+		for ( let i = 1, { length } = expressions; i < length; i++ ) {
+			let param = expressions[ i ]
 			code.push( ', ' )
 			traveler[ param.type ]( param, state )
 		}
 	}
-	code.push( ') ' )
+	code.push( ')' )
 }
 
 
@@ -279,7 +257,7 @@ let traveler = {
 		const statementIndent = caseIndent + state.indent
 		code.push( 'switch (' )
 		this[ node.discriminant.type ]( node.discriminant, state )
-		code.push( ') {', lineEnd )
+		code.push( ') \{', lineEnd )
 		const { cases: occurences } = node
 		for ( let i = 0, { length } = occurences; i < length; i++ ) {
 			let occurence = occurences[ i ];
@@ -394,7 +372,8 @@ let traveler = {
 		code.push( node.generator ? 'function* ' : 'function ' )
 		if ( node.id )
 			code.push( node.id.name )
-		formatParameters( code, node.params, state, this )
+		formatSequence( code, node.params, state, this )
+		code.push( ' ' )
 		this[ node.body.type ]( node.body, state )
 	},
 	VariableDeclaration( node, state ) {
@@ -535,7 +514,8 @@ let traveler = {
 		} else {
 			code.push( node.key.name )
 		}
-		formatParameters( code, node.value.params, state, this )
+		formatSequence( code, node.value.params, state, this )
+		code.push(' ')
 		this[ node.value.body.type ]( node.value.body, state )
 	},
 	ClassExpression( node, state ) {
@@ -543,8 +523,13 @@ let traveler = {
 	},
 	ArrowFunctionExpression( node, state ) {
 		const { code } = state
-		formatParameters( code, node.params, state, this )
-		code.push( '=> ' )
+		const { params } = node
+		if ( params != null && params.length === 1 && params[0].type === 'Identifier' ) {
+			code.push( params[0].name )
+		} else {
+			formatSequence( code, node.params, state, this )
+		}
+		code.push( ' => ' )
 		if ( node.body.type[ 0 ] === 'O' ) {
 			code.push( '(' )
 			this.ObjectExpression( node.body, state )	
@@ -686,21 +671,7 @@ let traveler = {
 	},
 	FunctionExpression: FunctionDeclaration,
 	SequenceExpression( node, state ) {
-		const { code } = state
-		const { expressions } = node
-		if ( expressions.length > 0 ) {
-			code.push( '(' )
-			const { length } = expressions
-			for ( let i = 0; ; ) {
-				let expression = expressions[ i ]
-				this[ expression.type ]( expression, state )
-				if ( ++i < length )
-					code.push( ', ' )
-				else
-					break
-			}
-			code.push( ')' )
-		}
+		formatSequence( state.code, node.expressions, state, this )
 	},
 	UnaryExpression( node, state ) {
 		const { code } = state
