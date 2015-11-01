@@ -688,6 +688,7 @@ let traveler = {
 		const { code } = state
 		const { expressions } = node
 		if ( expressions.length > 0 ) {
+			code.push( '(' )
 			const { length } = expressions
 			for ( let i = 0; ; ) {
 				let expression = expressions[ i ]
@@ -697,6 +698,7 @@ let traveler = {
 				else
 					break
 			}
+			code.push( ')' )
 		}
 	},
 	UnaryExpression( node, state ) {
