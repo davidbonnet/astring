@@ -28,6 +28,7 @@
     "acorn": "^2.4.0",
     "astravel": "^0.3.0",
     "babelify": "^6.1.3",
+    "babel-preset-es2015": "^6.0.14",
     "benchmark": "^1.0.0",
     "browserify": "^11.0.1",
     "escodegen": "^1.6.1",
