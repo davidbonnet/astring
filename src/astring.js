@@ -358,6 +358,7 @@ let traveler = {
 			// Remove inserted semicolon if VariableDeclaration
 			state.code.pop()
 		}
+		// Identifying whether node.type is `ForInStatement` or `ForOfStatement`
 		code.push( node.type[ 3 ] === 'I' ? ' in ' : ' of ' )
 		this[ node.right.type ]( node.right, state )
 		code.push( ') ' )
@@ -524,10 +525,13 @@ let traveler = {
 	ArrowFunctionExpression( node, state ) {
 		const { code } = state
 		const { params } = node
-		if ( params != null && params.length === 1 && params[0].type === 'Identifier' ) {
-			code.push( params[0].name )
-		} else {
-			formatSequence( code, node.params, state, this )
+		if ( params != null ) {
+			if ( params.length === 1 && params[0].type[0] === 'I' ) {
+				// If params[0].type[0] starts with 'I', it can't be `ImportDeclaration` nor `IfStatement` and thus is `Identifier`
+				code.push( params[0].name )
+			} else {
+				formatSequence( code, node.params, state, this )
+			}
 		}
 		code.push( ' => ' )
 		if ( node.body.type[ 0 ] === 'O' ) {
