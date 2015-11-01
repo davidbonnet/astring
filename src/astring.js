@@ -163,6 +163,7 @@ const PARENTHESIS_NEEDED = {
 	Super: 0,
 	ThisExpression: 0,
 	UnaryExpression: 0,
+	ArrayExpression: 0,
 	// Requires precedence check
 	BinaryExpression: 1,
 	LogicalExpression: 1
