@@ -6,8 +6,10 @@ var astravel = require( 'astravel' )
 var astring
 try {
 	astring = require( '../dist/astring.debug' )
+	console.log( 'Using ./dist/astring.debug.js' )
 } catch ( error ) {
 	astring = require( '../dist/astring.min' )
+	console.log( 'Using ./dist/astring.min.js' )
 }
 
 
