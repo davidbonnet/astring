@@ -9,9 +9,6 @@
 // https://github.com/davidbonnet/astring/issues
 
 
-import 'string.prototype.repeat'
-
-
 function formatSequence( code, expressions, state, traveler ) {
 	/*
 	Formats a sequence of `expressions` into the `code` array.
