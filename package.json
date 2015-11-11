@@ -36,7 +36,7 @@
     "minifyify": "^7.0.3",
     "mocha": "^2.2.5",
     "string.prototype.repeat": "^0.2.0",
-    "uglify-js": "^2.4.24",
+    "uglify-js": "^2.5.0",
     "watchify": "^3.6.0"
   }
 }
