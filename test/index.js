@@ -28,6 +28,7 @@ var stripLocation = astravel.makeTraveler( {
 
 
 describe( 'Syntax check', function() {
+	this.timeout(0)
 	var dirname = path.join( __dirname, 'syntax' )
 	var files = fs.readdirSync( dirname ).sort()
 	var options = {
@@ -45,6 +46,7 @@ describe( 'Syntax check', function() {
 
 
 describe( 'Tree comparison', function() {
+	this.timeout(0)
 	var dirname = path.join( __dirname, 'syntax' )
 	var files = fs.readdirSync( dirname ).sort()
 	var options = {
@@ -65,6 +67,7 @@ describe( 'Tree comparison', function() {
 
 
 describe( 'Deprecated syntax check', function() {
+	this.timeout(0)
 	var dirname = path.join( __dirname, 'deprecated' )
 	var files = fs.readdirSync( dirname ).sort()
 	files.forEach( function( filename ) {
@@ -79,6 +82,7 @@ describe( 'Deprecated syntax check', function() {
 
 
 describe( 'Comment generation', function() {
+	this.timeout(0)
 	var dirname = path.join( __dirname, 'comment' )
 	var files = fs.readdirSync( dirname ).sort()
 	var options = {

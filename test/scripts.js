@@ -15,6 +15,7 @@ try {
 
 
 describe( 'Scripts tree comparison', function() {
+  this.timeout(0)
   var pattern = path.join( __dirname, '../node_modules/{watchify,uglify-js,astravel,escodegen,babelify,acorn,minifyify,mocha,esotope,browserify,glob,benchmark}/**/*.js' )
   var options = {
     ecmaVersion: 6,
