@@ -835,7 +835,7 @@ let traveler = {
 
 
 
-export default function( node, options ) {
+export default function astring( node, options ) {
 	/*
 	Returns a string representing the rendered code of the provided AST `node`.
 	The `options` are:
