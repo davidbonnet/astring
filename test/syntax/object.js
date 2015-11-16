@@ -22,3 +22,4 @@ let g = {
 		return a;
 	}
 };
+let h = ({}).toString();

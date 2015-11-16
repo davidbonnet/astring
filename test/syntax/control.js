@@ -1,6 +1,7 @@
 if (a > b) {} else {}
 if (c != d) {}
 var a = b > c ? d : e;
+let a = (b = 1) ? c : d;
 switch (a) {
 	case b:
 		break;

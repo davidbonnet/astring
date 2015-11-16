@@ -1,2 +1,2 @@
-require('string.prototype.repeat');
-module.exports = require('./astring').default;
+require( 'string.prototype.repeat' )
+module.exports = require( './astring' ).default

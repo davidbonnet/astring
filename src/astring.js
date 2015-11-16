@@ -9,15 +9,76 @@
 // https://github.com/davidbonnet/astring/issues
 
 
-function formatSequence( code, expressions, state, traveler ) {
+const OPERATORS_PRECEDENCE = {
+	'||': 3,
+	'&&': 4,
+	'|': 5,
+	'^': 6,
+	'&': 7,
+	'==': 8,
+	'!=': 8,
+	'===': 8,
+	'!==': 8,
+	'<': 9,
+	'>': 9,
+	'<=': 9,
+	'>=': 9,
+	'in': 9,
+	'instanceof': 9,
+	'<<': 10,
+	'>>': 10,
+	'>>>': 10,
+	'+': 11,
+	'-': 11,
+	'*': 12,
+	'%': 12,
+	'/': 12,
+	'**': 12
+}
+
+
+const EXPRESSIONS_PRECEDENCE = {
+  // Definitions
+  ArrayExpression: 20,
+  TaggedTemplateExpression: 20,
+  ThisExpression: 20,
+  Identifier: 20,
+  Literal: 20,
+  TemplateLiteral: 20,
+  Super: 20,
+  SequenceExpression: 20,
+  // Operations
+  MemberExpression: 19,
+  CallExpression: 19,
+  NewExpression: 19,
+  ArrowFunctionExpression: 18,
+  // Other definitions
+  // Value 17 enables parenthesis in an `ExpressionStatement` node
+  ClassExpression: 17,
+  FunctionExpression: 17,
+  ObjectExpression: 17,
+  // Other operations
+  UpdateExpression: 16,
+  UnaryExpression: 15,
+  BinaryExpression: 14,
+  LogicalExpression: 13,
+  ConditionalExpression: 4,
+  AssignmentExpression: 3,
+  YieldExpression: 2,
+  RestElement: 1
+}
+
+
+function formatSequence( nodes, state, traveler ) {
 	/*
-	Formats a sequence of `expressions` into the `code` array.
+	Formats a sequence of `nodes` into the `code` array.
 	*/
+	const { code } = state;
 	code.push( '(' )
-	if ( expressions != null && expressions.length > 0 ) {
-		traveler[ expressions[ 0 ].type ]( expressions[ 0 ], state )
-		for ( let i = 1, { length } = expressions; i < length; i++ ) {
-			let param = expressions[ i ]
+	if ( nodes != null && nodes.length > 0 ) {
+		traveler[ nodes[ 0 ].type ]( nodes[ 0 ], state )
+		for ( let i = 1, { length } = nodes; i < length; i++ ) {
+			let param = nodes[ i ]
 			code.push( ', ' )
 			traveler[ param.type ]( param, state )
 		}
@@ -26,33 +87,38 @@ function formatSequence( code, expressions, state, traveler ) {
 }
 
 
-function formatExpression( code, node, rightHand, operator, state, traveler ) {
+function formatBinaryExpressionPart( node, parentNode, isRightHand, state, traveler ) {
 	/*
 	Formats into the `code` array a left-hand or right-hand expression `node` from a binary expression applying the provided `operator`.
-	The `rightHand` parameter should be `true` if the `node` is a right-hand argument.
+	The `isRightHand` parameter should be `true` if the `node` is a right-hand argument.
 	*/
-	const needed = PARENTHESIS_NEEDED[ node.type ]
-	if ( needed === 0 ) {
+	const nodePrecedence = EXPRESSIONS_PRECEDENCE[ node.type ]
+	const parentNodePrecedence = EXPRESSIONS_PRECEDENCE[ parentNode.type ]
+	if ( nodePrecedence > parentNodePrecedence ) {
 		traveler[ node.type ]( node, state )
 		return
-	} else if ( needed === 1 ) {
-		const precedence = OPERATORS_PRECEDENCE[ node.operator ]
-		const parentPrecedence = OPERATORS_PRECEDENCE[ operator ]
-		if ( rightHand ) {
-			if ( precedence > parentPrecedence ) {
-				traveler[ node.type ]( node, state )
-				return
+	} else if ( nodePrecedence === parentNodePrecedence ) {
+		if ( nodePrecedence === 13 || nodePrecedence === 14 ) {
+			// Either `LogicalExpression` or `BinaryExpression`
+			if ( isRightHand ) {
+				if ( OPERATORS_PRECEDENCE[ node.operator ] > OPERATORS_PRECEDENCE[ parentNode.operator ] ) {
+					traveler[ node.type ]( node, state )
+					return
+				}
+			} else {
+				if ( OPERATORS_PRECEDENCE[ node.operator ] >= OPERATORS_PRECEDENCE[ parentNode.operator ] ) {
+					traveler[ node.type ]( node, state )
+					return
+				}
 			}
 		} else {
-			if ( precedence >= parentPrecedence ) {
-				traveler[ node.type ]( node, state )
-				return
-			}
+			traveler[ node.type ]( node, state )
+			return
 		}
 	}
-	code.push( '(' )
+	state.code.push( '(' )
 	traveler[ node.type ]( node, state )
-	code.push( ')' )
+	state.code.push( ')' )
 }
 
 
@@ -82,7 +148,7 @@ function reindent( text, indentation ) {
 }
 
 
-function formatComments( code, comments, indent, lineEnd ) {
+function formatComments( comments, code, indent, lineEnd ) {
 	/*
 	Inserts into `code` the provided list of `comments`, with the given `indent` and `lineEnd` strings.
 	Line comments will end with `"\n"` regardless of the value of `lineEnd`.
@@ -101,47 +167,22 @@ function formatComments( code, comments, indent, lineEnd ) {
 }
 
 
-const OPERATORS_PRECEDENCE = {
-	'||': 3,
-	'&&': 4,
-	'|': 5,
-	'^': 6,
-	'&': 7,
-	'==': 8,
-	'!=': 8,
-	'===': 8,
-	'!==': 8,
-	'<': 9,
-	'>': 9,
-	'<=': 9,
-	'>=': 9,
-	'in': 9,
-	'instanceof': 9,
-	'<<': 10,
-	'>>': 10,
-	'>>>': 10,
-	'+': 11,
-	'-': 11,
-	'*': 12,
-	'%': 12,
-	'/': 12
-}
-
-
-const PARENTHESIS_NEEDED = {
-	// Never needed
-	Identifier: 0,
-	Literal: 0,
-	MemberExpression: 0,
-	CallExpression: 0,
-	NewExpression: 0,
-	Super: 0,
-	ThisExpression: 0,
-	UnaryExpression: 0,
-	ArrayExpression: 0,
-	// Requires precedence check
-	BinaryExpression: 1,
-	LogicalExpression: 1
+function hasCallExpression( node ) {
+	/*
+	Returns `true` if the provided `node` contains a call expression and `false` otherwise.
+	*/
+	while ( node != null ) {
+		let { type } = node
+		if ( type[0] === 'C' && type[1] === 'a' ) {
+			// Is CallExpression
+			return true
+		} else if ( type[0] === 'M' && type[1] === 'e' && type[2] === 'm' ) {
+			// Is MemberExpression
+			node = node.object
+		} else {
+			return false
+		}
+	}
 }
 
 
@@ -153,18 +194,18 @@ let traveler = {
 		const indent = state.indent.repeat( state.indentLevel )
 		const { lineEnd, code, writeComments } = state
 		if ( writeComments && node.comments != null )
-			formatComments( code, node.comments, indent, lineEnd )
+			formatComments( node.comments, code, indent, lineEnd )
 		let statements = node.body
 		for ( let i = 0, { length } = statements; i < length; i++ ) {
 			let statement = statements[ i ]
 			if ( writeComments && statement.comments != null )
-				formatComments( code, statement.comments, indent, lineEnd )
+				formatComments( statement.comments, code, indent, lineEnd )
 			code.push( indent )
 			this[ statement.type ]( statement, state )
 			code.push( lineEnd )
 		}
 		if ( writeComments && node.trailingComments != null )
-			formatComments( code, node.trailingComments, indent, lineEnd )
+			formatComments( node.trailingComments, code, indent, lineEnd )
 	},
 	BlockStatement( node, state ) {
 		const indent = state.indent.repeat( state.indentLevel++ )
@@ -175,12 +216,12 @@ let traveler = {
 		if ( statements != null && statements.length > 0 ) {
 			code.push( lineEnd )
 			if ( writeComments && node.comments != null ) {
-				formatComments( code, node.comments, statementIndent, lineEnd )
+				formatComments( node.comments, code, statementIndent, lineEnd )
 			}
 			for ( let i = 0, { length } = statements; i < length; i++ ) {
 				let statement = statements[ i ]
 				if ( writeComments && statement.comments != null )
-					formatComments( code, statement.comments, statementIndent, lineEnd )
+					formatComments( statement.comments, code, statementIndent, lineEnd )
 				code.push( statementIndent )
 				this[ statement.type ]( statement, state )
 				code.push( lineEnd )
@@ -189,12 +230,12 @@ let traveler = {
 		} else {
 			if ( writeComments && node.comments != null ) {
 				code.push( lineEnd )
-				formatComments( code, node.comments, statementIndent, lineEnd )
+				formatComments( node.comments, code, statementIndent, lineEnd )
 				code.push( indent )
 			}
 		}
 		if ( writeComments && node.trailingComments != null )
-			formatComments( code, node.trailingComments, statementIndent, lineEnd )
+			formatComments( node.trailingComments, code, statementIndent, lineEnd )
 		code.push( '}' )
 		state.indentLevel--
 	},
@@ -202,7 +243,13 @@ let traveler = {
 		state.code.push( ';' )
 	},
 	ExpressionStatement( node, state ) {
-		this[ node.expression.type ]( node.expression, state )
+		if ( EXPRESSIONS_PRECEDENCE[ node.expression.type ] === 17 ) {
+			state.code.push( '(' )
+			this[ node.expression.type ]( node.expression, state )
+			state.code.push( ')' )
+		} else {
+			this[ node.expression.type ]( node.expression, state )
+		}
 		state.code.push( ';' )
 	},
 	IfStatement( node, state ) {
@@ -259,7 +306,7 @@ let traveler = {
 		for ( let i = 0, { length } = occurences; i < length; i++ ) {
 			let occurence = occurences[ i ];
 			if ( writeComments && occurence.comments != null )
-				formatComments( code, occurence.comments, caseIndent, lineEnd )
+				formatComments( occurence.comments, code, caseIndent, lineEnd )
 			if ( occurence.test ) {
 				code.push( caseIndent, 'case ' )
 				this[ occurence.test.type ]( occurence.test, state )
@@ -271,7 +318,7 @@ let traveler = {
 			for ( let i = 0, { length } = consequent; i < length; i++ ) {
 				let statement = consequent[ i ]
 				if ( writeComments && statement.comments != null )
-					formatComments( code, statement.comments, statementIndent, lineEnd )
+					formatComments( statement.comments, code, statementIndent, lineEnd )
 				code.push( statementIndent )
 				this[ statement.type ]( statement, state )
 				code.push( lineEnd )
@@ -370,7 +417,7 @@ let traveler = {
 		code.push( node.generator ? 'function* ' : 'function ' )
 		if ( node.id )
 			code.push( node.id.name )
-		formatSequence( code, node.params, state, this )
+		formatSequence( node.params, state, this )
 		code.push( ' ' )
 		this[ node.body.type ]( node.body, state )
 	},
@@ -459,7 +506,8 @@ let traveler = {
 		const { code } = state
 		code.push( 'export default ' )
 		this[ node.declaration.type ]( node.declaration, state )
-		if ( node.declaration.type.substr( -10 ) === 'Expression' )
+		if ( EXPRESSIONS_PRECEDENCE[ node.declaration.type ] && node.declaration.type[0] !== 'F' )
+			// All expression nodes except `FunctionExpression`
 			code.push( ';' )
 	},
 	ExportNamedDeclaration( node, state ) {
@@ -512,7 +560,7 @@ let traveler = {
 		} else {
 			code.push( node.key.name )
 		}
-		formatSequence( code, node.value.params, state, this )
+		formatSequence( node.value.params, state, this )
 		code.push(' ')
 		this[ node.value.body.type ]( node.value.body, state )
 	},
@@ -527,7 +575,7 @@ let traveler = {
 				// If params[0].type[0] starts with 'I', it can't be `ImportDeclaration` nor `IfStatement` and thus is `Identifier`
 				code.push( params[0].name )
 			} else {
-				formatSequence( code, node.params, state, this )
+				formatSequence( node.params, state, this )
 			}
 		}
 		code.push( ' => ' )
@@ -601,12 +649,12 @@ let traveler = {
 		if ( node.properties.length > 0 ) {
 			code.push( lineEnd )
 			if ( writeComments && node.comments != null )
-				formatComments( code, node.comments, propertyIndent, lineEnd )
+				formatComments( node.comments, code, propertyIndent, lineEnd )
 			const comma = ',' + lineEnd, { properties } = node, { length } = properties
 			for ( let i = 0; ; ) {
 				let property = properties[ i ]
 				if ( writeComments && property.comments != null )
-					formatComments( code, property.comments, propertyIndent, lineEnd )
+					formatComments( property.comments, code, propertyIndent, lineEnd )
 				code.push( propertyIndent )
 				this.Property( property, state )
 				if ( ++i < length )
@@ -616,18 +664,18 @@ let traveler = {
 			}
 			code.push( lineEnd )
 			if ( writeComments && node.trailingComments != null )
-				formatComments( code, node.trailingComments, propertyIndent, lineEnd )
+				formatComments( node.trailingComments, code, propertyIndent, lineEnd )
 			code.push( indent, '}' )
 		} else if ( writeComments ) {
 			if ( node.comments != null ) {
 				code.push( lineEnd )
-				formatComments( code, node.comments, propertyIndent, lineEnd )
+				formatComments( node.comments, code, propertyIndent, lineEnd )
 				if ( node.trailingComments != null )
-					formatComments( code, node.trailingComments, propertyIndent, lineEnd )
+					formatComments( node.trailingComments, code, propertyIndent, lineEnd )
 				code.push( indent, '}' )
 			} else if ( node.trailingComments != null ) {
 				code.push( lineEnd )
-				formatComments( code, node.trailingComments, propertyIndent, lineEnd )
+				formatComments( node.trailingComments, code, propertyIndent, lineEnd )
 				code.push( indent, '}' )
 			} else {
 				code.push( '}' )
@@ -638,7 +686,8 @@ let traveler = {
 		state.indentLevel--
 	},
 	Property( node, state ) {
-		if ( node.method ) {
+		if ( node.method || node.kind[0] !== 'i' ) {
+			// Either a method or of kind `set` or `get` (not `init`)
 			this.MethodDefinition( node, state )
 		} else {
 			const { code } = state
@@ -672,27 +721,29 @@ let traveler = {
 	},
 	FunctionExpression: FunctionDeclaration,
 	SequenceExpression( node, state ) {
-		formatSequence( state.code, node.expressions, state, this )
+		formatSequence( node.expressions, state, this )
 	},
 	UnaryExpression( node, state ) {
 		const { code } = state
 		if ( node.prefix ) {
 			code.push( node.operator )
-			if ( PARENTHESIS_NEEDED[ node.argument.type ] === 1 ) {
+			if ( node.operator.length > 1 )
+				state.code.push( ' ' )
+			if ( EXPRESSIONS_PRECEDENCE[ node.argument.type ] < EXPRESSIONS_PRECEDENCE.UnaryExpression ) {
 				code.push( '(' )
 				this[ node.argument.type ]( node.argument, state )
 				code.push( ')' )
 			} else {
-				if ( node.operator.length > 1 )
-					state.code.push( ' ' )
 				this[ node.argument.type ]( node.argument, state )
 			}
 		} else {
+			// FIXME: This case never occurs
 			this[ node.argument.type ]( node.argument, state )
 			state.code.push( node.operator )
 		}
 	},
 	UpdateExpression( node, state ) {
+		// Always applied to identifiers or members, no parenthesis check needed
 		if ( node.prefix ) {
 			state.code.push( node.operator )
 			this[ node.argument.type ]( node.argument, state )
@@ -713,15 +764,20 @@ let traveler = {
 	},
 	BinaryExpression: BinaryExpression = function( node, state ) {
 		const { code } = state
-		const { operator } = node
-		formatExpression( code, node.left, false, operator, state, this )
-		code.push( ' ', operator, ' ' )
-		formatExpression( code, node.right, true, operator, state, this )
+		formatBinaryExpressionPart( node.left, node, false, state, this )
+		code.push( ' ', node.operator, ' ' )
+		formatBinaryExpressionPart( node.right, node, true, state, this )
 	},
 	LogicalExpression: BinaryExpression,
 	ConditionalExpression( node, state ) {
 		const { code } = state
-		this[ node.test.type ]( node.test, state )
+		if ( EXPRESSIONS_PRECEDENCE[ node.test.type ] > EXPRESSIONS_PRECEDENCE.ConditionalExpression ) {
+			this[ node.test.type ]( node.test, state )
+		} else {
+			code.push('(')
+			this[ node.test.type ]( node.test, state )
+			code.push(')')
+		}
 		code.push( ' ? ' )
 		this[ node.consequent.type ]( node.consequent, state )
 		code.push( ' : ' )
@@ -729,38 +785,36 @@ let traveler = {
 	},
 	NewExpression( node, state ) {
 		state.code.push( 'new ' )
-		this.CallExpression( node, state )
+		const { code } = state
+		if ( EXPRESSIONS_PRECEDENCE[ node.callee.type ] < EXPRESSIONS_PRECEDENCE.CallExpression
+				|| hasCallExpression(node.callee) ) {
+			code.push( '(' )
+			this[ node.callee.type ]( node.callee, state )
+			code.push( ')' )
+		} else {
+			this[ node.callee.type ]( node.callee, state )
+		}
+		formatSequence( node[ 'arguments' ], state, this )
 	},
 	CallExpression( node, state ) {
 		const { code } = state
-		if ( PARENTHESIS_NEEDED[ node.callee.type ] === 0 ) {
-			this[ node.callee.type ]( node.callee, state )
-		} else {
+		if ( EXPRESSIONS_PRECEDENCE[ node.callee.type ] < EXPRESSIONS_PRECEDENCE.CallExpression ) {
 			code.push( '(' )
 			this[ node.callee.type ]( node.callee, state )
 			code.push( ')' )
+		} else {
+			this[ node.callee.type ]( node.callee, state )
 		}
-		code.push( '(' )
-		const args = node[ 'arguments' ]
-		if ( args.length > 0 ) {
-			this[ args[ 0 ].type ]( args[ 0 ], state )
-			const { length } = args
-			for ( let i = 1; i < length; i++ ) {
-				let arg = args[ i ]
-				code.push( ', ' )
-				this[ arg.type ]( arg, state )
-			}
-		}
-		code.push( ')' )
+		formatSequence( node[ 'arguments' ], state, this )
 	},
 	MemberExpression( node, state ) {
 		const { code } = state
-		if ( PARENTHESIS_NEEDED[ node.object.type ] === 0 ) {
-			this[ node.object.type ]( node.object, state )
-		} else {
+		if ( EXPRESSIONS_PRECEDENCE[ node.object.type ] < EXPRESSIONS_PRECEDENCE.MemberExpression ) {
 			code.push( '(' )
 			this[ node.object.type ]( node.object, state )
 			code.push( ')' )
+		} else {
+			this[ node.object.type ]( node.object, state )
 		}
 		if ( node.computed ) {
 			code.push( '[' )
