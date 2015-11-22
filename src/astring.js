@@ -558,7 +558,7 @@ let traveler = {
 			this[ node.key.type ]( node.key, state )
 			code.push( ']' )
 		} else {
-			code.push( node.key.name )
+			this[ node.key.type ]( node.key, state )
 		}
 		formatSequence( node.value.params, state, this )
 		code.push( ' ' )
