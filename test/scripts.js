@@ -42,7 +42,7 @@ var files = glob.sync( pattern, {
 	nodir: true
 } )
 
-console.log( 'Found', files.length, 'files' )
+console.log( 'Found', files.length, 'files, processing them…' )
 
 var processedFiles = 0, errorFiles = 0
 
@@ -66,4 +66,4 @@ files.forEach( function( filename ) {
 	processedFiles++
 } )
 
-console.log( 'Processed ' + processedFiles + ' files with ' + errorFiles + ' error' + ( errorsFiles === 1 ? '' : 's' ) )
+console.log( 'Processed ' + processedFiles + ' files with ' + errorFiles + ' error' + ( errorFiles === 1 ? '' : 's' ) )
