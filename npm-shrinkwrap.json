@@ -5764,6 +5764,18 @@
         }
       }
     },
+    "esast": {
+      "version": "0.0.0",
+      "from": "mason-lang/esast",
+      "resolved": "git://github.com/mason-lang/esast.git#3530eaf037a9b403562c9ae1ae7f71fb6ea52990",
+      "dependencies": {
+        "source-map": {
+          "version": "0.5.3",
+          "from": "mozilla/source-map",
+          "resolved": "git://github.com/mozilla/source-map.git#3d8b134049f45aaab09bf83f061f9010d509ef98"
+        }
+      }
+    },
     "escodegen": {
       "version": "1.7.0",
       "from": "escodegen@>=1.6.1 <2.0.0",

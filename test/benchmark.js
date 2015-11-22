@@ -3,6 +3,8 @@ var acorn = require( 'acorn' )
 var uglify = require( 'uglify-js' )
 var escodegen = require( 'escodegen' ).generate
 var esotope = require( 'esotope' ).generate
+var esast = require( 'esast/dist/render' ).default
+var jsonToEsast = require( 'esast/dist/fromJson' ).default
 var astring
 try {
 	astring = require( '../dist/astring.debug' )
@@ -39,6 +41,9 @@ function benchmarkWithCode( code ) {
 	} )
 	.add( 'uglify', function() {
 		uglifyAst.print_to_string( uglifyOptions )
+	} )
+	.add( 'esast', function() {
+		esast( jsonToEsast( ast ) )
 	} )
 	// add listeners
 	.on( 'cycle', function( event ) {

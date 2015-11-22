@@ -32,6 +32,7 @@
     "babelify": "^7.2.0",
     "benchmark": "^1.0.0",
     "browserify": "^12.0.1",
+    "esast": "mason-lang/esast",
     "escodegen": "^1.6.1",
     "esotope": "^1.4.5",
     "glob": "^6.0.1",
