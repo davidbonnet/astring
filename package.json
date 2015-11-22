@@ -34,7 +34,7 @@
     "browserify": "^12.0.1",
     "escodegen": "^1.6.1",
     "esotope": "^1.4.5",
-    "glob": "^5.0.15",
+    "glob": "^6.0.1",
     "minifyify": "^7.0.3",
     "mocha": "^2.2.5",
     "string.prototype.repeat": "^0.2.0",
