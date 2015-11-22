@@ -1,0 +1,40 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/opt/local/bin/node',
+1 verbose cli   '/opt/local/bin/npm',
+1 verbose cli   'run',
+1 verbose cli   'full-test' ]
+2 info using npm@2.14.10
+3 info using node@v4.2.2
+4 verbose run-script [ 'prefull-test', 'full-test', 'postfull-test' ]
+5 info prefull-test astring@0.4.9
+6 info full-test astring@0.4.9
+7 verbose unsafe-perm in lifecycle true
+8 info astring@0.4.9 Failed to exec full-test script
+9 verbose stack Error: astring@0.4.9 full-test: `node --max_old_space_size=10000 --max_executable_size=10000 --max_new_space_size=10000 ./node_modules/mocha/bin/mocha test/scripts.js`
+9 verbose stack Exit status 9
+9 verbose stack     at EventEmitter.<anonymous> (/opt/local/lib/node_modules/npm/lib/utils/lifecycle.js:214:16)
+9 verbose stack     at emitTwo (events.js:87:13)
+9 verbose stack     at EventEmitter.emit (events.js:172:7)
+9 verbose stack     at ChildProcess.<anonymous> (/opt/local/lib/node_modules/npm/lib/utils/spawn.js:24:14)
+9 verbose stack     at emitTwo (events.js:87:13)
+9 verbose stack     at ChildProcess.emit (events.js:172:7)
+9 verbose stack     at maybeClose (internal/child_process.js:818:16)
+9 verbose stack     at Process.ChildProcess._handle.onexit (internal/child_process.js:211:5)
+10 verbose pkgid astring@0.4.9
+11 verbose cwd /Users/david/Documents/Projects/Bee/astring
+12 error Darwin 15.0.0
+13 error argv "/opt/local/bin/node" "/opt/local/bin/npm" "run" "full-test"
+14 error node v4.2.2
+15 error npm  v2.14.10
+16 error code ELIFECYCLE
+17 error astring@0.4.9 full-test: `node --max_old_space_size=10000 --max_executable_size=10000 --max_new_space_size=10000 ./node_modules/mocha/bin/mocha test/scripts.js`
+17 error Exit status 9
+18 error Failed at the astring@0.4.9 full-test script 'node --max_old_space_size=10000 --max_executable_size=10000 --max_new_space_size=10000 ./node_modules/mocha/bin/mocha test/scripts.js'.
+18 error This is most likely a problem with the astring package,
+18 error not with npm itself.
+18 error Tell the author that this fails on your system:
+18 error     node --max_old_space_size=10000 --max_executable_size=10000 --max_new_space_size=10000 ./node_modules/mocha/bin/mocha test/scripts.js
+18 error You can get their info via:
+18 error     npm owner ls astring
+18 error There is likely additional logging output above.
+19 verbose exit [ 1, true ]

@@ -38,34 +38,34 @@ const OPERATORS_PRECEDENCE = {
 
 
 const EXPRESSIONS_PRECEDENCE = {
-  // Definitions
-  ArrayExpression: 20,
-  TaggedTemplateExpression: 20,
-  ThisExpression: 20,
-  Identifier: 20,
-  Literal: 20,
-  TemplateLiteral: 20,
-  Super: 20,
-  SequenceExpression: 20,
-  // Operations
-  MemberExpression: 19,
-  CallExpression: 19,
-  NewExpression: 19,
-  ArrowFunctionExpression: 18,
-  // Other definitions
-  // Value 17 enables parenthesis in an `ExpressionStatement` node
-  ClassExpression: 17,
-  FunctionExpression: 17,
-  ObjectExpression: 17,
-  // Other operations
-  UpdateExpression: 16,
-  UnaryExpression: 15,
-  BinaryExpression: 14,
-  LogicalExpression: 13,
-  ConditionalExpression: 4,
-  AssignmentExpression: 3,
-  YieldExpression: 2,
-  RestElement: 1
+	// Definitions
+	ArrayExpression: 20,
+	TaggedTemplateExpression: 20,
+	ThisExpression: 20,
+	Identifier: 20,
+	Literal: 20,
+	TemplateLiteral: 20,
+	Super: 20,
+	SequenceExpression: 20,
+	// Operations
+	MemberExpression: 19,
+	CallExpression: 19,
+	NewExpression: 19,
+	ArrowFunctionExpression: 18,
+	// Other definitions
+	// Value 17 enables parenthesis in an `ExpressionStatement` node
+	ClassExpression: 17,
+	FunctionExpression: 17,
+	ObjectExpression: 17,
+	// Other operations
+	UpdateExpression: 16,
+	UnaryExpression: 15,
+	BinaryExpression: 14,
+	LogicalExpression: 13,
+	ConditionalExpression: 4,
+	AssignmentExpression: 3,
+	YieldExpression: 2,
+	RestElement: 1
 }
 
 
@@ -73,7 +73,7 @@ function formatSequence( nodes, state, traveler ) {
 	/*
 	Formats a sequence of `nodes` into the `code` array.
 	*/
-	const { code } = state;
+	const { code } = state
 	code.push( '(' )
 	if ( nodes != null && nodes.length > 0 ) {
 		traveler[ nodes[ 0 ].type ]( nodes[ 0 ], state )
@@ -159,7 +159,7 @@ function formatComments( comments, code, indent, lineEnd ) {
 		code.push( indent )
 		if ( comment.type[ 0 ] === 'L' )
 			// Line comment
-			code.push( '// ', comment.value.trim(), "\n" )
+			code.push( '// ', comment.value.trim(), '\n' )
 		else
 			// Block comment
 			code.push( '/*', lineEnd, reindent( comment.value, indent ), lineEnd, indent, '*/', lineEnd )
@@ -173,10 +173,10 @@ function hasCallExpression( node ) {
 	*/
 	while ( node != null ) {
 		let { type } = node
-		if ( type[0] === 'C' && type[1] === 'a' ) {
+		if ( type[ 0 ] === 'C' && type[ 1 ] === 'a' ) {
 			// Is CallExpression
 			return true
-		} else if ( type[0] === 'M' && type[1] === 'e' && type[2] === 'm' ) {
+		} else if ( type[ 0 ] === 'M' && type[ 1 ] === 'e' && type[ 2 ] === 'm' ) {
 			// Is MemberExpression
 			node = node.object
 		} else {
@@ -304,7 +304,7 @@ let traveler = {
 		code.push( ') \{', lineEnd )
 		const { cases: occurences } = node
 		for ( let i = 0, { length } = occurences; i < length; i++ ) {
-			let occurence = occurences[ i ];
+			let occurence = occurences[ i ]
 			if ( writeComments && occurence.comments != null )
 				formatComments( occurence.comments, code, caseIndent, lineEnd )
 			if ( occurence.test ) {
@@ -506,7 +506,7 @@ let traveler = {
 		const { code } = state
 		code.push( 'export default ' )
 		this[ node.declaration.type ]( node.declaration, state )
-		if ( EXPRESSIONS_PRECEDENCE[ node.declaration.type ] && node.declaration.type[0] !== 'F' )
+		if ( EXPRESSIONS_PRECEDENCE[ node.declaration.type ] && node.declaration.type[ 0 ] !== 'F' )
 			// All expression nodes except `FunctionExpression`
 			code.push( ';' )
 	},
@@ -561,7 +561,7 @@ let traveler = {
 			code.push( node.key.name )
 		}
 		formatSequence( node.value.params, state, this )
-		code.push(' ')
+		code.push( ' ' )
 		this[ node.value.body.type ]( node.value.body, state )
 	},
 	ClassExpression( node, state ) {
@@ -571,9 +571,9 @@ let traveler = {
 		const { code } = state
 		const { params } = node
 		if ( params != null ) {
-			if ( params.length === 1 && params[0].type[0] === 'I' ) {
+			if ( params.length === 1 && params[ 0 ].type[ 0 ] === 'I' ) {
 				// If params[0].type[0] starts with 'I', it can't be `ImportDeclaration` nor `IfStatement` and thus is `Identifier`
-				code.push( params[0].name )
+				code.push( params[ 0 ].name )
 			} else {
 				formatSequence( node.params, state, this )
 			}
@@ -581,7 +581,7 @@ let traveler = {
 		code.push( ' => ' )
 		if ( node.body.type[ 0 ] === 'O' ) {
 			code.push( '(' )
-			this.ObjectExpression( node.body, state )	
+			this.ObjectExpression( node.body, state )
 			code.push( ')' )
 		} else {
 			this[ node.body.type ]( node.body, state )
@@ -686,7 +686,7 @@ let traveler = {
 		state.indentLevel--
 	},
 	Property( node, state ) {
-		if ( node.method || node.kind[0] !== 'i' ) {
+		if ( node.method || node.kind[ 0 ] !== 'i' ) {
 			// Either a method or of kind `set` or `get` (not `init`)
 			this.MethodDefinition( node, state )
 		} else {
@@ -749,7 +749,7 @@ let traveler = {
 			this[ node.argument.type ]( node.argument, state )
 		} else {
 			this[ node.argument.type ]( node.argument, state )
-			state.code.push( node.operator )	
+			state.code.push( node.operator )
 		}
 	},
 	AssignmentExpression( node, state ) {
@@ -774,9 +774,9 @@ let traveler = {
 		if ( EXPRESSIONS_PRECEDENCE[ node.test.type ] > EXPRESSIONS_PRECEDENCE.ConditionalExpression ) {
 			this[ node.test.type ]( node.test, state )
 		} else {
-			code.push('(')
+			code.push( '(' )
 			this[ node.test.type ]( node.test, state )
-			code.push(')')
+			code.push( ')' )
 		}
 		code.push( ' ? ' )
 		this[ node.consequent.type ]( node.consequent, state )
@@ -787,7 +787,7 @@ let traveler = {
 		state.code.push( 'new ' )
 		const { code } = state
 		if ( EXPRESSIONS_PRECEDENCE[ node.callee.type ] < EXPRESSIONS_PRECEDENCE.CallExpression
-				|| hasCallExpression(node.callee) ) {
+				|| hasCallExpression( node.callee ) ) {
 			code.push( '(' )
 			this[ node.callee.type ]( node.callee, state )
 			code.push( ')' )
@@ -834,7 +834,6 @@ let traveler = {
 }
 
 
-
 export default function astring( node, options ) {
 	/*
 	Returns a string representing the rendered code of the provided AST `node`.
@@ -845,18 +844,18 @@ export default function astring( node, options ) {
 	- `startingIndentLevel`: indent level to start from (default to `0`)
 	- `comments`: generate comments if `true` (defaults to `false`)
 	*/
-	const state = (options == null) ? {
+	const state = ( options == null ) ? {
 		code: [],
-		indent: "\t",
-		lineEnd: "\n",
+		indent: '\t',
+		lineEnd: '\n',
 		indentLevel: 0,
 		writeComments: false
 	} : {
 		// Will contain the resulting code as an array of code strings
 		code: [],
 		// Formating options
-		indent: options.indent != null ? options.indent : "\t",
-		lineEnd: options.lineEnd != null ? options.lineEnd : "\n",
+		indent: options.indent != null ? options.indent : '\t',
+		lineEnd: options.lineEnd != null ? options.lineEnd : '\n',
 		indentLevel: options.startingIndentLevel != null ? options.startingIndentLevel : 0,
 		writeComments: options.comments ? options.comments : false
 	}
@@ -864,5 +863,3 @@ export default function astring( node, options ) {
 	traveler[ node.type ]( node, state )
 	return state.code.join( '' )
 }
-
-
