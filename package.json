@@ -8,7 +8,7 @@
   },
   "scripts": {
     "test": "./node_modules/mocha/bin/mocha test/index.js",
-    "full-test": "./node_modules/mocha/bin/mocha test/scripts.js",
+    "full-test": "node test/scripts.js",
     "prepublish": "./node_modules/browserify/bin/cmd.js --transform [ babelify ] --plugin [ minifyify --no-map ] --no-builtins --standalone astring --entry ./src/export.js --outfile dist/astring.min.js",
     "build": "./node_modules/browserify/bin/cmd.js --transform [ babelify ] --no-builtins --standalone astring --entry ./src/export.js --outfile dist/astring.js",
     "start": "./node_modules/watchify/bin/cmd.js --transform [ babelify ] --no-builtins --debug --verbose --standalone astring --entry ./src/export.js --outfile dist/astring.debug.js",
