@@ -631,11 +631,15 @@ let traveler = {
 			const { elements } = node, { length } = elements
 			for ( let i = 0; ; ) {
 				let element = elements[ i ]
-				this[ element.type ]( element, state )
-				if ( ++i < length )
+				if ( element != null )
+					this[ element.type ]( element, state )
+				if ( ++i < length ) {
 					code.push( ', ' )
-				else
+				} else {
+					if ( element == null )
+						code.push( ', ' )
 					break
+				}
 			}
 		}
 		code.push( ']' )
