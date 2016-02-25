@@ -166,6 +166,6 @@ npm run benchmark
 ## Roadmap
 
 Future releases will include the following features:
-- *0.5*: input and output streams support
-- *0.6*: source map support
-- *0.7*: JavaScript 7 support
+- **0.5**: input and output streams support
+- **0.6**: source map support
+- **0.7**: JavaScript 7 support
