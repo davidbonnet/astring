@@ -19,16 +19,21 @@ try {
 
 
 var stripLocation = astravel.makeTraveler( {
-   go: function( node, state ) {
-      delete node.start;
-      delete node.end;
-      this[node.type]( node, state );
-   }
-} );
+	go: function( node, state ) {
+		delete node.start
+		delete node.end
+		this[ node.type ]( node, state )
+	},
+	Property: function( node, state ) {
+		this.go( node.key, state )
+		// Always walk through value, regardless of `node.shorthand` flag
+		this.go( node.value, state )
+	}
+} )
 
 
 describe( 'Syntax check', function() {
-	this.timeout(0)
+	this.timeout( 0 )
 	var dirname = path.join( __dirname, 'syntax' )
 	var files = fs.readdirSync( dirname ).sort()
 	var options = {
@@ -46,8 +51,8 @@ describe( 'Syntax check', function() {
 
 
 describe( 'Tree comparison', function() {
-	this.timeout(0)
-	var dirname = path.join( __dirname, 'syntax' )
+	this.timeout( 0 )
+	var dirname = path.join( __dirname, 'tree' )
 	var files = fs.readdirSync( dirname ).sort()
 	var options = {
 		ecmaVersion: 6,
@@ -67,7 +72,7 @@ describe( 'Tree comparison', function() {
 
 
 describe( 'Deprecated syntax check', function() {
-	this.timeout(0)
+	this.timeout( 0 )
 	var dirname = path.join( __dirname, 'deprecated' )
 	var files = fs.readdirSync( dirname ).sort()
 	files.forEach( function( filename ) {
@@ -82,7 +87,7 @@ describe( 'Deprecated syntax check', function() {
 
 
 describe( 'Comment generation', function() {
-	this.timeout(0)
+	this.timeout( 0 )
 	var dirname = path.join( __dirname, 'comment' )
 	var files = fs.readdirSync( dirname ).sort()
 	var options = {
