@@ -825,6 +825,13 @@ let traveler = {
 			this[ node.property.type ]( node.property, state )
 		}
 	},
+	MetaProperty( node, state ) {
+		state.code.push(
+			node.meta.name,
+			'.',
+			node.property.name
+		)
+	},
 	Identifier( node, state ) {
 		state.code.push( node.name )
 	},
