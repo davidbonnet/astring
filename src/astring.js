@@ -43,7 +43,7 @@ const EXPRESSIONS_PRECEDENCE = {
 	TaggedTemplateExpression: 20,
 	ThisExpression: 20,
 	Identifier: 20,
-	Literal: 20,
+	Literal: 18,
 	TemplateLiteral: 20,
 	Super: 20,
 	SequenceExpression: 20,
@@ -243,7 +243,9 @@ let traveler = {
 		state.code.push( ';' )
 	},
 	ExpressionStatement( node, state ) {
-		if ( EXPRESSIONS_PRECEDENCE[ node.expression.type ] === 17 ) {
+		const precedence = EXPRESSIONS_PRECEDENCE[ node.expression.type ]
+		if ( precedence === 17 || ( precedence === 3 && node.expression.left.type[ 0 ] === 'O' ) ) {
+			// Should always have parentheses or is an AssignmentExpression to an ObjectPattern
 			state.code.push( '(' )
 			this[ node.expression.type ]( node.expression, state )
 			state.code.push( ')' )
@@ -421,6 +423,7 @@ let traveler = {
 		code.push( ' ' )
 		this[ node.body.type ]( node.body, state )
 	},
+	FunctionExpression: FunctionDeclaration,
 	VariableDeclaration( node, state ) {
 		const { code } = state
 		const { declarations } = node
@@ -545,9 +548,9 @@ let traveler = {
 		const { code } = state
 		if ( node.static )
 			code.push( 'static ' )
-		switch ( node.kind ) {
-			case 'get':
-			case 'set':
+		switch ( node.kind[ 0 ] ) {
+			case 'g': // `get`
+			case 's': // `set`
 				code.push( node.kind, ' ' )
 				break
 			default:
@@ -723,7 +726,6 @@ let traveler = {
 		}
 		code.push( '}' )
 	},
-	FunctionExpression: FunctionDeclaration,
 	SequenceExpression( node, state ) {
 		formatSequence( node.expressions, state, this )
 	},
@@ -768,9 +770,18 @@ let traveler = {
 	},
 	BinaryExpression: BinaryExpression = function( node, state ) {
 		const { code } = state
-		formatBinaryExpressionPart( node.left, node, false, state, this )
-		code.push( ' ', node.operator, ' ' )
-		formatBinaryExpressionPart( node.right, node, true, state, this )
+		if ( node.operator === 'in' ) {
+			// Avoids confusion in `for` loops initializers
+			code.push( '(' )
+			formatBinaryExpressionPart( node.left, node, false, state, this )
+			code.push( ' ', node.operator, ' ' )
+			formatBinaryExpressionPart( node.right, node, true, state, this )
+			code.push( ')' )
+		} else {
+			formatBinaryExpressionPart( node.left, node, false, state, this )
+			code.push( ' ', node.operator, ' ' )
+			formatBinaryExpressionPart( node.right, node, true, state, this )
+		}
 	},
 	LogicalExpression: BinaryExpression,
 	ConditionalExpression( node, state ) {
