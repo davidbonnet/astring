@@ -600,7 +600,7 @@ let traveler = {
 	SpreadElement: RestElement,
 	YieldExpression( node, state ) {
 		const { code } = state
-		code.push( 'yield' )
+		code.push( node.delegate ? 'yield*' : 'yield' )
 		if ( node.argument ) {
 			code.push( ' ' )
 			this[ node.argument.type ]( node.argument, state )
