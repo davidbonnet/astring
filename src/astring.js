@@ -556,6 +556,8 @@ let traveler = {
 			default:
 				break
 		}
+		if ( node.value.generator )
+			code.push( '*' )
 		if ( node.computed ) {
 			code.push( '[' )
 			this[ node.key.type ]( node.key, state )
