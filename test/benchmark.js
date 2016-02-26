@@ -33,7 +33,7 @@ function benchmarkWithCode( code ) {
 		beautify: true
 	}
 
-	console.log( "\n\nTesting code:" )
+	console.log( '\n\nTesting code:' )
 	console.log( astring( ast ) )
 
 	var suite = ( new Benchmark.Suite )
@@ -54,10 +54,10 @@ function benchmarkWithCode( code ) {
 	} )
 	// add listeners
 	.on( 'cycle', function( event ) {
-	  console.log( String( event.target ) )
-	})
+		console.log( String( event.target ) )
+	} )
 	.on( 'complete', function() {
-	  console.log( 'Fastest is ' + this.filter( 'fastest' ).map( 'name' ) )
+		console.log( 'Fastest is ' + this.filter( 'fastest' ).map( 'name' ) )
 	} )
 	.run()
 }
@@ -65,6 +65,6 @@ function benchmarkWithCode( code ) {
 code = fs.readFileSync( path.join( __dirname, 'index.js' ), 'utf8' )
 benchmarkWithCode( code )
 
-benchmarkWithCode( "var a = 2;" )
+benchmarkWithCode( 'var a = 2;' )
 
 
