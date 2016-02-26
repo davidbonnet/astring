@@ -309,8 +309,8 @@ let traveler = {
 		this[ node.discriminant.type ]( node.discriminant, state )
 		code.push( ') \{', lineEnd )
 		const { cases: occurences } = node
-		const { length } = occurences
-		for ( let i = 0; i < length; i++ ) {
+		const { length: occurencesCount } = occurences
+		for ( let i = 0; i < occurencesCount; i++ ) {
 			let occurence = occurences[ i ]
 			if ( writeComments && occurence.comments != null )
 				formatComments( occurence.comments, code, caseIndent, lineEnd )
@@ -322,8 +322,8 @@ let traveler = {
 				code.push( caseIndent, 'default:', lineEnd )
 			}
 			let { consequent } = occurence
-			const { length } = consequent
-			for ( let i = 0; i < length; i++ ) {
+			const { length: consequentCount } = consequent
+			for ( let i = 0; i < consequentCount; i++ ) {
 				let statement = consequent[ i ]
 				if ( writeComments && statement.comments != null )
 					formatComments( statement.comments, code, statementIndent, lineEnd )
