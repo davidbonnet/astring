@@ -8,8 +8,8 @@
       "resolved": "https://registry.npmjs.org/acorn/-/acorn-2.5.2.tgz"
     },
     "astravel": {
-      "version": "0.3.12",
-      "from": "astravel@0.3.12"
+      "version": "0.3.13",
+      "from": "astravel@0.3.13"
     },
     "babel-preset-es2015": {
       "version": "6.0.14",
