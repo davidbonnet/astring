@@ -251,9 +251,6 @@ function*g(a, b = 0, [c,, d = 0, ...e], {f, g: h, i = 0, i: j = 0}, ...k){
 (function * g(a, b = 0, [c,, d = 0, ...e], {f, g: h, i = 0, i: j = 0}, ...k){
   return a = yield* b = yield c = yield yield;
 })
-yield;
-yield +0;
-yield * 0;
 
 (function(){});
 (function(x){});
