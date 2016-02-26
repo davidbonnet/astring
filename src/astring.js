@@ -77,7 +77,8 @@ function formatSequence( nodes, state, traveler ) {
 	code.push( '(' )
 	if ( nodes != null && nodes.length > 0 ) {
 		traveler[ nodes[ 0 ].type ]( nodes[ 0 ], state )
-		for ( let i = 1, { length } = nodes; i < length; i++ ) {
+		const { length } = nodes
+		for ( let i = 1; i < length; i++ ) {
 			let param = nodes[ i ]
 			code.push( ', ' )
 			traveler[ param.type ]( param, state )
@@ -154,7 +155,8 @@ function formatComments( comments, code, indent, lineEnd ) {
 	Line comments will end with `"\n"` regardless of the value of `lineEnd`.
 	Expects to start on a new unindented line.
 	*/
-	for ( let i = 0, { length } = comments; i < length; i++ ) {
+	const { length } = comments
+	for ( let i = 0; i < length; i++ ) {
 		let comment = comments[ i ]
 		code.push( indent )
 		if ( comment.type[ 0 ] === 'L' )
@@ -196,7 +198,8 @@ let traveler = {
 		if ( writeComments && node.comments != null )
 			formatComments( node.comments, code, indent, lineEnd )
 		let statements = node.body
-		for ( let i = 0, { length } = statements; i < length; i++ ) {
+		const { length } = statements
+		for ( let i = 0; i < length; i++ ) {
 			let statement = statements[ i ]
 			if ( writeComments && statement.comments != null )
 				formatComments( statement.comments, code, indent, lineEnd )
@@ -218,7 +221,8 @@ let traveler = {
 			if ( writeComments && node.comments != null ) {
 				formatComments( node.comments, code, statementIndent, lineEnd )
 			}
-			for ( let i = 0, { length } = statements; i < length; i++ ) {
+			const { length } = statements
+			for ( let i = 0; i < length; i++ ) {
 				let statement = statements[ i ]
 				if ( writeComments && statement.comments != null )
 					formatComments( statement.comments, code, statementIndent, lineEnd )
@@ -305,7 +309,8 @@ let traveler = {
 		this[ node.discriminant.type ]( node.discriminant, state )
 		code.push( ') \{', lineEnd )
 		const { cases: occurences } = node
-		for ( let i = 0, { length } = occurences; i < length; i++ ) {
+		const { length } = occurences
+		for ( let i = 0; i < length; i++ ) {
 			let occurence = occurences[ i ]
 			if ( writeComments && occurence.comments != null )
 				formatComments( occurence.comments, code, caseIndent, lineEnd )
@@ -317,7 +322,8 @@ let traveler = {
 				code.push( caseIndent, 'default:', lineEnd )
 			}
 			let { consequent } = occurence
-			for ( let i = 0, { length } = consequent; i < length; i++ ) {
+			const { length } = consequent
+			for ( let i = 0; i < length; i++ ) {
 				let statement = consequent[ i ]
 				if ( writeComments && statement.comments != null )
 					formatComments( statement.comments, code, statementIndent, lineEnd )
@@ -615,7 +621,8 @@ let traveler = {
 		const { code } = state
 		const { quasis, expressions } = node
 		code.push( '`' )
-		for ( let i = 0, { length } = expressions; i < length; i++ ) {
+		const { length } = expressions
+		for ( let i = 0; i < length; i++ ) {
 			let expression = expressions[ i ]
 			code.push( quasis[ i ].value.raw )
 			code.push( '${' )
