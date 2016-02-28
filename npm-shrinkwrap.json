@@ -7269,6 +7269,11 @@
         }
       }
     },
+    "source-map": {
+      "version": "0.5.3",
+      "from": "source-map@*",
+      "resolved": "https://registry.npmjs.org/source-map/-/source-map-0.5.3.tgz"
+    },
     "string.prototype.repeat": {
       "version": "0.2.0",
       "from": "https://registry.npmjs.org/string.prototype.repeat/-/string.prototype.repeat-0.2.0.tgz",
