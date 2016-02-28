@@ -4,6 +4,7 @@ var uglify = require( 'uglify-js' )
 var escodegen = require( 'escodegen' ).generate
 var esotope = require( 'esotope' ).generate
 var esast = require( 'esast/dist/render' ).default
+var nodent = require( '../vendor/nodent' )
 var jsonToEsast = require( 'esast/dist/fromJson' ).default
 var astring
 try {
@@ -36,7 +37,7 @@ function benchmarkWithCode( code ) {
 	console.log( '\n\nTesting code:' )
 	console.log( astring( ast ) )
 
-	var suite = ( new Benchmark.Suite )
+	;( new Benchmark.Suite )
 	.add( 'escodegen', function() {
 		escodegen( ast )
 	} )
@@ -51,6 +52,9 @@ function benchmarkWithCode( code ) {
 	} )
 	.add( 'esast', function() {
 		esast( jsonToEsast( ast ) )
+	} )
+	.add( 'nodent', function() {
+		nodent( ast )
 	} )
 	// add listeners
 	.on( 'cycle', function( event ) {
