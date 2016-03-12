@@ -1,7 +1,7 @@
 /*eslint-disable */
 
 // From: https://github.com/MatAtBread/nodent/blob/master/lib/output.js
-// Commit: https://github.com/MatAtBread/nodent/commit/cddd025e596f6956b0684eac4d5eab9633f75f54
+// Commit: https://github.com/MatAtBread/nodent/commit/c1c1029e158fc3d3316f44128e9f282ce287bc54
 
 'use strict';
 
@@ -22,30 +22,43 @@
 var SourceMapGenerator = require('source-map').SourceMapGenerator;
 var ForInStatement, RestElement, BinaryExpression, ArrayExpression, traveler;
 
-function repeat(str, count) {
-    var out = [];
-    while (count--) {
-        out.push(str);
+var repeat ;
+if ("".repeat) {
+    repeat = function(str,count){
+        return count && str ? str.repeat(count):"" ;
+    } ;
+} else {
+    var cache = {} ;
+    repeat = function(str,count) {
+        if (!count || !str) return "" ;
+        var k = ""+str+count ;
+        if (!cache[k]) {
+            var out = [];
+            while (count--) {
+                out.push(str);
+            }
+            cache[k] = out.join('');
+        }
+        return cache[k] ;
     }
-    return out.join('');
 }
 
 var OPERATORS_PRECEDENCE = {
     'ExpressionStatement': -1, //  Use to parenthesize FunctionExpressions as statements
     'Identifier': 21,
     'Literal': 21,
-  'BooleanLiteral':21,
-  'RegExpLiteral':21,
-  'NumericLiteral':21,
-  'StringLiteral':21,
-  'NullLiteral':21,
+    'BooleanLiteral':21,
+    'RegExpLiteral':21,
+    'NumericLiteral':21,
+    'StringLiteral':21,
+    'NullLiteral':21,
     'ThisExpression': 21,
     'SuperExpression': 21,
     'ObjectExpression': 21,
     'ClassExpression': 21,
-    //    '(_)':20, // Parens
+    //      '(_)':20,   // Parens
     'MemberExpression': 19,
-    //    'new()':19,
+    //      'new()':19,
     'CallExpression': 18,
     'NewExpression': 18,
     'ArrayExpression': 17.5,
@@ -102,39 +115,42 @@ function precedence(node) {
     return 20;
 }
 
-traveler = {
-  out: function(node,state,type) {
+function out(node,state,type) {
     var f = this[type || node.type] ;
     if (f)
-      f.call(this, node, state);
+        f.call(this, node, state);
     else // Unknown node type - just spew its source
-      state.write(node,state.sourceAt(node.start,node.end)) ;
-  },
-    expr: function expr(state, parent, node, assoc) {
-        if (assoc==2 ||
+        state.write(node,state.sourceAt(node.start,node.end)) ;
+} 
+function expr(state, parent, node, assoc) {
+    if (assoc===2 ||
             precedence(node) < precedence(parent) ||
             (precedence(node) == precedence(parent) && (assoc || parent.right === node))) {
-            state.write(null, '(');
-            this.out(node, state,node.type);
-            state.write(null, ')');
-        } else {
-            this.out(node, state,node.type);
-        }
-    },
-    formatParameters: function formatParameters(node, state) {
-        var param, params;
-        params = node.params;
         state.write(null, '(');
-        if (params != null && params.length > 0) {
-            this.out(params[0], state,params[0].type);
-            for (var i = 1, length = params.length; i < length; i++) {
-                param = params[i];
-                state.write(param, ', ');
-                this.out(param, state,param.type);
-            }
+        this.out(node, state,node.type);
+        state.write(null, ')');
+    } else {
+        this.out(node, state,node.type);
+    }
+}
+function formatParameters(node, state) {
+    var param, params;
+    params = node.params;
+    state.write(null, '(');
+    if (params != null && params.length > 0) {
+        this.out(params[0], state,params[0].type);
+        for (var i = 1, length = params.length; i < length; i++) {
+            param = params[i];
+            state.write(param, ', ');
+            this.out(param, state,param.type);
         }
-        state.write(null, ') ');
-    },
+    }
+    state.write(null, ') ');
+}
+traveler = {
+    out: out,
+    expr: expr,
+    formatParameters: formatParameters,
     Program: function (node, state) {
         var statements, statement;
         var indent = repeat(state.indent, state.indentLevel);
@@ -607,7 +623,7 @@ traveler = {
         state.indentLevel--;
     },
     Property: function (node, state) {
-        if (node.method || (node.kind == 'get' || node.kind == 'set')) {
+        if (node.method || (node.kind === 'get' || node.kind === 'set')) {
             this.MethodDefinition(node, state);
         } else {
             if (!node.shorthand) {
@@ -645,7 +661,7 @@ traveler = {
             for (var i = 0; i<length; i++) {
                 expression = expressions[i];
                 if (i)
-                  state.write(null, ', ') ;
+                    state.write(null, ', ') ;
                 this.expr(state,CommaList,expression) ;
             }
         }
@@ -712,17 +728,17 @@ traveler = {
             var length = args.length;
             for (var i = 0; i < length; i++) {
                 if (i!=0)
-                  state.write(null, ', ');
+                    state.write(null, ', ');
                 this.expr(state,CommaList,args[i]) ;
             }
         }
         state.write(null, ')');
     },
     MemberExpression: function (node, state) {
-      var requireParens = (node.object.type === 'ObjectExpression' || (node.object.type.match(/Literal$/) && node.object.raw.match(/^[0-9]/))) ;
+        var requireParens = (node.object.type === 'ObjectExpression' || (node.object.type.match(/Literal$/) && node.object.raw.match(/^[0-9]/))) ;
         var noParens = !requireParens &&
-          ((node.object.type === 'ArrayExpression' || node.object.type === 'CallExpression' || node.object.type === 'NewExpression')
-          || precedence(node) <= precedence(node.object));
+            ((node.object.type === 'ArrayExpression' || node.object.type === 'CallExpression' || node.object.type === 'NewExpression')
+            || precedence(node) <= precedence(node.object));
         if (noParens) {
             this.out(node.object, state,node.object.type);
         } else {
@@ -768,88 +784,90 @@ module.exports = function (node, options, originalSource) {
     if (map && options.map.sourceContent) {
         map.setSourceContent(options.map.file, options.map.sourceContent);
     }
-    var backBy = 0;
+    var backBy = "";
     var leadingComments = [];
     var trailingComments = [];
-    var st = {
-        inForInit: 0,
-        lineLength: function () {
-            return buffer.length;
-        },
-        sourceAt:function(start, end) {
-          return originalSource?originalSource.substring(start,end):"/* Omitted Non-standard node */" ;
-        },
-        write: function (node) {
-            var parts;
-            parts = [].slice.call(arguments, 1);
-            backBy = parts[parts.length - 1].length;
-            for (var i = 0; i < parts.length; i++) {
-                if (map && node && node.loc && node.loc.start) {
-                    var startOfLine = false;
-                    map.addMapping({
-                        source: options.map.file,
-                        original: {
-                            line: node.loc.start.line,
-                            column: startOfLine ? 0 : node.loc.start.column
-                        },
-                        generated: {
-                            line: options.map.startLine + lines.length + 1,
-                            column: startOfLine ? 0 : buffer.length
+    function write(node) {
+        backBy = arguments[arguments.length - 1] ;
+        for (var i = 1; i < arguments.length; i++) {
+            if (map && node && node.loc && node.loc.start) {
+                var startOfLine = false;
+                map.addMapping({
+                    source: options.map.file,
+                    original: {
+                        line: node.loc.start.line,
+                        column: startOfLine ? 0 : node.loc.start.column
+                    },
+                    generated: {
+                        line: options.map.startLine + lines.length + 1,
+                        column: startOfLine ? 0 : buffer.length
+                    }
+                });
+            }
+            if (arguments[i] === st.lineEnd) {
+                if (trailingComments.length) {
+                    trailingComments.forEach(function (c) {
+                        if (c.type === 'Line')
+                            buffer += " // " + c.value;
+                         else {
+                            (" /*" + c.value + "*/").split("\n").forEach(function (v) {
+                                buffer += v;
+                                lines.push(buffer);
+                                buffer = "";
+                            });
+                            buffer = lines.pop();
                         }
                     });
+                    trailingComments = [];
                 }
-                if (parts[i] == st.lineEnd) {
-                    if (trailingComments.length) {
-                        trailingComments.forEach(function (c) {
-                            if (c.type === 'Line')
-                                buffer += " // " + c.value;
-                             else {
-                                (" /*" + c.value + "*/").split("\n").forEach(function (v) {
-                                    buffer += v;
-                                    lines.push(buffer);
-                                    buffer = "";
-                                });
-                                buffer = lines.pop();
-                            }
+                lines.push(buffer);
+                buffer = "";
+                if (leadingComments.length) {
+                    var preceeding = lines.pop();
+                    leadingComments.forEach(function (c) {
+                        var indent = repeat(st.indent, c.indent);
+                        if (c.type === "Line")
+                            lines.push(indent + "//" + c.value);
+                         else
+                            (indent + "/*" + c.value + "*/").split("\n").forEach(function (l) {
+                            lines.push(l);
                         });
-                        trailingComments = [];
-                    }
-                    lines.push(buffer);
-                    buffer = "";
-                    if (leadingComments.length) {
-                        var preceeding = lines.pop();
-                        leadingComments.forEach(function (c) {
-                            var indent = repeat(st.indent, c.indent);
-                            if (c.type == "Line")
-                                lines.push(indent + "//" + c.value);
-                             else
-                                (indent + "/*" + c.value + "*/").split("\n").forEach(function (l) {
-                                lines.push(l);
-                            });
-                        });
-                        lines.push(preceeding);
-                        leadingComments = [];
-                    }
-                } else {
-                    buffer += parts[i];
-                    if (node && node.$comments) {
-                        node.$comments.forEach(function (c) {
-                            var trailing = node.loc.start.column < c.loc.start.column;
-                            c.indent = st.indentLevel;
-                            if (trailing) {
-                                trailingComments.push(c);
-                            } else {
-                                leadingComments.push(c);
-                            }
-                        });
-                        node.$comments = null;
-                    }
+                    });
+                    lines.push(preceeding);
+                    leadingComments = [];
+                }
+            } else {
+                buffer += arguments[i];
+                if (node && node.$comments) {
+                    node.$comments.forEach(function (c) {
+                        var trailing = node.loc.start.column < c.loc.start.column;
+                        c.indent = st.indentLevel;
+                        if (trailing) {
+                            trailingComments.push(c);
+                        } else {
+                            leadingComments.push(c);
+                        }
+                    });
+                    node.$comments = null;
                 }
             }
-        },
-        back: function () {
-            buffer = buffer.substring(0, buffer.length - backBy);
-        },
+        }
+    }
+    function lineLength() {
+        return buffer.length;
+    }
+    function sourceAt(start, end) {
+        return originalSource?originalSource.substring(start,end):"/* Omitted Non-standard node */" ;
+    }
+    function back() {
+        buffer = buffer.substring(0, buffer.length - backBy.length);
+    }
+    var st = {
+        inForInit: 0,
+        lineLength: lineLength,
+        sourceAt:sourceAt,
+        write: write,
+        back: back,
         indent: "    ",
         lineEnd: "\n",
         indentLevel: 0,
