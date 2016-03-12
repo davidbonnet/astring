@@ -3,19 +3,25 @@ var fs = require( 'fs' )
 var path = require( 'path' )
 var acorn = require( 'acorn' )
 var astravel = require( 'astravel' )
-var astring
-try {
-	astring = require( '../dist/astring.debug' )
-	console.log( 'Using ./dist/astring.debug.js' )
-} catch ( error ) {
-	try {
-		astring = require( '../dist/astring.min' )
-		console.log( 'Using ./dist/astring.min.js' )
-	} catch ( error ) {
-		astring = require( '../dist/astring' )
-		console.log( 'Using ./dist/astring.js' )
-	}
-}
+var astring = require( '../dist/astring.instrumented' )
+
+// try {
+// 	astring = require( '../dist/astring.instrumented' )
+// 	console.log( 'Using ./dist/astring.instrumented.js' )
+// } catch ( error ) {
+// 	try {
+// 		astring = require( '../dist/astring.debug' )
+// 		console.log( 'Using ./dist/astring.debug.js' )
+// 	} catch ( error ) {
+// 		try {
+// 			astring = require( '../dist/astring.min' )
+// 			console.log( 'Using ./dist/astring.min.js' )
+// 		} catch ( error ) {
+// 			astring = require( '../dist/astring' )
+// 			console.log( 'Using ./dist/astring.js' )
+// 		}
+// 	}
+// }
 
 
 var stripLocation = astravel.makeTraveler( {
