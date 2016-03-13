@@ -9,15 +9,15 @@ try {
 var version = require( '../package' ).version
 var fs = require( 'fs' )
 var path = require( 'path' )
+
+
 var argv = process.argv.slice( 2 )
 var length = argv.length
-
 var options = {
 	indent: '\t',
 	lindeEnd: '\n',
 	startingIndentLevel: 0
 }
-
 var files = []
 
 function printHelp( status ) {
@@ -25,26 +25,13 @@ function printHelp( status ) {
 	var binName = path.basename( process.argv[ 1 ] )
 	print( 'Usage: ' + binName + ' [-h, --help] [-v, --version]' )
 	print( '       ' + binName + ' [-i, --indent INDENT] [-l, --line-end LINE_END] [-s, --starting-indent-level LEVEL] files...' )
+	process.exit( status )
 }
 
 function printVersion() {
-	var print = console.log
-	print( version )
+	console.log( version )
+	process.exit( 0 )
 }
-
-function emptyStdinAndExitWith( status ) {
-	// Exhaust any stdin input and exit
-	process.stdin.read(0)
-	process.stdin
-	.on( 'dataready', function() {
-		process.stdin.read()
-	} )
-	.on( 'end', function () {
-		process.exit( status )
-	} )
-}
-
-var stop = false
 
 for ( var i = 0; i < length; i++ ) {
 	var arg = argv[ i ]
@@ -65,20 +52,14 @@ for ( var i = 0; i < length; i++ ) {
 			case '-h':
 			case '--help':
 				printHelp( 0 )
-				emptyStdinAndExitWith( 0 )
-				stop = true
 				break
 			case '-v':
 			case '--version':
 				printVersion()
-				emptyStdinAndExitWith( 0 )
-				stop = true
 				break
 			default:
 				console.error( 'Option "' + arg + '" not supported.' )
 				printHelp( 1 )
-				emptyStdinAndExitWith( 1 )
-				stop = true
 				break
 		}
 	} else {
@@ -86,39 +67,39 @@ for ( var i = 0; i < length; i++ ) {
 	}
 }
 
-if ( !stop ) {
-	if ( files.length === 0 ) {
-		var data = []
-		process.stdin.setEncoding( 'utf8' )
-		process.stdin
-		.on( 'readable', function() {
-			var chunk = process.stdin.read()
-			if ( chunk == null )
-				process.stdin.pause()
-			else {
-				data.push( chunk )
-			}
-		} )
-		.on( 'end', function() {
-			try {
-				console.log( astring( JSON.parse( data.join( '' ) ), options ) )				
-			} catch ( error ) {
-				console.error( 'Error: ' + error.message )
-				process.exit( 1 )
-			}
-		} )
-	} else {
-		length = files.length
-		for ( var i = 0; i < length; i++ ) {
-			try {
-				var file = files[i]
-				console.log( astring( JSON.parse( fs.readFileSync( file, 'utf8' ) ), options ) )				
-			} catch ( error ) {
-				console.error( 'Error: ' + error.message )
-				printHelp( 1 )
-				emptyStdinAndExitWith( 1 )
-			}
+options.output = process.stdout
+
+if ( files.length === 0 ) {
+	var data = ''
+	process.stdin.setEncoding( 'utf8' )
+	process.stdin.resume()
+	process.stdin
+	.on( 'data', function( chunk ) {
+		data += chunk
+	} )
+	.on( 'end', function() {
+		try {
+			astring( JSON.parse( data ), options )
+		} catch ( error ) {
+			console.error( 'Error: ' + error.message )
+			process.exit( 1 )
+		}
+	} )
+} else {
+	length = files.length
+	var hasError = false
+	for ( var i = 0; i < length; i++ ) {
+		try {
+			var file = files[ i ]
+			astring( JSON.parse( fs.readFileSync( file, 'utf8' ) ), options )
+		} catch ( error ) {
+			console.error( 'Error: ' + error.message )
+			if ( hasError !== true )
+				hasError = true
 		}
 	}
+	if ( hasError )
+		process.exit( 1 )
 }
+
 
