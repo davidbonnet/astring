@@ -385,10 +385,12 @@ let traveler = {
 		const { code } = state
 		code.write( 'for (' )
 		if ( node.init != null ) {
-			const { init } = node, { type } = init
-			this[ type ]( init, state )
+			const { init } = node
+			state.noTrailingSemicolon = true
+			this[ node.init.type ]( node.init, state )
+			state.noTrailingSemicolon = false
 		}
-		code.write( code.getLast() === ';' ? ' ' : '; ' )
+		code.write( '; ' )
 		if ( node.test )
 			this[ node.test.type ]( node.test, state )
 		code.write( '; ' )
@@ -855,23 +857,18 @@ let traveler = {
 }
 
 
-class StringBuffer {
+class Stream {
 
 	constructor() {
-		this.buffer = ''
+		this.data = ''
 	}
 	
 	write( string ) {
-		this.buffer += string;
-	}
-
-	getLast() {
-		const { buffer } = this
-		return buffer[ buffer.length - 1 ]
+		this.data += string;
 	}
 
 	toString() {
-		return this.buffer
+		return this.data
 	}
 
 }
@@ -886,9 +883,10 @@ export default function astring( node, options ) {
 	- `lineEnd`: string to use for line endings (defaults to `\n`)
 	- `startingIndentLevel`: indent level to start from (default to `0`)
 	- `comments`: generate comments if `true` (defaults to `false`)
+	- `output`: output stream to write the rendered code to (defaults to `null`)
 	*/
 	const state = ( options == null ) ? {
-		code: new StringBuffer(),
+		code: new Stream(),
 		indent: '\t',
 		lineEnd: '\n',
 		indentLevel: 0,
@@ -896,7 +894,7 @@ export default function astring( node, options ) {
 		noTrailingSemicolon: false
 	} : {
 		// Will contain the resulting code as an array of code strings
-		code: new StringBuffer(),
+		code: options.output ? options.output : new Stream(),
 		// Formating options
 		indent: options.indent != null ? options.indent : '\t',
 		lineEnd: options.lineEnd != null ? options.lineEnd : '\n',
@@ -906,5 +904,6 @@ export default function astring( node, options ) {
 	}
 	// Travel through the AST node and generate the code
 	traveler[ node.type ]( node, state )
-	return state.code.toString()
+	const { code } = state
+	return code.data ? code.data : code
 }

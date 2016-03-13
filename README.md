@@ -46,13 +46,14 @@ The path to the module file is `dist/astring.min.js` and can be linked to from a
 
 A [live demo](http://bonnet.cc/astring/demo.html) showing Astring in action is available.
 
-The `astring` module consists of a function that takes two arguments: `node` and `options`. It returns a string representing the rendered code of the provided AST `node`.
+The `astring` module consists of a function that takes two arguments: `node` and `options`. It returns a string representing the rendered code of the provided AST `node`. However, if an `output` stream is provided in the options, it write to that stream and returns it.
 The `options` are:
 
 - `indent`: string to use for indentation (defaults to `"\t"`)
 - `lineEnd`: string to use for line endings (defaults to `"\n"`)
 - `startingIndentLevel`: indent level to start from (defaults to `0`)
 - `comments`: generate comments if `true` (defaults to `false`)
+- `output`: output stream to write the rendered code to (defaults to `null`)
 
 ### Example
 
