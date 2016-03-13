@@ -74,17 +74,17 @@ function formatSequence( nodes, state, traveler ) {
 	Formats a sequence of `nodes` into the `code` array.
 	*/
 	const { code } = state
-	code.push( '(' )
+	code.write( '(' )
 	if ( nodes != null && nodes.length > 0 ) {
 		traveler[ nodes[ 0 ].type ]( nodes[ 0 ], state )
 		const { length } = nodes
 		for ( let i = 1; i < length; i++ ) {
 			let param = nodes[ i ]
-			code.push( ', ' )
+			code.write( ', ' )
 			traveler[ param.type ]( param, state )
 		}
 	}
-	code.push( ')' )
+	code.write( ')' )
 }
 
 
@@ -117,9 +117,9 @@ function formatBinaryExpressionPart( node, parentNode, isRightHand, state, trave
 			return
 		}
 	}
-	state.code.push( '(' )
+	state.code.write( '(' )
 	traveler[ node.type ]( node, state )
-	state.code.push( ')' )
+	state.code.write( ')' )
 }
 
 
@@ -158,13 +158,13 @@ function formatComments( comments, code, indent, lineEnd ) {
 	const { length } = comments
 	for ( let i = 0; i < length; i++ ) {
 		let comment = comments[ i ]
-		code.push( indent )
+		code.write( indent )
 		if ( comment.type[ 0 ] === 'L' )
 			// Line comment
-			code.push( '// ', comment.value.trim(), '\n' )
+			code.write( '// ' + comment.value.trim() + '\n' )
 		else
 			// Block comment
-			code.push( '/*', lineEnd, reindent( comment.value, indent ), lineEnd, indent, '*/', lineEnd )
+			code.write( '/*' + lineEnd + reindent( comment.value, indent ) + lineEnd + indent + '*/' + lineEnd )
 	}
 }
 
@@ -203,9 +203,9 @@ let traveler = {
 			let statement = statements[ i ]
 			if ( writeComments && statement.comments != null )
 				formatComments( statement.comments, code, indent, lineEnd )
-			code.push( indent )
+			code.write( indent )
 			this[ statement.type ]( statement, state )
-			code.push( lineEnd )
+			code.write( lineEnd )
 		}
 		if ( writeComments && node.trailingComments != null )
 			formatComments( node.trailingComments, code, indent, lineEnd )
@@ -214,10 +214,10 @@ let traveler = {
 		const indent = state.indent.repeat( state.indentLevel++ )
 		const { lineEnd, code, writeComments } = state
 		const statementIndent = indent + state.indent
-		code.push( '{' )
+		code.write( '{' )
 		let statements = node.body
 		if ( statements != null && statements.length > 0 ) {
-			code.push( lineEnd )
+			code.write( lineEnd )
 			if ( writeComments && node.comments != null ) {
 				formatComments( node.comments, code, statementIndent, lineEnd )
 			}
@@ -226,77 +226,77 @@ let traveler = {
 				let statement = statements[ i ]
 				if ( writeComments && statement.comments != null )
 					formatComments( statement.comments, code, statementIndent, lineEnd )
-				code.push( statementIndent )
+				code.write( statementIndent )
 				this[ statement.type ]( statement, state )
-				code.push( lineEnd )
+				code.write( lineEnd )
 			}
-			code.push( indent )
+			code.write( indent )
 		} else {
 			if ( writeComments && node.comments != null ) {
-				code.push( lineEnd )
+				code.write( lineEnd )
 				formatComments( node.comments, code, statementIndent, lineEnd )
-				code.push( indent )
+				code.write( indent )
 			}
 		}
 		if ( writeComments && node.trailingComments != null )
 			formatComments( node.trailingComments, code, statementIndent, lineEnd )
-		code.push( '}' )
+		code.write( '}' )
 		state.indentLevel--
 	},
 	EmptyStatement( node, state ) {
-		state.code.push( ';' )
+		state.code.write( ';' )
 	},
 	ExpressionStatement( node, state ) {
 		const precedence = EXPRESSIONS_PRECEDENCE[ node.expression.type ]
 		if ( precedence === 17 || ( precedence === 3 && node.expression.left.type[ 0 ] === 'O' ) ) {
 			// Should always have parentheses or is an AssignmentExpression to an ObjectPattern
-			state.code.push( '(' )
+			state.code.write( '(' )
 			this[ node.expression.type ]( node.expression, state )
-			state.code.push( ')' )
+			state.code.write( ')' )
 		} else {
 			this[ node.expression.type ]( node.expression, state )
 		}
-		state.code.push( ';' )
+		state.code.write( ';' )
 	},
 	IfStatement( node, state ) {
 		const { code } = state
-		code.push( 'if (' )
+		code.write( 'if (' )
 		this[ node.test.type ]( node.test, state )
-		code.push( ') ' )
+		code.write( ') ' )
 		this[ node.consequent.type ]( node.consequent, state )
 		if ( node.alternate != null ) {
-			code.push( ' else ' )
+			code.write( ' else ' )
 			this[ node.alternate.type ]( node.alternate, state )
 		}
 	},
 	LabeledStatement( node, state ) {
 		this[ node.label.type ]( node.label, state )
-		state.code.push( ': ' )
+		state.code.write( ': ' )
 		this[ node.body.type ]( node.body, state )
 	},
 	BreakStatement( node, state ) {
 		const { code } = state
-		code.push( 'break' )
+		code.write( 'break' )
 		if ( node.label ) {
-			code.push( ' ' )
+			code.write( ' ' )
 			this[ node.label.type ]( node.label, state )
 		}
-		code.push( ';' )
+		code.write( ';' )
 	},
 	ContinueStatement( node, state ) {
 		const { code } = state
-		code.push( 'continue' )
+		code.write( 'continue' )
 		if ( node.label ) {
-			code.push( ' ' )
+			code.write( ' ' )
 			this[ node.label.type ]( node.label, state )
 		}
-		code.push( ';' )
+		code.write( ';' )
 	},
 	WithStatement( node, state ) {
 		const { code } = state
-		code.push( 'with (' )
+		code.write( 'with (' )
 		this[ node.object.type ]( node.object, state )
-		code.push( ') ' )
+		code.write( ') ' )
 		this[ node.body.type ]( node.body, state )
 	},
 	SwitchStatement( node, state ) {
@@ -305,9 +305,9 @@ let traveler = {
 		state.indentLevel++
 		const caseIndent = indent + state.indent
 		const statementIndent = caseIndent + state.indent
-		code.push( 'switch (' )
+		code.write( 'switch (' )
 		this[ node.discriminant.type ]( node.discriminant, state )
-		code.push( ') \{', lineEnd )
+		code.write( ') \{' + lineEnd )
 		const { cases: occurences } = node
 		const { length: occurencesCount } = occurences
 		for ( let i = 0; i < occurencesCount; i++ ) {
@@ -315,11 +315,11 @@ let traveler = {
 			if ( writeComments && occurence.comments != null )
 				formatComments( occurence.comments, code, caseIndent, lineEnd )
 			if ( occurence.test ) {
-				code.push( caseIndent, 'case ' )
+				code.write( caseIndent + 'case ' )
 				this[ occurence.test.type ]( occurence.test, state )
-				code.push( ':', lineEnd )
+				code.write( ':' + lineEnd )
 			} else {
-				code.push( caseIndent, 'default:', lineEnd )
+				code.write( caseIndent + 'default:' + lineEnd )
 			}
 			let { consequent } = occurence
 			const { length: consequentCount } = consequent
@@ -327,157 +327,157 @@ let traveler = {
 				let statement = consequent[ i ]
 				if ( writeComments && statement.comments != null )
 					formatComments( statement.comments, code, statementIndent, lineEnd )
-				code.push( statementIndent )
+				code.write( statementIndent )
 				this[ statement.type ]( statement, state )
-				code.push( lineEnd )
+				code.write( lineEnd )
 			}
 		}
 		state.indentLevel -= 2
-		code.push( indent, '}' )
+		code.write( indent + '}' )
 	},
 	ReturnStatement( node, state ) {
 		const { code } = state
-		code.push( 'return' )
+		code.write( 'return' )
 		if ( node.argument ) {
-			code.push( ' ' )
+			code.write( ' ' )
 			this[ node.argument.type ]( node.argument, state )
 		}
-		code.push( ';' )
+		code.write( ';' )
 	},
 	ThrowStatement( node, state ) {
 		const { code } = state
-		code.push( 'throw ' )
+		code.write( 'throw ' )
 		this[ node.argument.type ]( node.argument, state )
-		code.push( ';' )
+		code.write( ';' )
 	},
 	TryStatement( node, state ) {
 		const { code } = state
-		code.push( 'try ' )
+		code.write( 'try ' )
 		this[ node.block.type ]( node.block, state )
 		if ( node.handler ) {
 			let { handler } = node
-			code.push( ' catch (' )
+			code.write( ' catch (' )
 			this[ handler.param.type ]( handler.param, state )
-			code.push( ') ' )
+			code.write( ') ' )
 			this[ handler.body.type ]( handler.body, state )
 		}
 		if ( node.finalizer ) {
-			code.push( ' finally ' )
+			code.write( ' finally ' )
 			this[ node.finalizer.type ]( node.finalizer, state )
 		}
 	},
 	WhileStatement( node, state ) {
 		const { code } = state
-		code.push( 'while (' )
+		code.write( 'while (' )
 		this[ node.test.type ]( node.test, state )
-		code.push( ') ' )
+		code.write( ') ' )
 		this[ node.body.type ]( node.body, state )
 	},
 	DoWhileStatement( node, state ) {
 		const { code } = state
-		code.push( 'do ' )
+		code.write( 'do ' )
 		this[ node.body.type ]( node.body, state )
-		code.push( ' while (' )
+		code.write( ' while (' )
 		this[ node.test.type ]( node.test, state )
-		code.push( ');' )
+		code.write( ');' )
 	},
 	ForStatement( node, state ) {
 		const { code } = state
-		code.push( 'for (' )
+		code.write( 'for (' )
 		if ( node.init != null ) {
 			const { init } = node, { type } = init
 			this[ type ]( init, state )
 		}
-		code.push( code.getLast() === ';' ? ' ' : '; ' )
+		code.write( code.getLast() === ';' ? ' ' : '; ' )
 		if ( node.test )
 			this[ node.test.type ]( node.test, state )
-		code.push( '; ' )
+		code.write( '; ' )
 		if ( node.update )
 			this[ node.update.type ]( node.update, state )
-		code.push( ') ' )
+		code.write( ') ' )
 		this[ node.body.type ]( node.body, state )
 	},
 	ForInStatement: ForInStatement = function( node, state ) {
 		const { code } = state
-		code.push( 'for (' )
+		code.write( 'for (' )
 		const { left } = node, { type } = left
 		state.noTrailingSemicolon = true
 		this[ type ]( left, state )
 		state.noTrailingSemicolon = false
 		// Identifying whether node.type is `ForInStatement` or `ForOfStatement`
-		code.push( node.type[ 3 ] === 'I' ? ' in ' : ' of ' )
+		code.write( node.type[ 3 ] === 'I' ? ' in ' : ' of ' )
 		this[ node.right.type ]( node.right, state )
-		code.push( ') ' )
+		code.write( ') ' )
 		this[ node.body.type ]( node.body, state )
 	},
 	ForOfStatement: ForInStatement,
 	DebuggerStatement( node, state ) {
-		state.code.push( 'debugger;', state.lineEnd )
+		state.code.write( 'debugger;' + state.lineEnd )
 	},
 	FunctionDeclaration: FunctionDeclaration = function( node, state ) {
 		const { code } = state
-		code.push( node.generator ? 'function* ' : 'function ' )
+		code.write( node.generator ? 'function* ' : 'function ' )
 		if ( node.id )
-			code.push( node.id.name )
+			code.write( node.id.name )
 		formatSequence( node.params, state, this )
-		code.push( ' ' )
+		code.write( ' ' )
 		this[ node.body.type ]( node.body, state )
 	},
 	FunctionExpression: FunctionDeclaration,
 	VariableDeclaration( node, state ) {
 		const { code } = state
 		const { declarations } = node
-		code.push( node.kind, ' ' )
+		code.write( node.kind + ' ' )
 		const { length } = declarations
 		if ( length > 0 ) {
 			this.VariableDeclarator( declarations[ 0 ], state )
 			for ( let i = 1; i < length; i++ ) {
-				code.push( ', ' )
+				code.write( ', ' )
 				this.VariableDeclarator( declarations[ i ], state )
 			}
 		}
 		if ( state.noTrailingSemicolon !== true )
-			code.push( ';' )
+			code.write( ';' )
 	},
 	VariableDeclarator( node, state ) {
 		this[ node.id.type ]( node.id, state )
 		if ( node.init != null ) {
-			state.code.push( ' = ' )
+			state.code.write( ' = ' )
 			this[ node.init.type ]( node.init, state )
 		}
 	},
 	ClassDeclaration( node, state ) {
 		const { code } = state
-		code.push( 'class ' )
+		code.write( 'class ' )
 		if ( node.id ) {
-			code.push( node.id.name + ' ' )
+			code.write( node.id.name + ' ' )
 		}
 		if ( node.superClass ) {
-			code.push( 'extends ' )
+			code.write( 'extends ' )
 			this[ node.superClass.type ]( node.superClass, state )
-			code.push( ' ' )
+			code.write( ' ' )
 		}
 		this.BlockStatement( node.body, state )
 	},
 	ImportDeclaration( node, state ) {
 		const { code } = state
-		code.push( 'import ' )
+		code.write( 'import ' )
 		const { specifiers } = node
 		const { length } = specifiers
 		if ( length > 0 ) {
 			let i = 0, specifier
 			while ( i < length ) {
 				if ( i > 0 )
-					code.push( ', ' )
+					code.write( ', ' )
 				specifier = specifiers[ i ]
 				const type = specifier.type[ 6 ]
 				if (type === 'D') {
 					// ImportDefaultSpecifier
-					code.push( specifier.local.name )
+					code.write( specifier.local.name )
 					i++
 				} else if (type === 'N') {
 					// ImportNamespaceSpecifier
-					code.push( '* as ', specifier.local.name )
+					code.write( '* as ' + specifier.local.name )
 					i++
 				} else {
 					// ImportSpecifier
@@ -485,88 +485,88 @@ let traveler = {
 				}
 			}
 			if ( i < length ) {
-				code.push( '{' )
+				code.write( '{' )
 				for ( ; ; ) {
 					specifier = specifiers[ i ]
 					let { name } = specifier.imported
-					code.push( name )
+					code.write( name )
 					if ( name !== specifier.local.name ) {
-						code.push( ' as ', specifier.local.name )
+						code.write( ' as ' + specifier.local.name )
 					}
 					if ( ++i < length )
-						code.push( ', ' )
+						code.write( ', ' )
 					else
 						break
 				}
-				code.push( '}' )
+				code.write( '}' )
 			}
-			code.push( ' from ' )
+			code.write( ' from ' )
 		}
-		code.push( node.source.raw )
-		code.push( ';' )
+		code.write( node.source.raw )
+		code.write( ';' )
 	},
 	ExportDefaultDeclaration( node, state ) {
 		const { code } = state
-		code.push( 'export default ' )
+		code.write( 'export default ' )
 		this[ node.declaration.type ]( node.declaration, state )
 		if ( EXPRESSIONS_PRECEDENCE[ node.declaration.type ] && node.declaration.type[ 0 ] !== 'F' )
 			// All expression nodes except `FunctionExpression`
-			code.push( ';' )
+			code.write( ';' )
 	},
 	ExportNamedDeclaration( node, state ) {
 		const { code } = state
-		code.push( 'export ' )
+		code.write( 'export ' )
 		if ( node.declaration ) {
 			this[ node.declaration.type ]( node.declaration, state )
 		} else {
-			code.push( '{' )
+			code.write( '{' )
 			const { specifiers } = node, { length } = specifiers
 			if ( length > 0 ) {
 				for ( let i = 0; ; ) {
 					let specifier = specifiers[ i ]
 					let { name } = specifier.local
-					code.push( name )
+					code.write( name )
 					if ( name !== specifier.exported.name )
-						code.push( ' as ' + specifier.exported.name )
+						code.write( ' as ' + specifier.exported.name )
 					if ( ++i < length )
-						code.push( ', ' )
+						code.write( ', ' )
 					else
 						break
 				}
 			}
-			code.push( '}' )
+			code.write( '}' )
 			if ( node.source ) {
-				code.push( ' from ', node.source.raw )
+				code.write( ' from ' + node.source.raw )
 			}
-			code.push( ';' )
+			code.write( ';' )
 		}
 	},
 	ExportAllDeclaration( node, state ) {
-		state.code.push( 'export * from ', node.source.raw, ';' )
+		state.code.write( 'export * from ' + node.source.raw + ';' )
 	},
 	MethodDefinition( node, state ) {
 		const { code } = state
 		if ( node.static )
-			code.push( 'static ' )
+			code.write( 'static ' )
 		switch ( node.kind[ 0 ] ) {
 			case 'g': // `get`
 			case 's': // `set`
-				code.push( node.kind, ' ' )
+				code.write( node.kind + ' ' )
 				break
 			default:
 				break
 		}
 		if ( node.value.generator )
-			code.push( '*' )
+			code.write( '*' )
 		if ( node.computed ) {
-			code.push( '[' )
+			code.write( '[' )
 			this[ node.key.type ]( node.key, state )
-			code.push( ']' )
+			code.write( ']' )
 		} else {
 			this[ node.key.type ]( node.key, state )
 		}
 		formatSequence( node.value.params, state, this )
-		code.push( ' ' )
+		code.write( ' ' )
 		this[ node.value.body.type ]( node.value.body, state )
 	},
 	ClassExpression( node, state ) {
@@ -578,53 +578,53 @@ let traveler = {
 		if ( params != null ) {
 			if ( params.length === 1 && params[ 0 ].type[ 0 ] === 'I' ) {
 				// If params[0].type[0] starts with 'I', it can't be `ImportDeclaration` nor `IfStatement` and thus is `Identifier`
-				code.push( params[ 0 ].name )
+				code.write( params[ 0 ].name )
 			} else {
 				formatSequence( node.params, state, this )
 			}
 		}
-		code.push( ' => ' )
+		code.write( ' => ' )
 		if ( node.body.type[ 0 ] === 'O' ) {
-			code.push( '(' )
+			code.write( '(' )
 			this.ObjectExpression( node.body, state )
-			code.push( ')' )
+			code.write( ')' )
 		} else {
 			this[ node.body.type ]( node.body, state )
 		}
 	},
 	ThisExpression( node, state ) {
-		state.code.push( 'this' )
+		state.code.write( 'this' )
 	},
 	Super( node, state ) {
-		state.code.push( 'super' )
+		state.code.write( 'super' )
 	},
 	RestElement: RestElement = function( node, state ) {
-		state.code.push( '...' )
+		state.code.write( '...' )
 		this[ node.argument.type ]( node.argument, state )
 	},
 	SpreadElement: RestElement,
 	YieldExpression( node, state ) {
 		const { code } = state
-		code.push( node.delegate ? 'yield*' : 'yield' )
+		code.write( node.delegate ? 'yield*' : 'yield' )
 		if ( node.argument ) {
-			code.push( ' ' )
+			code.write( ' ' )
 			this[ node.argument.type ]( node.argument, state )
 		}
 	},
 	TemplateLiteral( node, state ) {
 		const { code } = state
 		const { quasis, expressions } = node
-		code.push( '`' )
+		code.write( '`' )
 		const { length } = expressions
 		for ( let i = 0; i < length; i++ ) {
 			let expression = expressions[ i ]
-			code.push( quasis[ i ].value.raw )
-			code.push( '${' )
+			code.write( quasis[ i ].value.raw )
+			code.write( '${' )
 			this[ expression.type ]( expression, state )
-			code.push( '}' )
+			code.write( '}' )
 		}
-		code.push( quasis[ quasis.length - 1 ].value.raw )
-		code.push( '`' )
+		code.write( quasis[ quasis.length - 1 ].value.raw )
+		code.write( '`' )
 	},
 	TaggedTemplateExpression( node, state ) {
 		this[ node.tag.type ]( node.tag, state )
@@ -632,7 +632,7 @@ let traveler = {
 	},
 	ArrayExpression: ArrayExpression = function( node, state ) {
 		const { code } = state
-		code.push( '[' )
+		code.write( '[' )
 		if ( node.elements.length > 0 ) {
 			const { elements } = node, { length } = elements
 			for ( let i = 0; ; ) {
@@ -640,24 +640,24 @@ let traveler = {
 				if ( element != null )
 					this[ element.type ]( element, state )
 				if ( ++i < length ) {
-					code.push( ', ' )
+					code.write( ', ' )
 				} else {
 					if ( element == null )
-						code.push( ', ' )
+						code.write( ', ' )
 					break
 				}
 			}
 		}
-		code.push( ']' )
+		code.write( ']' )
 	},
 	ArrayPattern: ArrayExpression,
 	ObjectExpression( node, state ) {
 		const indent = state.indent.repeat( state.indentLevel++ )
 		const { lineEnd, code, writeComments } = state
 		const propertyIndent = indent + state.indent
-		code.push( '{' )
+		code.write( '{' )
 		if ( node.properties.length > 0 ) {
-			code.push( lineEnd )
+			code.write( lineEnd )
 			if ( writeComments && node.comments != null )
 				formatComments( node.comments, code, propertyIndent, lineEnd )
 			const comma = ',' + lineEnd, { properties } = node, { length } = properties
@@ -665,33 +665,33 @@ let traveler = {
 				let property = properties[ i ]
 				if ( writeComments && property.comments != null )
 					formatComments( property.comments, code, propertyIndent, lineEnd )
-				code.push( propertyIndent )
+				code.write( propertyIndent )
 				this.Property( property, state )
 				if ( ++i < length )
-					code.push( comma )
+					code.write( comma )
 				else
 					break
 			}
-			code.push( lineEnd )
+			code.write( lineEnd )
 			if ( writeComments && node.trailingComments != null )
 				formatComments( node.trailingComments, code, propertyIndent, lineEnd )
-			code.push( indent, '}' )
+			code.write( indent + '}' )
 		} else if ( writeComments ) {
 			if ( node.comments != null ) {
-				code.push( lineEnd )
+				code.write( lineEnd )
 				formatComments( node.comments, code, propertyIndent, lineEnd )
 				if ( node.trailingComments != null )
 					formatComments( node.trailingComments, code, propertyIndent, lineEnd )
-				code.push( indent, '}' )
+				code.write( indent + '}' )
 			} else if ( node.trailingComments != null ) {
-				code.push( lineEnd )
+				code.write( lineEnd )
 				formatComments( node.trailingComments, code, propertyIndent, lineEnd )
-				code.push( indent, '}' )
+				code.write( indent + '}' )
 			} else {
-				code.push( '}' )
+				code.write( '}' )
 			}
 		} else {
-			code.push( '}' )
+			code.write( '}' )
 		}
 		state.indentLevel--
 	},
@@ -703,31 +703,31 @@ let traveler = {
 			const { code } = state
 			if ( !node.shorthand ) {
 				if ( node.computed ) {
-					code.push( '[' )
+					code.write( '[' )
 					this[ node.key.type ]( node.key, state )
-					code.push( ']' )
+					code.write( ']' )
 				} else {
 					this[ node.key.type ]( node.key, state )
 				}
-				code.push( ': ' )
+				code.write( ': ' )
 			}
 			this[ node.value.type ]( node.value, state )
 		}
 	},
 	ObjectPattern( node, state ) {
 		const { code } = state
-		code.push( '{' )
+		code.write( '{' )
 		if ( node.properties.length > 0 ) {
 			const { properties } = node, { length } = properties
 			for ( let i = 0; ; ) {
 				this.Property( properties[ i ], state )
 				if ( ++i < length )
-					code.push( ', ' )
+					code.write( ', ' )
 				else
 					break
 			}
 		}
-		code.push( '}' )
+		code.write( '}' )
 	},
 	SequenceExpression( node, state ) {
 		formatSequence( node.expressions, state, this )
@@ -735,54 +735,54 @@ let traveler = {
 	UnaryExpression( node, state ) {
 		const { code } = state
 		if ( node.prefix ) {
-			code.push( node.operator )
+			code.write( node.operator )
 			if ( node.operator.length > 1 )
-				state.code.push( ' ' )
+				state.code.write( ' ' )
 			if ( EXPRESSIONS_PRECEDENCE[ node.argument.type ] < EXPRESSIONS_PRECEDENCE.UnaryExpression ) {
-				code.push( '(' )
+				code.write( '(' )
 				this[ node.argument.type ]( node.argument, state )
-				code.push( ')' )
+				code.write( ')' )
 			} else {
 				this[ node.argument.type ]( node.argument, state )
 			}
 		} else {
 			// FIXME: This case never occurs
 			this[ node.argument.type ]( node.argument, state )
-			state.code.push( node.operator )
+			state.code.write( node.operator )
 		}
 	},
 	UpdateExpression( node, state ) {
 		// Always applied to identifiers or members, no parenthesis check needed
 		if ( node.prefix ) {
-			state.code.push( node.operator )
+			state.code.write( node.operator )
 			this[ node.argument.type ]( node.argument, state )
 		} else {
 			this[ node.argument.type ]( node.argument, state )
-			state.code.push( node.operator )
+			state.code.write( node.operator )
 		}
 	},
 	AssignmentExpression( node, state ) {
 		this[ node.left.type ]( node.left, state )
-		state.code.push( ' ', node.operator, ' ' )
+		state.code.write( ' ' + node.operator + ' ' )
 		this[ node.right.type ]( node.right, state )
 	},
 	AssignmentPattern( node, state ) {
 		this[ node.left.type ]( node.left, state )
-		state.code.push( ' = ' )
+		state.code.write( ' = ' )
 		this[ node.right.type ]( node.right, state )
 	},
 	BinaryExpression: BinaryExpression = function( node, state ) {
 		const { code } = state
 		if ( node.operator === 'in' ) {
 			// Avoids confusion in `for` loops initializers
-			code.push( '(' )
+			code.write( '(' )
 			formatBinaryExpressionPart( node.left, node, false, state, this )
-			code.push( ' ', node.operator, ' ' )
+			code.write( ' ' + node.operator + ' ' )
 			formatBinaryExpressionPart( node.right, node, true, state, this )
-			code.push( ')' )
+			code.write( ')' )
 		} else {
 			formatBinaryExpressionPart( node.left, node, false, state, this )
-			code.push( ' ', node.operator, ' ' )
+			code.write( ' ' + node.operator + ' ' )
 			formatBinaryExpressionPart( node.right, node, true, state, this )
 		}
 	},
@@ -792,23 +792,23 @@ let traveler = {
 		if ( EXPRESSIONS_PRECEDENCE[ node.test.type ] > EXPRESSIONS_PRECEDENCE.ConditionalExpression ) {
 			this[ node.test.type ]( node.test, state )
 		} else {
-			code.push( '(' )
+			code.write( '(' )
 			this[ node.test.type ]( node.test, state )
-			code.push( ')' )
+			code.write( ')' )
 		}
-		code.push( ' ? ' )
+		code.write( ' ? ' )
 		this[ node.consequent.type ]( node.consequent, state )
-		code.push( ' : ' )
+		code.write( ' : ' )
 		this[ node.alternate.type ]( node.alternate, state )
 	},
 	NewExpression( node, state ) {
-		state.code.push( 'new ' )
+		state.code.write( 'new ' )
 		const { code } = state
 		if ( EXPRESSIONS_PRECEDENCE[ node.callee.type ] < EXPRESSIONS_PRECEDENCE.CallExpression
 				|| hasCallExpression( node.callee ) ) {
-			code.push( '(' )
+			code.write( '(' )
 			this[ node.callee.type ]( node.callee, state )
-			code.push( ')' )
+			code.write( ')' )
 		} else {
 			this[ node.callee.type ]( node.callee, state )
 		}
@@ -817,9 +817,9 @@ let traveler = {
 	CallExpression( node, state ) {
 		const { code } = state
 		if ( EXPRESSIONS_PRECEDENCE[ node.callee.type ] < EXPRESSIONS_PRECEDENCE.CallExpression ) {
-			code.push( '(' )
+			code.write( '(' )
 			this[ node.callee.type ]( node.callee, state )
-			code.push( ')' )
+			code.write( ')' )
 		} else {
 			this[ node.callee.type ]( node.callee, state )
 		}
@@ -828,33 +828,29 @@ let traveler = {
 	MemberExpression( node, state ) {
 		const { code } = state
 		if ( EXPRESSIONS_PRECEDENCE[ node.object.type ] < EXPRESSIONS_PRECEDENCE.MemberExpression ) {
-			code.push( '(' )
+			code.write( '(' )
 			this[ node.object.type ]( node.object, state )
-			code.push( ')' )
+			code.write( ')' )
 		} else {
 			this[ node.object.type ]( node.object, state )
 		}
 		if ( node.computed ) {
-			code.push( '[' )
+			code.write( '[' )
 			this[ node.property.type ]( node.property, state )
-			code.push( ']' )
+			code.write( ']' )
 		} else {
-			code.push( '.' )
+			code.write( '.' )
 			this[ node.property.type ]( node.property, state )
 		}
 	},
 	MetaProperty( node, state ) {
-		state.code.push(
-			node.meta.name,
-			'.',
-			node.property.name
-		)
+		state.code.write( node.meta.name + '.' + node.property.name )
 	},
 	Identifier( node, state ) {
-		state.code.push( node.name )
+		state.code.write( node.name )
 	},
 	Literal( node, state ) {
-		state.code.push( node.raw )
+		state.code.write( node.raw )
 	}
 }
 
@@ -865,16 +861,8 @@ class StringBuffer {
 		this.buffer = ''
 	}
 	
-	push(string, others) {
+	write( string ) {
 		this.buffer += string;
-		if ( others != null ) {
-			const { length } = arguments;
-			let buffer = ''
-			for (let i = 1; i < length; i++) {
-			  buffer += arguments[i];
-			}
-			this.buffer += buffer
-		}
 	}
 
 	getLast() {
