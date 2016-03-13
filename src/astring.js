@@ -387,12 +387,8 @@ let traveler = {
 		if ( node.init != null ) {
 			const { init } = node, { type } = init
 			this[ type ]( init, state )
-			if ( type[ 0 ] === 'V' && type.length === 19 ) {
-				// Remove inserted semicolon if VariableDeclaration
-				state.code.pop()
-			}
 		}
-		code.push( '; ' )
+		code.push( code.buffer[ code.buffer.length - 1 ] === ';' ? ' ' : '; ' )
 		if ( node.test )
 			this[ node.test.type ]( node.test, state )
 		code.push( '; ' )
@@ -405,11 +401,9 @@ let traveler = {
 		const { code } = state
 		code.push( 'for (' )
 		const { left } = node, { type } = left
+		state.noTrailingSemicolon = true
 		this[ type ]( left, state )
-		if ( type[ 0 ] === 'V' && type.length === 19 ) {
-			// Remove inserted semicolon if VariableDeclaration
-			state.code.pop()
-		}
+		state.noTrailingSemicolon = false
 		// Identifying whether node.type is `ForInStatement` or `ForOfStatement`
 		code.push( node.type[ 3 ] === 'I' ? ' in ' : ' of ' )
 		this[ node.right.type ]( node.right, state )
@@ -442,7 +436,8 @@ let traveler = {
 				this.VariableDeclarator( declarations[ i ], state )
 			}
 		}
-		code.push( ';' )
+		if ( state.noTrailingSemicolon !== true )
+			code.push( ';' )
 	},
 	VariableDeclarator( node, state ) {
 		this[ node.id.type ]( node.id, state )
@@ -471,40 +466,39 @@ let traveler = {
 		const { length } = specifiers
 		if ( length > 0 ) {
 			let i = 0, specifier
-			importSpecifiers: while ( i < length ) {
+			while ( i < length ) {
+				if ( i > 0 )
+					code.push( ', ' )
 				specifier = specifiers[ i ]
-				switch ( specifier.type ) {
-					case 'ImportDefaultSpecifier':
-						code.push( specifier.local.name )
-						i++
-						break
-					case 'ImportNamespaceSpecifier':
-						code.push( '* as ', specifier.local.name )
-						i++
-						break
-					default:
-						break importSpecifiers
+				const type = specifier.type[ 6 ]
+				if (type === 'D') {
+					// ImportDefaultSpecifier
+					code.push( specifier.local.name )
+					i++
+				} else if (type === 'N') {
+					// ImportNamespaceSpecifier
+					code.push( '* as ', specifier.local.name )
+					i++
+				} else {
+					// ImportSpecifier
+					break
 				}
-				code.push( ', ' )
 			}
 			if ( i < length ) {
 				code.push( '{' )
-				while ( i < length ) {
+				for ( ; ; ) {
 					specifier = specifiers[ i ]
 					let { name } = specifier.imported
 					code.push( name )
 					if ( name !== specifier.local.name ) {
 						code.push( ' as ', specifier.local.name )
 					}
-					code.push( ', ' )
-					i++
+					if ( ++i < length )
+						code.push( ', ' )
+					else
+						break
 				}
-				// Remove trailing comma
-				code.pop()
 				code.push( '}' )
-			} else {
-				// Remove trailing comma
-				code.pop()
 			}
 			code.push( ' from ' )
 		}
@@ -865,6 +859,19 @@ let traveler = {
 }
 
 
+function StringBuffer() {
+	this.buffer = ''
+}
+StringBuffer.prototype.push = function(...strings) {
+	const { length } = strings;
+	let result = ''
+	for (let i = 0; i < length; i++) {
+	  result += strings[i];
+	}
+	this.buffer += result;
+}
+
+
 export default function astring( node, options ) {
 	/*
 	Returns a string representing the rendered code of the provided AST `node`.
@@ -876,21 +883,23 @@ export default function astring( node, options ) {
 	- `comments`: generate comments if `true` (defaults to `false`)
 	*/
 	const state = ( options == null ) ? {
-		code: [],
+		code: new StringBuffer(),
 		indent: '\t',
 		lineEnd: '\n',
 		indentLevel: 0,
-		writeComments: false
+		writeComments: false,
+		noTrailingSemicolon: false
 	} : {
 		// Will contain the resulting code as an array of code strings
-		code: [],
+		code: new StringBuffer(),
 		// Formating options
 		indent: options.indent != null ? options.indent : '\t',
 		lineEnd: options.lineEnd != null ? options.lineEnd : '\n',
 		indentLevel: options.startingIndentLevel != null ? options.startingIndentLevel : 0,
-		writeComments: options.comments ? options.comments : false
+		writeComments: options.comments ? options.comments : false,
+		noTrailingSemicolon: false
 	}
 	// Travel through the AST node and generate the code
 	traveler[ node.type ]( node, state )
-	return state.code.join( '' )
+	return state.code.buffer
 }
