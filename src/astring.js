@@ -388,7 +388,7 @@ let traveler = {
 			const { init } = node, { type } = init
 			this[ type ]( init, state )
 		}
-		code.push( code.buffer[ code.buffer.length - 1 ] === ';' ? ' ' : '; ' )
+		code.push( code.getLast() === ';' ? ' ' : '; ' )
 		if ( node.test )
 			this[ node.test.type ]( node.test, state )
 		code.push( '; ' )
@@ -859,16 +859,33 @@ let traveler = {
 }
 
 
-function StringBuffer() {
-	this.buffer = ''
-}
-StringBuffer.prototype.push = function(...strings) {
-	const { length } = strings;
-	let result = ''
-	for (let i = 0; i < length; i++) {
-	  result += strings[i];
+class StringBuffer {
+
+	constructor() {
+		this.buffer = ''
 	}
-	this.buffer += result;
+	
+	push(string, others) {
+		this.buffer += string;
+		if ( others != null ) {
+			const { length } = arguments;
+			let buffer = ''
+			for (let i = 1; i < length; i++) {
+			  buffer += arguments[i];
+			}
+			this.buffer += buffer
+		}
+	}
+
+	getLast() {
+		const { buffer } = this
+		return buffer[ buffer.length - 1 ]
+	}
+
+	toString() {
+		return this.buffer
+	}
+
 }
 
 
@@ -901,5 +918,5 @@ export default function astring( node, options ) {
 	}
 	// Travel through the AST node and generate the code
 	traveler[ node.type ]( node, state )
-	return state.code.buffer
+	return state.code.toString()
 }
