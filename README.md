@@ -64,11 +64,32 @@ This example uses [Acorn](https://github.com/marijnh/acorn), a blazingly fast Ja
 // Set example code
 var code = "let answer = 4 + 7 * 5 + 3;\n";
 // Parse it into an AST
-var ast = acorn.parse(code, {ecmaVersion: 6});
+var ast = acorn.parse(code, { ecmaVersion: 6 });
 // Format it into a code string
-var formattedCode = astring(ast, {indent: '   ', lineEnd: '\n'});
+var formattedCode = astring(ast, {
+	indent: '   ',
+	lineEnd: '\n'
+});
 // Check it
 console.log((code === formattedCode) ? 'It works !' : 'Something went wrong…');
+```
+
+### Using writable streams
+
+This example for [Node](http://nodejs.org) shows how to use writable streams to get the rendered code.
+
+```javascript
+// Make sure acorn and astring modules are imported
+// Set example code
+var code = "let answer = 4 + 7 * 5 + 3;\n";
+// Parse it into an AST
+var ast = acorn.parse(code, { ecmaVersion: 6 });
+// Format it and write the result to stdout
+var stream = astring(ast, {
+	output: process.stdout
+});
+// The returned value is the output stream
+console.log('stream is process.stdout?', stream === process.stdout);
 ```
 
 ### Generating comments
@@ -86,11 +107,19 @@ var code = [
 ].join('\n') + '\n';
 // Parse it into an AST and retrieve the list of comments
 var comments = [];
-var ast = acorn.parse(code, {ecmaVersion: 6, locations: true, onComment: comments});
+var ast = acorn.parse(code, {
+	ecmaVersion: 6,
+	locations: true,
+	onComment: comments
+});
 // Attach comments to AST nodes
 astravel.attachComments(ast, comments);
 // Format it into a code string
-var formattedCode = astring(ast, {indent: '   ', lineEnd: '\n', comments: true});
+var formattedCode = astring(ast, {
+	indent: '   ',
+	lineEnd: '\n',
+	comments: true
+});
 // Check it
 console.log((code === formattedCode) ? 'It works !' : 'Something went wrong…');
 ```
@@ -118,6 +147,7 @@ acorn --ecma6 script.js | astring --indent "  " > result.js
 ```
 
 This command does the same, but reads the AST from an intermediary file:
+
 ```bash
 acorn --ecma6 script.js > ast.json
 astring --indent "  " ast.json > result.js
@@ -129,9 +159,11 @@ astring --indent "  " ast.json > result.js
 
 All building scripts are defined in the `package.json` file and rely on the [Node Package Manager](https://www.npmjs.com/). All commands must be run from within the root repository folder.
 
+
 ### Production
 
 The source code of Astring is written in JavaScript 6 and located at `src/astring.js`. It is compiled down to a minified JavaScript 5 file located at `dist/astring.min.js` using [Browserify](http://browserify.org), [Babel](http://babeljs.io/) and [UglifyJS](https://github.com/mishoo/UglifyJS2). This is achieved by running:
+
 ```bash
 npm install
 ```
@@ -139,21 +171,29 @@ npm install
 If you are already using a JavaScript 6 to 5 compiler for your project, or a JavaScript 6 compliant interpreter, you can include the `src/astring.js` file directly.
 
 A non-minified and source map free version can be obtained at `dist/astring.js` by running:
+
 ```bash
 npm run build
 ```
 
+
 ### Development
 
 If you are working on Astring, you can use [Watchify](https://github.com/substack/watchify) to build automatically at each modification a non-minified version (along with a source map for easy debugging) located at `dist/astring.debug.js` by running:
+
 ```bash
 npm start
 ```
 
+#### Tests
+
 While making changes to Astring, make sure it passes the tests by running:
+
 ```bash
 npm test
 ```
+
+#### Benchmark
 
 Also, make sure that the modifications don't alter the performance by running benchmarks that compare Astring against Escodegen and Esotope:
 
@@ -163,10 +203,6 @@ npm run benchmark
 
 
 
-
 ## Roadmap
 
-Future releases will include the following features:
-- **0.5**: input and output streams support
-- **0.6**: source map support
-- **0.7**: JavaScript 7 support
+Planned features and releases are outlined on the [milestones page](https://github.com/davidbonnet/astring/milestones).
