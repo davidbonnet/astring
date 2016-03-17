@@ -1,6 +1,6 @@
 {
   "name": "astring",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "JavaScript code generator from an ESTree-compliant AST.",
   "main": "./dist/astring.min.js",
   "bin": {
