@@ -54,6 +54,7 @@ The `options` are:
 - `startingIndentLevel`: indent level to start from (defaults to `0`)
 - `comments`: generate comments if `true` (defaults to `false`)
 - `output`: output stream to write the rendered code to (defaults to `null`)
+- `generator`: custom code generator (defaults to `astring.defaultGenerator`)
 
 ### Example
 
@@ -121,7 +122,52 @@ var formattedCode = astring(ast, {
 	comments: true
 });
 // Check it
-console.log((code === formattedCode) ? 'It works !' : 'Something went wrong…');
+console.log(code === formattedCode ? 'It works !' : 'Something went wrong…');
+```
+
+### Extending
+
+Astring can easily be extended by updating or passing a custom `generator`. A `generator` consists of a mapping of node names and functions that take two arguments: `node` and `state`. The `node` points to the node from which to generate the code and the `state` holds various values and objects, the most important one being the `output` code stream.
+
+This example shows how to support the `await` keyword that is part of the [asynchronous functions proposal](https://github.com/tc39/ecmascript-asyncawait). The corresponding `AwaitExpression` is node is based on [this suggested definition](https://github.com/estree/estree/blob/master/experimental/async-functions.md).
+
+```javascript
+// Make sure the astring module is imported and that `Object.assign` is defined
+// Create a custom generator that inherits from Astring's default generator
+var customGenerator = Object.assign({}, astring.defaultGenerator, {
+	AwaitExpression: function(node, state) {
+		state.stream.write('await ');
+		var argument = node.argument;
+		if (argument != null) {
+			this[argument.type](argument, state);
+		}
+	}
+});
+// Obtain a custom ast somehow (note that this ast is not valid)
+var ast = {
+   type: "Program",
+   body: [{
+      type: "ExpressionStatement",
+      expression: {
+      	type: "AwaitExpression",
+      	argument: {
+      		type: "CallExpression",
+      		callee: {
+      		   type: "Identifier",
+      		   name: "callable"
+      		},
+      		arguments: []	
+      	}
+      }
+   }],
+   sourceType: "module"
+};
+// Format it
+var code = astring(ast, {
+	generator: customGenerator
+});
+// Check it
+console.log(code === 'await callable()\n' ? 'It works!' : 'Something went wrong…');
 ```
 
 
