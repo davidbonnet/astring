@@ -145,22 +145,22 @@ var customGenerator = Object.assign({}, astring.defaultGenerator, {
 });
 // Obtain a custom ast somehow (note that this ast is not valid)
 var ast = {
-   type: "Program",
-   body: [{
-      type: "ExpressionStatement",
-      expression: {
-      	type: "AwaitExpression",
-      	argument: {
-      		type: "CallExpression",
-      		callee: {
-      		   type: "Identifier",
-      		   name: "callable"
-      		},
-      		arguments: []	
-      	}
-      }
-   }],
-   sourceType: "module"
+	type: "Program",
+	body: [{
+		type: "ExpressionStatement",
+		expression: {
+			type: "AwaitExpression",
+			argument: {
+				type: "CallExpression",
+				callee: {
+					type: "Identifier",
+					name: "callable"
+				},
+				arguments: []	
+			}
+		}
+	}],
+	sourceType: "module"
 };
 // Format it
 var code = astring(ast, {
