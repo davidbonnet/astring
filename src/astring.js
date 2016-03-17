@@ -864,7 +864,7 @@ class Stream {
 	}
 	
 	write( string ) {
-		this.data += string;
+		this.data += string
 	}
 
 	toString() {
