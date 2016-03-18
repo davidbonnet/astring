@@ -912,6 +912,3 @@ export default function astring( node, options ) {
 	const { output } = state
 	return output.data != null ? output.data : output
 }
-
-
-astring.defaultGenerator = defaultGenerator
