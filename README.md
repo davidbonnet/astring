@@ -128,7 +128,7 @@ console.log(code === formattedCode ? 'It works !' : 'Something went wrong…');
 
 Astring can easily be extended by updating or passing a custom code `generator`. A code `generator` consists of a mapping of node names and functions that take two arguments: `node` and `state`. The `node` points to the node from which to generate the code and the `state` holds various values and objects, the most important one being the `output` code stream.
 
-This example shows how to support the `await` keyword that is part of the [asynchronous functions proposal](https://github.com/tc39/ecmascript-asyncawait). The corresponding `AwaitExpression` is node is based on [this suggested definition](https://github.com/estree/estree/blob/master/experimental/async-functions.md).
+This example shows how to support the `await` keyword which is part of the [asynchronous functions proposal](https://github.com/tc39/ecmascript-asyncawait). The corresponding `AwaitExpression` node is based on [this suggested definition](https://github.com/estree/estree/blob/master/experimental/async-functions.md).
 
 ```javascript
 // Make sure the astring module is imported and that `Object.assign` is defined
@@ -142,7 +142,7 @@ var customGenerator = Object.assign({}, astring.defaultGenerator, {
 		}
 	}
 });
-// Obtain a custom ast somehow (note that this ast is not valid)
+// Obtain a custom AST somehow (note that this AST is not from obtained from a valid code)
 var ast = {
 	type: "Program",
 	body: [{
