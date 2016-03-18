@@ -11,11 +11,10 @@ Key features:
 
 - Generates JavaScript code up to [version 6](http://www.ecma-international.org/ecma-262/6.0/index.html).
 - Works on [ESTree](https://github.com/estree/estree)-compliant ASTs such as the ones produced by [Acorn](https://github.com/marijnh/acorn).
-- Runs both in a browser and in [Node](http://nodejs.org).
-- Considerably faster than [UglifyJS](https://github.com/mishoo/UglifyJS2) (up to 125×), [Escodegen](https://github.com/estools/escodegen) (up to 10×), and [Esotope](https://github.com/inikulin/esotope) (up to 4×).
+- Considerably faster than [Esotope](https://github.com/inikulin/esotope) (up to 4×), [Escodegen](https://github.com/estools/escodegen) (up to 10×), and [UglifyJS](https://github.com/mishoo/UglifyJS2) (up to 125×).
 - No dependencies and small footprint (≈ 16 KB minified, ≈ 4 KB gziped).
 - Supports comment generation with [Astravel](https://github.com/davidbonnet/astravel).
-- Outputs readable code.
+- Extendable with custom AST node handlers.
 
 
 ## Installation
@@ -127,7 +126,7 @@ console.log(code === formattedCode ? 'It works !' : 'Something went wrong…');
 
 ### Extending
 
-Astring can easily be extended by updating or passing a custom `generator`. A `generator` consists of a mapping of node names and functions that take two arguments: `node` and `state`. The `node` points to the node from which to generate the code and the `state` holds various values and objects, the most important one being the `output` code stream.
+Astring can easily be extended by updating or passing a custom code `generator`. A code `generator` consists of a mapping of node names and functions that take two arguments: `node` and `state`. The `node` points to the node from which to generate the code and the `state` holds various values and objects, the most important one being the `output` code stream.
 
 This example shows how to support the `await` keyword that is part of the [asynchronous functions proposal](https://github.com/tc39/ecmascript-asyncawait). The corresponding `AwaitExpression` is node is based on [this suggested definition](https://github.com/estree/estree/blob/master/experimental/async-functions.md).
 
@@ -136,7 +135,7 @@ This example shows how to support the `await` keyword that is part of the [async
 // Create a custom generator that inherits from Astring's default generator
 var customGenerator = Object.assign({}, astring.defaultGenerator, {
 	AwaitExpression: function(node, state) {
-		state.stream.write('await ');
+		state.output.write('await ');
 		var argument = node.argument;
 		if (argument != null) {
 			this[argument.type](argument, state);
@@ -167,7 +166,7 @@ var code = astring(ast, {
 	generator: customGenerator
 });
 // Check it
-console.log(code === 'await callable()\n' ? 'It works!' : 'Something went wrong…');
+console.log(code === 'await callable();\n' ? 'It works!' : 'Something went wrong…');
 ```
 
 
