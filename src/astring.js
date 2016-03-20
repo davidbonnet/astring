@@ -70,57 +70,58 @@ const EXPRESSIONS_PRECEDENCE = {
 }
 
 
-function formatSequence( nodes, state, traveler ) {
+function formatSequence( state, nodes ) {
 	/*
-	Formats a sequence of `nodes`.
+	Writes into `state` a sequence of `nodes`.
 	*/
-	const { output } = state
-	output.write( '(' )
+	const { generator } = state
+	state.write( '(' )
 	if ( nodes != null && nodes.length > 0 ) {
-		traveler[ nodes[ 0 ].type ]( nodes[ 0 ], state )
+		generator[ nodes[ 0 ].type ]( nodes[ 0 ], state )
 		const { length } = nodes
 		for ( let i = 1; i < length; i++ ) {
 			let param = nodes[ i ]
-			output.write( ', ' )
-			traveler[ param.type ]( param, state )
+			state.write( ', ' )
+			generator[ param.type ]( param, state )
 		}
 	}
-	output.write( ')' )
+	state.write( ')' )
 }
 
 
-function formatBinaryExpressionPart( node, parentNode, isRightHand, state, traveler ) {
+function formatBinaryExpressionPart( state, node, parentNode, isRightHand ) {
 	/*
-	Formats into the `output` stream a left-hand or right-hand expression `node` from a binary expression applying the provided `operator`.
+	Writes into `state` a left-hand or right-hand expression `node` from a binary expression applying the provided `operator`.
 	The `isRightHand` parameter should be `true` if the `node` is a right-hand argument.
 	*/
+	const { generator } = state
 	const nodePrecedence = EXPRESSIONS_PRECEDENCE[ node.type ]
 	const parentNodePrecedence = EXPRESSIONS_PRECEDENCE[ parentNode.type ]
 	if ( nodePrecedence > parentNodePrecedence ) {
-		traveler[ node.type ]( node, state )
+		generator[ node.type ]( node, state )
 		return
 	} else if ( nodePrecedence === parentNodePrecedence ) {
 		if ( nodePrecedence === 13 || nodePrecedence === 14 ) {
 			// Either `LogicalExpression` or `BinaryExpression`
 			if ( isRightHand ) {
 				if ( OPERATORS_PRECEDENCE[ node.operator ] > OPERATORS_PRECEDENCE[ parentNode.operator ] ) {
-					traveler[ node.type ]( node, state )
+					generator[ node.type ]( node, state )
 					return
 				}
 			} else {
 				if ( OPERATORS_PRECEDENCE[ node.operator ] >= OPERATORS_PRECEDENCE[ parentNode.operator ] ) {
-					traveler[ node.type ]( node, state )
+					generator[ node.type ]( node, state )
 					return
 				}
 			}
 		} else {
-			traveler[ node.type ]( node, state )
+			generator[ node.type ]( node, state )
 			return
 		}
 	}
-	state.output.write( '(' )
-	traveler[ node.type ]( node, state )
-	state.output.write( ')' )
+	state.write( '(' )
+	generator[ node.type ]( node, state )
+	state.write( ')' )
 }
 
 
@@ -150,22 +151,22 @@ function reindent( text, indentation ) {
 }
 
 
-function formatComments( comments, output, indent, lineEnd ) {
+function formatComments( state, comments, indent, lineEnd ) {
 	/*
-	Inserts into `output` the provided list of `comments`, with the given `indent` and `lineEnd` strings.
+	Writes into `state` the provided list of `comments`, with the given `indent` and `lineEnd` strings.
 	Line comments will end with `"\n"` regardless of the value of `lineEnd`.
 	Expects to start on a new unindented line.
 	*/
 	const { length } = comments
 	for ( let i = 0; i < length; i++ ) {
 		let comment = comments[ i ]
-		output.write( indent )
+		state.write( indent )
 		if ( comment.type[ 0 ] === 'L' )
 			// Line comment
-			output.write( '// ' + comment.value.trim() + '\n' )
+			state.write( '// ' + comment.value.trim() + '\n' )
 		else
 			// Block comment
-			output.write( '/*' + lineEnd + reindent( comment.value, indent ) + lineEnd + indent + '*/' + lineEnd )
+			state.write( '/*' + lineEnd + reindent( comment.value, indent ) + lineEnd + indent + '*/' + lineEnd )
 	}
 }
 
@@ -195,292 +196,277 @@ let ForInStatement, FunctionDeclaration, RestElement, BinaryExpression, ArrayExp
 export const defaultGenerator = {
 	Program( node, state ) {
 		const indent = state.indent.repeat( state.indentLevel )
-		const { lineEnd, output, writeComments } = state
+		const { lineEnd, writeComments } = state
 		if ( writeComments && node.comments != null )
-			formatComments( node.comments, output, indent, lineEnd )
+			formatComments( state, node.comments, indent, lineEnd )
 		let statements = node.body
 		const { length } = statements
 		for ( let i = 0; i < length; i++ ) {
 			let statement = statements[ i ]
 			if ( writeComments && statement.comments != null )
-				formatComments( statement.comments, output, indent, lineEnd )
-			output.write( indent )
+				formatComments( state, statement.comments, indent, lineEnd )
+			state.write( indent )
 			this[ statement.type ]( statement, state )
-			output.write( lineEnd )
+			state.write( lineEnd )
 		}
 		if ( writeComments && node.trailingComments != null )
-			formatComments( node.trailingComments, output, indent, lineEnd )
+			formatComments( state, node.trailingComments, indent, lineEnd )
 	},
 	BlockStatement( node, state ) {
 		const indent = state.indent.repeat( state.indentLevel++ )
-		const { lineEnd, output, writeComments } = state
+		const { lineEnd, writeComments } = state
 		const statementIndent = indent + state.indent
-		output.write( '{' )
+		state.write( '{' )
 		let statements = node.body
 		if ( statements != null && statements.length > 0 ) {
-			output.write( lineEnd )
+			state.write( lineEnd )
 			if ( writeComments && node.comments != null ) {
-				formatComments( node.comments, output, statementIndent, lineEnd )
+				formatComments( state, node.comments, statementIndent, lineEnd )
 			}
 			const { length } = statements
 			for ( let i = 0; i < length; i++ ) {
 				let statement = statements[ i ]
 				if ( writeComments && statement.comments != null )
-					formatComments( statement.comments, output, statementIndent, lineEnd )
-				output.write( statementIndent )
+					formatComments( state, statement.comments, statementIndent, lineEnd )
+				state.write( statementIndent )
 				this[ statement.type ]( statement, state )
-				output.write( lineEnd )
+				state.write( lineEnd )
 			}
-			output.write( indent )
+			state.write( indent )
 		} else {
 			if ( writeComments && node.comments != null ) {
-				output.write( lineEnd )
-				formatComments( node.comments, output, statementIndent, lineEnd )
-				output.write( indent )
+				state.write( lineEnd )
+				formatComments( state, node.comments, statementIndent, lineEnd )
+				state.write( indent )
 			}
 		}
 		if ( writeComments && node.trailingComments != null )
-			formatComments( node.trailingComments, output, statementIndent, lineEnd )
-		output.write( '}' )
+			formatComments( state, node.trailingComments, statementIndent, lineEnd )
+		state.write( '}' )
 		state.indentLevel--
 	},
 	EmptyStatement( node, state ) {
-		state.output.write( ';' )
+		state.write( ';' )
 	},
 	ExpressionStatement( node, state ) {
 		const precedence = EXPRESSIONS_PRECEDENCE[ node.expression.type ]
 		if ( precedence === 17 || ( precedence === 3 && node.expression.left.type[ 0 ] === 'O' ) ) {
 			// Should always have parentheses or is an AssignmentExpression to an ObjectPattern
-			state.output.write( '(' )
+			state.write( '(' )
 			this[ node.expression.type ]( node.expression, state )
-			state.output.write( ')' )
+			state.write( ')' )
 		} else {
 			this[ node.expression.type ]( node.expression, state )
 		}
-		state.output.write( ';' )
+		state.write( ';' )
 	},
 	IfStatement( node, state ) {
-		const { output } = state
-		output.write( 'if (' )
+		state.write( 'if (' )
 		this[ node.test.type ]( node.test, state )
-		output.write( ') ' )
+		state.write( ') ' )
 		this[ node.consequent.type ]( node.consequent, state )
 		if ( node.alternate != null ) {
-			output.write( ' else ' )
+			state.write( ' else ' )
 			this[ node.alternate.type ]( node.alternate, state )
 		}
 	},
 	LabeledStatement( node, state ) {
 		this[ node.label.type ]( node.label, state )
-		state.output.write( ': ' )
+		state.write( ': ' )
 		this[ node.body.type ]( node.body, state )
 	},
 	BreakStatement( node, state ) {
-		const { output } = state
-		output.write( 'break' )
-		if ( node.label ) {
-			output.write( ' ' )
+		state.write( 'break' )
+		if ( node.label != null ) {
+			state.write( ' ' )
 			this[ node.label.type ]( node.label, state )
 		}
-		output.write( ';' )
+		state.write( ';' )
 	},
 	ContinueStatement( node, state ) {
-		const { output } = state
-		output.write( 'continue' )
-		if ( node.label ) {
-			output.write( ' ' )
+		state.write( 'continue' )
+		if ( node.label != null ) {
+			state.write( ' ' )
 			this[ node.label.type ]( node.label, state )
 		}
-		output.write( ';' )
+		state.write( ';' )
 	},
 	WithStatement( node, state ) {
-		const { output } = state
-		output.write( 'with (' )
+		state.write( 'with (' )
 		this[ node.object.type ]( node.object, state )
-		output.write( ') ' )
+		state.write( ') ' )
 		this[ node.body.type ]( node.body, state )
 	},
 	SwitchStatement( node, state ) {
 		const indent = state.indent.repeat( state.indentLevel++ )
-		const { lineEnd, output, writeComments } = state
+		const { lineEnd, writeComments } = state
 		state.indentLevel++
 		const caseIndent = indent + state.indent
 		const statementIndent = caseIndent + state.indent
-		output.write( 'switch (' )
+		state.write( 'switch (' )
 		this[ node.discriminant.type ]( node.discriminant, state )
-		output.write( ') \{' + lineEnd )
+		state.write( ') \{' + lineEnd )
 		const { cases: occurences } = node
 		const { length: occurencesCount } = occurences
 		for ( let i = 0; i < occurencesCount; i++ ) {
 			let occurence = occurences[ i ]
 			if ( writeComments && occurence.comments != null )
-				formatComments( occurence.comments, output, caseIndent, lineEnd )
+				formatComments( state, occurence.comments, caseIndent, lineEnd )
 			if ( occurence.test ) {
-				output.write( caseIndent + 'case ' )
+				state.write( caseIndent + 'case ' )
 				this[ occurence.test.type ]( occurence.test, state )
-				output.write( ':' + lineEnd )
+				state.write( ':' + lineEnd )
 			} else {
-				output.write( caseIndent + 'default:' + lineEnd )
+				state.write( caseIndent + 'default:' + lineEnd )
 			}
 			let { consequent } = occurence
 			const { length: consequentCount } = consequent
 			for ( let i = 0; i < consequentCount; i++ ) {
 				let statement = consequent[ i ]
 				if ( writeComments && statement.comments != null )
-					formatComments( statement.comments, output, statementIndent, lineEnd )
-				output.write( statementIndent )
+					formatComments( state, statement.comments, statementIndent, lineEnd )
+				state.write( statementIndent )
 				this[ statement.type ]( statement, state )
-				output.write( lineEnd )
+				state.write( lineEnd )
 			}
 		}
 		state.indentLevel -= 2
-		output.write( indent + '}' )
+		state.write( indent + '}' )
 	},
 	ReturnStatement( node, state ) {
-		const { output } = state
-		output.write( 'return' )
+		state.write( 'return' )
 		if ( node.argument ) {
-			output.write( ' ' )
+			state.write( ' ' )
 			this[ node.argument.type ]( node.argument, state )
 		}
-		output.write( ';' )
+		state.write( ';' )
 	},
 	ThrowStatement( node, state ) {
-		const { output } = state
-		output.write( 'throw ' )
+		state.write( 'throw ' )
 		this[ node.argument.type ]( node.argument, state )
-		output.write( ';' )
+		state.write( ';' )
 	},
 	TryStatement( node, state ) {
-		const { output } = state
-		output.write( 'try ' )
+		state.write( 'try ' )
 		this[ node.block.type ]( node.block, state )
 		if ( node.handler ) {
 			let { handler } = node
-			output.write( ' catch (' )
+			state.write( ' catch (' )
 			this[ handler.param.type ]( handler.param, state )
-			output.write( ') ' )
+			state.write( ') ' )
 			this[ handler.body.type ]( handler.body, state )
 		}
 		if ( node.finalizer ) {
-			output.write( ' finally ' )
+			state.write( ' finally ' )
 			this[ node.finalizer.type ]( node.finalizer, state )
 		}
 	},
 	WhileStatement( node, state ) {
-		const { output } = state
-		output.write( 'while (' )
+		state.write( 'while (' )
 		this[ node.test.type ]( node.test, state )
-		output.write( ') ' )
+		state.write( ') ' )
 		this[ node.body.type ]( node.body, state )
 	},
 	DoWhileStatement( node, state ) {
-		const { output } = state
-		output.write( 'do ' )
+		state.write( 'do ' )
 		this[ node.body.type ]( node.body, state )
-		output.write( ' while (' )
+		state.write( ' while (' )
 		this[ node.test.type ]( node.test, state )
-		output.write( ');' )
+		state.write( ');' )
 	},
 	ForStatement( node, state ) {
-		const { output } = state
-		output.write( 'for (' )
+		state.write( 'for (' )
 		if ( node.init != null ) {
 			const { init } = node
 			state.noTrailingSemicolon = true
 			this[ node.init.type ]( node.init, state )
 			state.noTrailingSemicolon = false
 		}
-		output.write( '; ' )
+		state.write( '; ' )
 		if ( node.test )
 			this[ node.test.type ]( node.test, state )
-		output.write( '; ' )
+		state.write( '; ' )
 		if ( node.update )
 			this[ node.update.type ]( node.update, state )
-		output.write( ') ' )
+		state.write( ') ' )
 		this[ node.body.type ]( node.body, state )
 	},
 	ForInStatement: ForInStatement = function( node, state ) {
-		const { output } = state
-		output.write( 'for (' )
+		state.write( 'for (' )
 		const { left } = node, { type } = left
 		state.noTrailingSemicolon = true
 		this[ type ]( left, state )
 		state.noTrailingSemicolon = false
 		// Identifying whether node.type is `ForInStatement` or `ForOfStatement`
-		output.write( node.type[ 3 ] === 'I' ? ' in ' : ' of ' )
+		state.write( node.type[ 3 ] === 'I' ? ' in ' : ' of ' )
 		this[ node.right.type ]( node.right, state )
-		output.write( ') ' )
+		state.write( ') ' )
 		this[ node.body.type ]( node.body, state )
 	},
 	ForOfStatement: ForInStatement,
 	DebuggerStatement( node, state ) {
-		state.output.write( 'debugger;' + state.lineEnd )
+		state.write( 'debugger;' + state.lineEnd )
 	},
 	FunctionDeclaration: FunctionDeclaration = function( node, state ) {
-		const { output } = state
-		output.write( node.generator ? 'function* ' : 'function ' )
+		state.write( node.generator ? 'function* ' : 'function ' )
 		if ( node.id )
-			output.write( node.id.name )
-		formatSequence( node.params, state, this )
-		output.write( ' ' )
+			state.write( node.id.name )
+		formatSequence( state, node.params )
+		state.write( ' ' )
 		this[ node.body.type ]( node.body, state )
 	},
 	FunctionExpression: FunctionDeclaration,
 	VariableDeclaration( node, state ) {
-		const { output } = state
 		const { declarations } = node
-		output.write( node.kind + ' ' )
+		state.write( node.kind + ' ' )
 		const { length } = declarations
 		if ( length > 0 ) {
 			this.VariableDeclarator( declarations[ 0 ], state )
 			for ( let i = 1; i < length; i++ ) {
-				output.write( ', ' )
+				state.write( ', ' )
 				this.VariableDeclarator( declarations[ i ], state )
 			}
 		}
 		if ( state.noTrailingSemicolon !== true )
-			output.write( ';' )
+			state.write( ';' )
 	},
 	VariableDeclarator( node, state ) {
 		this[ node.id.type ]( node.id, state )
 		if ( node.init != null ) {
-			state.output.write( ' = ' )
+			state.write( ' = ' )
 			this[ node.init.type ]( node.init, state )
 		}
 	},
 	ClassDeclaration( node, state ) {
-		const { output } = state
-		output.write( 'class ' )
+		state.write( 'class ' )
 		if ( node.id ) {
-			output.write( node.id.name + ' ' )
+			state.write( node.id.name + ' ' )
 		}
 		if ( node.superClass ) {
-			output.write( 'extends ' )
+			state.write( 'extends ' )
 			this[ node.superClass.type ]( node.superClass, state )
-			output.write( ' ' )
+			state.write( ' ' )
 		}
 		this.BlockStatement( node.body, state )
 	},
 	ImportDeclaration( node, state ) {
-		const { output } = state
-		output.write( 'import ' )
+		state.write( 'import ' )
 		const { specifiers } = node
 		const { length } = specifiers
 		if ( length > 0 ) {
 			let i = 0, specifier
 			while ( i < length ) {
 				if ( i > 0 )
-					output.write( ', ' )
+					state.write( ', ' )
 				specifier = specifiers[ i ]
 				const type = specifier.type[ 6 ]
 				if (type === 'D') {
 					// ImportDefaultSpecifier
-					output.write( specifier.local.name )
+					state.write( specifier.local.name )
 					i++
 				} else if (type === 'N') {
 					// ImportNamespaceSpecifier
-					output.write( '* as ' + specifier.local.name )
+					state.write( '* as ' + specifier.local.name )
 					i++
 				} else {
 					// ImportSpecifier
@@ -488,154 +474,147 @@ export const defaultGenerator = {
 				}
 			}
 			if ( i < length ) {
-				output.write( '{' )
+				state.write( '{' )
 				for ( ; ; ) {
 					specifier = specifiers[ i ]
 					let { name } = specifier.imported
-					output.write( name )
+					state.write( name )
 					if ( name !== specifier.local.name ) {
-						output.write( ' as ' + specifier.local.name )
+						state.write( ' as ' + specifier.local.name )
 					}
 					if ( ++i < length )
-						output.write( ', ' )
+						state.write( ', ' )
 					else
 						break
 				}
-				output.write( '}' )
+				state.write( '}' )
 			}
-			output.write( ' from ' )
+			state.write( ' from ' )
 		}
-		output.write( node.source.raw )
-		output.write( ';' )
+		state.write( node.source.raw )
+		state.write( ';' )
 	},
 	ExportDefaultDeclaration( node, state ) {
-		const { output } = state
-		output.write( 'export default ' )
+		state.write( 'export default ' )
 		this[ node.declaration.type ]( node.declaration, state )
 		if ( EXPRESSIONS_PRECEDENCE[ node.declaration.type ] && node.declaration.type[ 0 ] !== 'F' )
 			// All expression nodes except `FunctionExpression`
-			output.write( ';' )
+			state.write( ';' )
 	},
 	ExportNamedDeclaration( node, state ) {
-		const { output } = state
-		output.write( 'export ' )
+		state.write( 'export ' )
 		if ( node.declaration ) {
 			this[ node.declaration.type ]( node.declaration, state )
 		} else {
-			output.write( '{' )
+			state.write( '{' )
 			const { specifiers } = node, { length } = specifiers
 			if ( length > 0 ) {
 				for ( let i = 0; ; ) {
 					let specifier = specifiers[ i ]
 					let { name } = specifier.local
-					output.write( name )
+					state.write( name )
 					if ( name !== specifier.exported.name )
-						output.write( ' as ' + specifier.exported.name )
+						state.write( ' as ' + specifier.exported.name )
 					if ( ++i < length )
-						output.write( ', ' )
+						state.write( ', ' )
 					else
 						break
 				}
 			}
-			output.write( '}' )
+			state.write( '}' )
 			if ( node.source ) {
-				output.write( ' from ' + node.source.raw )
+				state.write( ' from ' + node.source.raw )
 			}
-			output.write( ';' )
+			state.write( ';' )
 		}
 	},
 	ExportAllDeclaration( node, state ) {
-		state.output.write( 'export * from ' + node.source.raw + ';' )
+		state.write( 'export * from ' + node.source.raw + ';' )
 	},
 	MethodDefinition( node, state ) {
-		const { output } = state
 		if ( node.static )
-			output.write( 'static ' )
+			state.write( 'static ' )
 		switch ( node.kind[ 0 ] ) {
 			case 'g': // `get`
 			case 's': // `set`
-				output.write( node.kind + ' ' )
+				state.write( node.kind + ' ' )
 				break
 			default:
 				break
 		}
 		if ( node.value.generator )
-			output.write( '*' )
+			state.write( '*' )
 		if ( node.computed ) {
-			output.write( '[' )
+			state.write( '[' )
 			this[ node.key.type ]( node.key, state )
-			output.write( ']' )
+			state.write( ']' )
 		} else {
 			this[ node.key.type ]( node.key, state )
 		}
-		formatSequence( node.value.params, state, this )
-		output.write( ' ' )
+		formatSequence( state, node.value.params )
+		state.write( ' ' )
 		this[ node.value.body.type ]( node.value.body, state )
 	},
 	ClassExpression( node, state ) {
 		this.ClassDeclaration( node, state )
 	},
 	ArrowFunctionExpression( node, state ) {
-		const { output } = state
 		const { params } = node
 		if ( params != null ) {
 			if ( params.length === 1 && params[ 0 ].type[ 0 ] === 'I' ) {
 				// If params[0].type[0] starts with 'I', it can't be `ImportDeclaration` nor `IfStatement` and thus is `Identifier`
-				output.write( params[ 0 ].name )
+				state.write( params[ 0 ].name )
 			} else {
-				formatSequence( node.params, state, this )
+				formatSequence( state, node.params )
 			}
 		}
-		output.write( ' => ' )
+		state.write( ' => ' )
 		if ( node.body.type[ 0 ] === 'O' ) {
-			output.write( '(' )
+			state.write( '(' )
 			this.ObjectExpression( node.body, state )
-			output.write( ')' )
+			state.write( ')' )
 		} else {
 			this[ node.body.type ]( node.body, state )
 		}
 	},
 	ThisExpression( node, state ) {
-		state.output.write( 'this' )
+		state.write( 'this' )
 	},
 	Super( node, state ) {
-		state.output.write( 'super' )
+		state.write( 'super' )
 	},
 	RestElement: RestElement = function( node, state ) {
-		state.output.write( '...' )
+		state.write( '...' )
 		this[ node.argument.type ]( node.argument, state )
 	},
 	SpreadElement: RestElement,
 	YieldExpression( node, state ) {
-		const { output } = state
-		output.write( node.delegate ? 'yield*' : 'yield' )
+		state.write( node.delegate ? 'yield*' : 'yield' )
 		if ( node.argument ) {
-			output.write( ' ' )
+			state.write( ' ' )
 			this[ node.argument.type ]( node.argument, state )
 		}
 	},
 	TemplateLiteral( node, state ) {
-		const { output } = state
 		const { quasis, expressions } = node
-		output.write( '`' )
+		state.write( '`' )
 		const { length } = expressions
 		for ( let i = 0; i < length; i++ ) {
 			let expression = expressions[ i ]
-			output.write( quasis[ i ].value.raw )
-			output.write( '${' )
+			state.write( quasis[ i ].value.raw )
+			state.write( '${' )
 			this[ expression.type ]( expression, state )
-			output.write( '}' )
+			state.write( '}' )
 		}
-		output.write( quasis[ quasis.length - 1 ].value.raw )
-		output.write( '`' )
+		state.write( quasis[ quasis.length - 1 ].value.raw )
+		state.write( '`' )
 	},
 	TaggedTemplateExpression( node, state ) {
 		this[ node.tag.type ]( node.tag, state )
 		this[ node.quasi.type ]( node.quasi, state )
 	},
 	ArrayExpression: ArrayExpression = function( node, state ) {
-		const { output } = state
-		output.write( '[' )
+		state.write( '[' )
 		if ( node.elements.length > 0 ) {
 			const { elements } = node, { length } = elements
 			for ( let i = 0; ; ) {
@@ -643,58 +622,59 @@ export const defaultGenerator = {
 				if ( element != null )
 					this[ element.type ]( element, state )
 				if ( ++i < length ) {
-					output.write( ', ' )
+					state.write( ', ' )
 				} else {
 					if ( element == null )
-						output.write( ', ' )
+						state.write( ', ' )
 					break
 				}
 			}
 		}
-		output.write( ']' )
+		state.write( ']' )
 	},
 	ArrayPattern: ArrayExpression,
 	ObjectExpression( node, state ) {
 		const indent = state.indent.repeat( state.indentLevel++ )
-		const { lineEnd, output, writeComments } = state
+		const { lineEnd, writeComments } = state
 		const propertyIndent = indent + state.indent
-		output.write( '{' )
+		state.write( '{' )
 		if ( node.properties.length > 0 ) {
-			output.write( lineEnd )
+			state.write( lineEnd )
 			if ( writeComments && node.comments != null )
-				formatComments( node.comments, output, propertyIndent, lineEnd )
-			const comma = ',' + lineEnd, { properties } = node, { length } = properties
+				formatComments( state, node.comments, propertyIndent, lineEnd )
+			const comma = ',' + lineEnd
+			const { properties } = node, { length } = properties
 			for ( let i = 0; ; ) {
 				let property = properties[ i ]
 				if ( writeComments && property.comments != null )
-					formatComments( property.comments, output, propertyIndent, lineEnd )
-				output.write( propertyIndent )
+					formatComments( state, property.comments, propertyIndent, lineEnd )
+				state.write( propertyIndent )
 				this.Property( property, state )
 				if ( ++i < length )
-					output.write( comma )
+					state.write( comma )
 				else
 					break
 			}
-			output.write( lineEnd )
+			state.write( lineEnd )
 			if ( writeComments && node.trailingComments != null )
-				formatComments( node.trailingComments, output, propertyIndent, lineEnd )
-			output.write( indent + '}' )
+				formatComments( state, node.trailingComments, propertyIndent, lineEnd )
+			state.write( indent + '}' )
 		} else if ( writeComments ) {
 			if ( node.comments != null ) {
-				output.write( lineEnd )
-				formatComments( node.comments, output, propertyIndent, lineEnd )
+				state.write( lineEnd )
+				formatComments( state, node.comments, propertyIndent, lineEnd )
 				if ( node.trailingComments != null )
-					formatComments( node.trailingComments, output, propertyIndent, lineEnd )
-				output.write( indent + '}' )
+					formatComments( state, node.trailingComments, propertyIndent, lineEnd )
+				state.write( indent + '}' )
 			} else if ( node.trailingComments != null ) {
-				output.write( lineEnd )
-				formatComments( node.trailingComments, output, propertyIndent, lineEnd )
-				output.write( indent + '}' )
+				state.write( lineEnd )
+				formatComments( state, node.trailingComments, propertyIndent, lineEnd )
+				state.write( indent + '}' )
 			} else {
-				output.write( '}' )
+				state.write( '}' )
 			}
 		} else {
-			output.write( '}' )
+			state.write( '}' )
 		}
 		state.indentLevel--
 	},
@@ -703,173 +683,195 @@ export const defaultGenerator = {
 			// Either a method or of kind `set` or `get` (not `init`)
 			this.MethodDefinition( node, state )
 		} else {
-			const { output } = state
 			if ( !node.shorthand ) {
 				if ( node.computed ) {
-					output.write( '[' )
+					state.write( '[' )
 					this[ node.key.type ]( node.key, state )
-					output.write( ']' )
+					state.write( ']' )
 				} else {
 					this[ node.key.type ]( node.key, state )
 				}
-				output.write( ': ' )
+				state.write( ': ' )
 			}
 			this[ node.value.type ]( node.value, state )
 		}
 	},
 	ObjectPattern( node, state ) {
-		const { output } = state
-		output.write( '{' )
+		state.write( '{' )
 		if ( node.properties.length > 0 ) {
 			const { properties } = node, { length } = properties
 			for ( let i = 0; ; ) {
 				this.Property( properties[ i ], state )
 				if ( ++i < length )
-					output.write( ', ' )
+					state.write( ', ' )
 				else
 					break
 			}
 		}
-		output.write( '}' )
+		state.write( '}' )
 	},
 	SequenceExpression( node, state ) {
-		formatSequence( node.expressions, state, this )
+		formatSequence( state, node.expressions )
 	},
 	UnaryExpression( node, state ) {
-		const { output } = state
 		if ( node.prefix ) {
-			output.write( node.operator )
+			state.write( node.operator )
 			if ( node.operator.length > 1 )
-				state.output.write( ' ' )
+				state.write( ' ' )
 			if ( EXPRESSIONS_PRECEDENCE[ node.argument.type ] < EXPRESSIONS_PRECEDENCE.UnaryExpression ) {
-				output.write( '(' )
+				state.write( '(' )
 				this[ node.argument.type ]( node.argument, state )
-				output.write( ')' )
+				state.write( ')' )
 			} else {
 				this[ node.argument.type ]( node.argument, state )
 			}
 		} else {
 			// FIXME: This case never occurs
 			this[ node.argument.type ]( node.argument, state )
-			state.output.write( node.operator )
+			state.write( node.operator )
 		}
 	},
 	UpdateExpression( node, state ) {
 		// Always applied to identifiers or members, no parenthesis check needed
 		if ( node.prefix ) {
-			state.output.write( node.operator )
+			state.write( node.operator )
 			this[ node.argument.type ]( node.argument, state )
 		} else {
 			this[ node.argument.type ]( node.argument, state )
-			state.output.write( node.operator )
+			state.write( node.operator )
 		}
 	},
 	AssignmentExpression( node, state ) {
 		this[ node.left.type ]( node.left, state )
-		state.output.write( ' ' + node.operator + ' ' )
+		state.write( ' ' + node.operator + ' ' )
 		this[ node.right.type ]( node.right, state )
 	},
 	AssignmentPattern( node, state ) {
 		this[ node.left.type ]( node.left, state )
-		state.output.write( ' = ' )
+		state.write( ' = ' )
 		this[ node.right.type ]( node.right, state )
 	},
 	BinaryExpression: BinaryExpression = function( node, state ) {
-		const { output } = state
 		if ( node.operator === 'in' ) {
 			// Avoids confusion in `for` loops initializers
-			output.write( '(' )
-			formatBinaryExpressionPart( node.left, node, false, state, this )
-			output.write( ' ' + node.operator + ' ' )
-			formatBinaryExpressionPart( node.right, node, true, state, this )
-			output.write( ')' )
+			state.write( '(' )
+			formatBinaryExpressionPart( state, node.left, node, false )
+			state.write( ' ' + node.operator + ' ' )
+			formatBinaryExpressionPart( state, node.right, node, true )
+			state.write( ')' )
 		} else {
-			formatBinaryExpressionPart( node.left, node, false, state, this )
-			output.write( ' ' + node.operator + ' ' )
-			formatBinaryExpressionPart( node.right, node, true, state, this )
+			formatBinaryExpressionPart( state, node.left, node, false )
+			state.write( ' ' + node.operator + ' ' )
+			formatBinaryExpressionPart( state, node.right, node, true )
 		}
 	},
 	LogicalExpression: BinaryExpression,
 	ConditionalExpression( node, state ) {
-		const { output } = state
 		if ( EXPRESSIONS_PRECEDENCE[ node.test.type ] > EXPRESSIONS_PRECEDENCE.ConditionalExpression ) {
 			this[ node.test.type ]( node.test, state )
 		} else {
-			output.write( '(' )
+			state.write( '(' )
 			this[ node.test.type ]( node.test, state )
-			output.write( ')' )
+			state.write( ')' )
 		}
-		output.write( ' ? ' )
+		state.write( ' ? ' )
 		this[ node.consequent.type ]( node.consequent, state )
-		output.write( ' : ' )
+		state.write( ' : ' )
 		this[ node.alternate.type ]( node.alternate, state )
 	},
 	NewExpression( node, state ) {
-		state.output.write( 'new ' )
-		const { output } = state
+		state.write( 'new ' )
 		if ( EXPRESSIONS_PRECEDENCE[ node.callee.type ] < EXPRESSIONS_PRECEDENCE.CallExpression
 				|| hasCallExpression( node.callee ) ) {
-			output.write( '(' )
+			state.write( '(' )
 			this[ node.callee.type ]( node.callee, state )
-			output.write( ')' )
+			state.write( ')' )
 		} else {
 			this[ node.callee.type ]( node.callee, state )
 		}
-		formatSequence( node[ 'arguments' ], state, this )
+		formatSequence( state, node[ 'arguments' ] )
 	},
 	CallExpression( node, state ) {
-		const { output } = state
 		if ( EXPRESSIONS_PRECEDENCE[ node.callee.type ] < EXPRESSIONS_PRECEDENCE.CallExpression ) {
-			output.write( '(' )
+			state.write( '(' )
 			this[ node.callee.type ]( node.callee, state )
-			output.write( ')' )
+			state.write( ')' )
 		} else {
 			this[ node.callee.type ]( node.callee, state )
 		}
-		formatSequence( node[ 'arguments' ], state, this )
+		formatSequence( state, node[ 'arguments' ] )
 	},
 	MemberExpression( node, state ) {
-		const { output } = state
 		if ( EXPRESSIONS_PRECEDENCE[ node.object.type ] < EXPRESSIONS_PRECEDENCE.MemberExpression ) {
-			output.write( '(' )
+			state.write( '(' )
 			this[ node.object.type ]( node.object, state )
-			output.write( ')' )
+			state.write( ')' )
 		} else {
 			this[ node.object.type ]( node.object, state )
 		}
 		if ( node.computed ) {
-			output.write( '[' )
+			state.write( '[' )
 			this[ node.property.type ]( node.property, state )
-			output.write( ']' )
+			state.write( ']' )
 		} else {
-			output.write( '.' )
+			state.write( '.' )
 			this[ node.property.type ]( node.property, state )
 		}
 	},
 	MetaProperty( node, state ) {
-		state.output.write( node.meta.name + '.' + node.property.name )
+		state.write( node.meta.name + '.' + node.property.name )
 	},
 	Identifier( node, state ) {
-		state.output.write( node.name )
+		state.write( node.name )
 	},
 	Literal( node, state ) {
-		state.output.write( node.raw )
+		state.write( node.raw )
 	}
 }
 
 
-class Stream {
+const EMPTY_OBJECT = {};
 
-	constructor() {
-		this.data = ''
+class State {
+
+	constructor( options ) {
+		const setup = options == null ? EMPTY_OBJECT : options
+		this.output = ''
+		// Functional options
+		if ( setup.output != null ) {
+			this.output = setup.output
+			this.write = this.writeToStream
+		} else {
+			this.output = ''
+		}
+		this.generator = setup.generator != null ? setup.generator : defaultGenerator
+		// Formating setup
+		this.indent = setup.indent != null ? setup.indent : '\t'
+		this.lineEnd = setup.lineEnd != null ? setup.lineEnd : '\n'
+		this.indentLevel = setup.startingIndentLevel != null ? setup.startingIndentLevel : 0
+		this.writeComments = setup.comments ? setup.comments : false
+		// Internal state
+		this.noTrailingSemicolon = false
 	}
 	
 	write( string ) {
-		this.data += string
+		this.output += string
+	}
+
+	writeToStream( string ) {
+		this.output.write( string )
+	}
+
+	writeAndMap( string, location ) {
+		this.output += string
+	}
+
+	writeToStreamAndMap( string, location ) {
+		this.output.write( string )
 	}
 
 	toString() {
-		return this.data
+		return this.output
 	}
 
 }
@@ -887,28 +889,8 @@ export default function astring( node, options ) {
 	- `output`: output stream to write the rendered code to (defaults to `null`)
 	- `generator`: custom code generator (defaults to `defaultGenerator`)
 	*/
-	const state = options == null ? {
-		output: new Stream(),
-		generator: defaultGenerator,
-		indent: '\t',
-		lineEnd: '\n',
-		indentLevel: 0,
-		writeComments: false,
-		noTrailingSemicolon: false
-	} : {
-		// Functional options
-		output: options.output ? options.output : new Stream(),
-		generator: options.generator ? options.generator : defaultGenerator,
-		// Formating options
-		indent: options.indent != null ? options.indent : '\t',
-		lineEnd: options.lineEnd != null ? options.lineEnd : '\n',
-		indentLevel: options.startingIndentLevel != null ? options.startingIndentLevel : 0,
-		writeComments: options.comments ? options.comments : false,
-		// Internal state
-		noTrailingSemicolon: false
-	}
+	const state = new State( options )
 	// Travel through the AST node and generate the code
 	state.generator[ node.type ]( node, state )
-	const { output } = state
-	return output.data != null ? output.data : output
+	return state.output
 }
