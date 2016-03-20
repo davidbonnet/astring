@@ -2,9 +2,9 @@
 
 var astring
 try {
-	astring = require( '../dist/astring' )
-} catch ( error ) {
 	astring = require( '../dist/astring.min' )
+} catch ( error ) {
+	astring = require( '../dist/astring' )
 }
 var version = require( '../package' ).version
 var fs = require( 'fs' )
