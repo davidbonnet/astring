@@ -126,7 +126,7 @@ console.log(code === formattedCode ? 'It works !' : 'Something went wrong…');
 
 ### Extending
 
-Astring can easily be extended by updating or passing a custom code `generator`. A code `generator` consists of a mapping of node names and functions that take two arguments: `node` and `state`. The `node` points to the node from which to generate the code and the `state` holds various values and objects, the most important one being the `output` code stream.
+Astring can easily be extended by updating or passing a custom code `generator`. A code `generator` consists of a mapping of node names and functions that take two arguments: `node` and `state`. The `node` points to the node from which to generate the code and the `state` exposes the `write` method that takes generated code strings.
 
 This example shows how to support the `await` keyword which is part of the [asynchronous functions proposal](https://github.com/tc39/ecmascript-asyncawait). The corresponding `AwaitExpression` node is based on [this suggested definition](https://github.com/estree/estree/blob/master/experimental/async-functions.md).
 
@@ -135,7 +135,7 @@ This example shows how to support the `await` keyword which is part of the [asyn
 // Create a custom generator that inherits from Astring's default generator
 var customGenerator = Object.assign({}, astring.defaultGenerator, {
 	AwaitExpression: function(node, state) {
-		state.output.write('await ');
+		state.write('await ');
 		var argument = node.argument;
 		if (argument != null) {
 			this[argument.type](argument, state);
