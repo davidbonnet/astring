@@ -174,14 +174,14 @@ The `bin/astring` utility can be used to convert a JSON-formatted ESTree complia
 - `-h`, `--help`: print a usage message and exit
 - `-v`, `--version`: print package version and exit
 
-The utility reads the AST from `stdin` or from a provided list of files, and prints out the resulting code.
+The utility reads the AST from a provided list of files or from `stdin` if none is supplied and prints the generated code.
 
 ### Example
 
 As in the previous example, these examples use [Acorn](https://github.com/marijnh/acorn) to get the JSON-formatted AST. This command pipes the AST output by Acorn from a `script.js` file to Astring and writes the formatted JavaScript code into a `result.js` file:
 
 ```bash
-acorn --ecma6 script.js | astring --indent "  " > result.js
+cat script.js | acorn --ecma6 | astring --indent "  " > result.js
 ```
 
 This command does the same, but reads the AST from an intermediary file:
@@ -189,6 +189,12 @@ This command does the same, but reads the AST from an intermediary file:
 ```bash
 acorn --ecma6 script.js > ast.json
 astring --indent "  " ast.json > result.js
+```
+
+This command reads JavaScript code from `stdin` and outputs a prettified version:
+
+```bash
+cat | acorn --ecma6 | astring --indent "  "
 ```
 
 
