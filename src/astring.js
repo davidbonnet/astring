@@ -845,6 +845,10 @@ class State {
 			this.output = ''
 		}
 		this.generator = setup.generator != null ? setup.generator : defaultGenerator
+		// Source map
+		this.map = setup.sourcemap ? new SourceMap() : null
+		this.line = 1
+		this.column = 0
 		// Formating setup
 		this.indent = setup.indent != null ? setup.indent : '\t'
 		this.lineEnd = setup.lineEnd != null ? setup.lineEnd : '\n'
@@ -864,6 +868,18 @@ class State {
 
 	writeAndMap( string, location ) {
 		this.output += string
+		if ( location != null ) {
+			this.map.add(this.sourceFile, location, this)
+		}
+		const { length } = string
+		if ( length > 0 ) {
+			if ( string.charCodeAt( string.length - 1 ) === 10 ) {
+				this.line++
+				this.column = 0
+			} else {
+				this.column += length
+			}
+		}
 	}
 
 	writeToStreamAndMap( string, location ) {
@@ -872,6 +888,19 @@ class State {
 
 	toString() {
 		return this.output
+	}
+
+}
+
+
+class SourceMap {
+
+	constructor() {
+
+	}
+
+	add(fileName, originalLocation, generatedLocation) {
+		
 	}
 
 }
