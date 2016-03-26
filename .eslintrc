@@ -1,4 +1,13 @@
 {
+    "parserOptions": {
+        "ecmaVersion": 6,
+        "sourceType": "module",
+        "ecmaFeatures": {}
+    },
+    "env": {
+        "browser": true,
+        "node": true
+    },
     "rules": {
         "indent": [2, "tab", {
             "SwitchCase": 1
@@ -37,17 +46,5 @@
             "max": 2
         }],
         "eol-last": 2
-    },
-    "globals": {
-        "require": true,
-        "__dirname": true,
-        "__filename": true
-    },
-    "env": {
-        "es6": true,
-        "browser": true
-    },
-    "ecmaFeatures": {
-        "modules": true
     }
 }
