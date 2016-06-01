@@ -22,6 +22,7 @@ var stripLocation = astravel.makeTraveler( {
 	go: function( node, state ) {
 		delete node.start
 		delete node.end
+		delete node.raw
 		this[ node.type ]( node, state )
 	},
 	Property: function( node, state ) {
