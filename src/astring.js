@@ -1,4 +1,3 @@
-
 // Astring is a tiny and fast JavaScript code generator from an ESTree-compliant AST.
 //
 // Astring was written by David Bonnet and released under an MIT license.
@@ -8,6 +7,8 @@
 //
 // Please use the GitHub bug tracker to report issues:
 // https://github.com/davidbonnet/astring/issues
+
+const { stringify } = JSON;
 
 
 const OPERATORS_PRECEDENCE = {
@@ -505,7 +506,7 @@ export const defaultGenerator = {
 			}
 			output.write( ' from ' )
 		}
-		output.write( node.source.raw )
+		this.Literal( node.source, state )
 		output.write( ';' )
 	},
 	ExportDefaultDeclaration( node, state ) {
@@ -539,13 +540,17 @@ export const defaultGenerator = {
 			}
 			output.write( '}' )
 			if ( node.source ) {
-				output.write( ' from ' + node.source.raw )
+				output.write( ' from ' )
+				this.Literal( node.source, state )
 			}
 			output.write( ';' )
 		}
 	},
 	ExportAllDeclaration( node, state ) {
-		state.output.write( 'export * from ' + node.source.raw + ';' )
+		const { output } = state
+		output.write( 'export * from ' )
+		this.Literal( node.source, state )
+		output.write( ';' )
 	},
 	MethodDefinition( node, state ) {
 		const { output } = state
@@ -853,7 +858,17 @@ export const defaultGenerator = {
 		state.output.write( node.name )
 	},
 	Literal( node, state ) {
-		state.output.write( node.raw )
+		if ( node.raw != null ) {
+			state.output.write( node.raw )
+		} else if ( node.regex != null ) {
+			this.RegExpLiteral( node, state )
+		} else {
+			state.output.write( stringify( node.value ) )			
+		}
+	},
+	RegExpLiteral( node, state ) {
+		const { regex } = node
+		state.output.write( 'new RegExp(' + stringify( regex.pattern ) + ', ' + stringify( regex.flags ) + ')' )
 	}
 }
 
