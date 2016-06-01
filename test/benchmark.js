@@ -25,7 +25,8 @@ function benchmarkWithCode( code, name ) {
 	console.log( '\nTesting "%s" (code length: %d)', name, code.length )
 	var ast = acorn.parse( code, {
 		ecmaVersion: 6,
-		sourceType: 'module'
+		sourceType: 'module',
+		locations: true
 	} )
 	var uglifyAst = null
 	try {
@@ -34,6 +35,15 @@ function benchmarkWithCode( code, name ) {
 	var uglifyOptions = {
 		beautify: true
 	}
+	var nodentOptions = {
+		map: {
+			startLine: 0,
+			file: 'original',
+			sourceMapRoot: '/',
+			sourceContent: code
+		}
+	}
+	// console.log( nodent( ast, nodentOptions ).map.toString() )
 	// console.log( astring( ast ) )
 	; ( new Benchmark.Suite )
 	.add( 'escodegen', function() {
@@ -49,7 +59,7 @@ function benchmarkWithCode( code, name ) {
 		uglifyAst.print_to_string( uglifyOptions )
 	} )
 	.add( 'nodent', function() {
-		nodent( ast )
+		nodent( ast, nodentOptions )
 	} )
 	// add listeners
 	.on( 'cycle', function( event ) {
