@@ -1,4 +1,3 @@
-
 // Astring is a tiny and fast JavaScript code generator from an ESTree-compliant AST.
 //
 // Astring was written by David Bonnet and released under an MIT license.
@@ -8,6 +7,8 @@
 //
 // Please use the GitHub bug tracker to report issues:
 // https://github.com/davidbonnet/astring/issues
+
+const { stringify } = JSON
 
 
 const OPERATORS_PRECEDENCE = {
@@ -491,7 +492,7 @@ export const defaultGenerator = {
 			}
 			state.write( ' from ' )
 		}
-		state.write( node.source.raw )
+		this.Literal( node.source, state )
 		state.write( ';' )
 	},
 	ExportDefaultDeclaration( node, state ) {
@@ -523,13 +524,16 @@ export const defaultGenerator = {
 			}
 			state.write( '}' )
 			if ( node.source ) {
-				state.write( ' from ' + node.source.raw )
+				state.write( ' from ' )
+				this.Literal( node.source, state )
 			}
 			state.write( ';' )
 		}
 	},
 	ExportAllDeclaration( node, state ) {
-		state.write( 'export * from ' + node.source.raw + ';' )
+		state.write( 'export * from ' )
+		this.Literal( node.source, state )
+		state.write( ';' )
 	},
 	MethodDefinition( node, state ) {
 		if ( node.static )
@@ -825,12 +829,23 @@ export const defaultGenerator = {
 		state.write( node.name )
 	},
 	Literal( node, state ) {
-		state.write( node.raw )
+		if ( node.raw != null ) {
+			state.write( node.raw )
+		} else if ( node.regex != null ) {
+			this.RegExpLiteral( node, state )
+		} else {
+			state.write( stringify( node.value ) )
+		}
+	},
+	RegExpLiteral( node, state ) {
+		const { regex } = node
+		state.write( 'new RegExp(' + stringify( regex.pattern ) + ', ' + stringify( regex.flags ) + ')' )
 	}
 }
 
 
-const EMPTY_OBJECT = {};
+const EMPTY_OBJECT = {}
+
 
 class State {
 
@@ -857,7 +872,7 @@ class State {
 		// Internal state
 		this.noTrailingSemicolon = false
 	}
-	
+
 	write( string ) {
 		this.output += string
 	}
@@ -869,7 +884,7 @@ class State {
 	writeAndMap( string, location ) {
 		this.output += string
 		if ( location != null ) {
-			this.map.add(this.sourceFile, location, this)
+			this.map.add( this.sourceFile, location, this )
 		}
 		const { length } = string
 		if ( length > 0 ) {
@@ -899,8 +914,8 @@ class SourceMap {
 
 	}
 
-	add(fileName, originalLocation, generatedLocation) {
-		
+	add( fileName, originalLocation, generatedLocation ) {
+
 	}
 
 }
