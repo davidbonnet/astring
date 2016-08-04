@@ -190,7 +190,7 @@ function hasCallExpression( node ) {
 }
 
 
-let ForInStatement, FunctionDeclaration, RestElement, BinaryExpression, ArrayExpression
+let ForInStatement, FunctionDeclaration, RestElement, BinaryExpression, ArrayExpression, BlockStatement
 
 
 export const defaultGenerator = {
@@ -212,7 +212,7 @@ export const defaultGenerator = {
 		if ( writeComments && node.trailingComments != null )
 			formatComments( node.trailingComments, output, indent, lineEnd )
 	},
-	BlockStatement( node, state ) {
+	BlockStatement: BlockStatement = function( node, state ) {
 		const indent = state.indent.repeat( state.indentLevel++ )
 		const { lineEnd, output, writeComments } = state
 		const statementIndent = indent + state.indent
@@ -245,6 +245,7 @@ export const defaultGenerator = {
 		output.write( '}' )
 		state.indentLevel--
 	},
+	ClassBody: BlockStatement,
 	EmptyStatement( node, state ) {
 		state.output.write( ';' )
 	},
@@ -461,7 +462,7 @@ export const defaultGenerator = {
 			this[ node.superClass.type ]( node.superClass, state )
 			output.write( ' ' )
 		}
-		this.BlockStatement( node.body, state )
+		this[ node.body.type ]( node.body, state )
 	},
 	ImportDeclaration( node, state ) {
 		const { output } = state
