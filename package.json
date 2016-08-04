@@ -2,14 +2,14 @@
   "name": "astring",
   "version": "0.6.1",
   "description": "JavaScript code generator from an ESTree-compliant AST.",
-  "main": "./dist/astring.min.js",
+  "main": "./dist/astring.js",
   "bin": {
     "astring": "./bin/astring"
   },
   "scripts": {
     "test": "mocha test/index.js",
     "full-test": "node test/scripts.js",
-    "prepublish": "browserify --transform [ babelify ] --plugin [ minifyify --no-map ] --no-builtins --standalone astring --entry ./src/export.js --outfile dist/astring.min.js",
+    "prepublish": "npm run build",
     "build": "browserify --transform [ babelify ] --no-builtins --standalone astring --entry ./src/export.js --outfile dist/astring.js",
     "start": "watchify --transform [ babelify ] --no-builtins --debug --verbose --standalone astring --entry ./src/export.js --outfile dist/astring.debug.js",
     "benchmark": "node ./test/benchmark.js"
@@ -37,7 +37,6 @@
     "eslint": "^2.2.0",
     "esotope": "^1.4.5",
     "glob": "^7.0.0",
-    "minifyify": "^7.3.0",
     "mocha": "^2.2.5",
     "source-map": "^0.5.3",
     "string.prototype.repeat": "^0.2.0",
