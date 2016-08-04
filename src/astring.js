@@ -552,6 +552,44 @@ export const defaultGenerator = {
 		this.Literal( node.source, state )
 		output.write( ';' )
 	},
+	ExportDeclaration( node, state ) {
+		const { output } = state
+		output.write( 'export ' )
+		if ( node.default )
+			output.write( 'default ' )
+		if ( node.declaration ) {
+			this[ node.declaration.type ]( node.declaration, state )
+		} else {
+			if ( !node.default)
+				output.write( '{' )
+			const { specifiers } = node, { length } = specifiers
+			if ( length > 0 ) {
+				for ( let i = 0; ; ) {
+					let specifier = specifiers[ i ]
+					if ( specifier.type === 'ExportBatchSpecifier' )
+						output.write( '*' )
+					else {
+						let { name } = specifier.id
+						output.write( name )
+						if ( name !== specifier.name.name )
+							output.write( ' as ' + specifier.name.name )
+					}
+					if ( ++i < length )
+						output.write( ', ' )
+					else
+						break
+				}
+			}
+			if ( !node.default)
+				output.write( '}' )
+			if ( node.source ) {
+				output.write( ' from ' )
+				this.Literal( node.source, state )
+			}
+			output.write( ';' )
+		}
+
+	},
 	MethodDefinition( node, state ) {
 		const { output } = state
 		if ( node.static )
@@ -863,7 +901,7 @@ export const defaultGenerator = {
 		} else if ( node.regex != null ) {
 			this.RegExpLiteral( node, state )
 		} else {
-			state.output.write( stringify( node.value ) )			
+			state.output.write( stringify( node.value ) )
 		}
 	},
 	RegExpLiteral( node, state ) {
@@ -878,7 +916,7 @@ class Stream {
 	constructor() {
 		this.data = ''
 	}
-	
+
 	write( string ) {
 		this.data += string
 	}
