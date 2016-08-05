@@ -2,7 +2,7 @@
   "name": "astring",
   "version": "0.6.1",
   "description": "JavaScript code generator from an ESTree-compliant AST.",
-  "main": "./dist/astring.js",
+  "main": "./dist/astring",
   "bin": {
     "astring": "./bin/astring"
   },
@@ -10,8 +10,8 @@
     "test": "mocha test/index.js",
     "full-test": "node test/scripts.js",
     "prepublish": "npm run build",
-    "build": "browserify --transform [ babelify ] --no-builtins --standalone astring --entry ./src/export.js --outfile dist/astring.js",
-    "start": "watchify --transform [ babelify ] --no-builtins --debug --verbose --standalone astring --entry ./src/export.js --outfile dist/astring.debug.js",
+    "build": "cross-env BABEL_ENV=production babel src -d dist",
+    "start": "babel --watch src -d dist",
     "benchmark": "node ./test/benchmark.js"
   },
   "keywords": [
@@ -25,22 +25,25 @@
   },
   "author": "David Bonnet <david@bonnet.cc>",
   "license": "MIT",
+  "dependencies": {
+    "string.prototype.repeat": "^0.2.0"
+  },
   "devDependencies": {
     "acorn": "^3.0.4",
     "astravel": "^0.3.11",
+    "babel-cli": "^6.11.4",
+    "babel-core": "^6.13.1",
+    "babel-plugin-transform-es2015-modules-umd": "^6.12.0",
     "babel-preset-es2015": "^6.6.0",
     "babel-preset-es2015-loose": "^7.0.0",
-    "babelify": "^7.2.0",
     "benchmark": "^2.0.0",
-    "browserify": "^13.0.0",
+    "cross-env": "^2.0.0",
     "escodegen": "^1.6.1",
     "eslint": "^2.2.0",
     "esotope": "^1.4.5",
     "glob": "^7.0.0",
     "mocha": "^2.2.5",
     "source-map": "^0.5.3",
-    "string.prototype.repeat": "^0.2.0",
-    "uglify-js": "^2.6.0",
-    "watchify": "^3.6.0"
+    "uglify-js": "^2.6.0"
   }
 }

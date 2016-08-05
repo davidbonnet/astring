@@ -4,19 +4,7 @@ var uglify = require( 'uglify-js' )
 var escodegen = require( 'escodegen' ).generate
 var esotope = require( 'esotope' ).generate
 var nodent = require( '../vendor/nodent' )
-var astring
-try {
-	astring = require( '../dist/astring.min' )
-	console.log( 'Using ./dist/astring.min.js' )
-} catch ( error ) {
-	try {
-		astring = require( '../dist/astring' )
-		console.log( 'Using ./dist/astring.js' )
-	} catch ( error ) {
-		astring = require( '../dist/astring.debug' )
-		console.log( 'Using ./dist/astring.debug.js' )
-	}
-}
+var astring = require( '../dist/astring' )
 var fs = require( 'fs' )
 var path = require( 'path' )
 

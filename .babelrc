@@ -1,3 +1,8 @@
 {
-  "presets": ["es2015-loose"]
+  "presets": ["./babel-preset-es2015-loose-umd"],
+  "env": {
+    "development": {
+      "sourceMaps": true
+    }
+  }
 }
