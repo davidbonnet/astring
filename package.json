@@ -43,6 +43,7 @@
     "esotope": "^1.4.5",
     "glob": "^7.0.0",
     "mocha": "^2.2.5",
+    "modify-babel-preset": "^2.1.1",
     "source-map": "^0.5.3",
     "uglify-js": "^2.6.0"
   }
