@@ -560,13 +560,14 @@ export const defaultGenerator = {
 		if ( node.declaration ) {
 			this[ node.declaration.type ]( node.declaration, state )
 		} else {
+			const { specifiers } = node, { length } = specifiers
+
 			const isDefaultOrBatch = node.default || (
-				specifiers.length === 1 &&
+				length === 1 &&
 				specifiers[ 0 ].type === 'ExportBatchSpecifier'
 			)
 			if ( !isDefaultOrBatch)
 				output.write( '{' )
-			const { specifiers } = node, { length } = specifiers
 			if ( length > 0 ) {
 				for ( let i = 0; ; ) {
 					let specifier = specifiers[ i ]
@@ -588,7 +589,7 @@ export const defaultGenerator = {
 				output.write( '}' )
 			if ( node.source ) {
 				output.write( ' from ' )
-				this.Literal( node.source, state )
+				this[ node.source.type ]( node.source, state )
 			}
 			output.write( ';' )
 		}
