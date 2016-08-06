@@ -33,12 +33,13 @@ cd astring
 npm install
 ```
 
-The path to the module file is `dist/astring.min.js` and can be linked to from an HTML webpage. When used in a browser environment, the module exposes a global variable `astring`:
+The path to the module file is `dist/astring.min.js` and it can be included from an HTML webpage. When used in a browser environment, the module exposes a global variable `astring`:
 
 ```html
-<script src="astring.min.js" type="text/javascript"></script>
+<script src="astring.js" type="text/javascript"></script>
 ```
 
+The module can also be used in the browser via a CommonJS bundler such as [Browserify](http://browserify.org) or [Webpack](https://webpack.github.io).
 
 
 ## Usage
@@ -155,7 +156,7 @@ var ast = {
 					type: "Identifier",
 					name: "callable"
 				},
-				arguments: []	
+				arguments: []
 			}
 		}
 	}],
@@ -207,24 +208,17 @@ All building scripts are defined in the `package.json` file and rely on the [Nod
 
 ### Production
 
-The source code of Astring is written in JavaScript 6 and located at `src/astring.js`. It is compiled down to a minified JavaScript 5 file located at `dist/astring.min.js` using [Browserify](http://browserify.org), [Babel](http://babeljs.io/) and [UglifyJS](https://github.com/mishoo/UglifyJS2). This is achieved by running:
+The source code of Astring is written in ECMAScript 2015 and located at `src/astring.js`. It is compiled down to a plain JavaScript (ES5) file located at `dist/astring.js` using [Babel](http://babeljs.io/). This is achieved by running:
 
 ```bash
 npm install
 ```
 
-If you are already using a JavaScript 6 to 5 compiler for your project, or a JavaScript 6 compliant interpreter, you can include the `src/astring.js` file directly.
-
-A non-minified and source map free version can be obtained at `dist/astring.js` by running:
-
-```bash
-npm run build
-```
-
+If you are already using an ES2015 to ES5 transpiler for your project, or running in an ES2015 compliant environment, you can include the `src/astring.js` file directly.
 
 ### Development
 
-If you are working on Astring, you can use [Watchify](https://github.com/substack/watchify) to build automatically at each modification a non-minified version (along with a source map for easy debugging) located at `dist/astring.debug.js` by running:
+If you are working on Astring, you can run the build in watch mode and including a source map, running:
 
 ```bash
 npm start

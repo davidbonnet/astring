@@ -8,6 +8,8 @@
 // Please use the GitHub bug tracker to report issues:
 // https://github.com/davidbonnet/astring/issues
 
+require( 'string.prototype.repeat' )
+
 const { stringify } = JSON;
 
 
@@ -193,7 +195,7 @@ function hasCallExpression( node ) {
 let ForInStatement, FunctionDeclaration, RestElement, BinaryExpression, ArrayExpression
 
 
-export const defaultGenerator = {
+const defaultGenerator = {
 	Program( node, state ) {
 		const indent = state.indent.repeat( state.indentLevel )
 		const { lineEnd, output, writeComments } = state
@@ -890,7 +892,7 @@ class Stream {
 }
 
 
-export default function astring( node, options ) {
+module.exports = function astring( node, options ) {
 	/*
 	Returns a string representing the rendered code of the provided AST `node`.
 	The `options` are:
@@ -927,3 +929,5 @@ export default function astring( node, options ) {
 	const { output } = state
 	return output.data != null ? output.data : output
 }
+
+module.exports.defaultGenerator = defaultGenerator;
