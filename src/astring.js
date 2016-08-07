@@ -474,7 +474,7 @@ export const defaultGenerator = {
 				if ( i > 0 )
 					output.write( ', ' )
 				specifier = specifiers[ i ]
-				const local = specifier.local || specifier.id
+				const local = specifier.local || specifier.name || specifier.id
 				const type = specifier.type[ 6 ]
 				if (type === 'D') {
 					// ImportDefaultSpecifier
@@ -493,9 +493,10 @@ export const defaultGenerator = {
 				output.write( '{' )
 				for ( ; ; ) {
 					specifier = specifiers[ i ]
-					let name = specifier.imported ? specifier.imported.name : specifier.name
-					output.write( name )
-					const local = specifier.local || specifier.id
+					let name = specifier.imported ? specifier.imported.name : specifier.id
+					if ( name.type )
+						this[ name.type ]( name, state )
+					const local = specifier.local || specifier.name
 					if ( name !== local.name ) {
 						output.write( ' as ' + local.name )
 					}
