@@ -7,10 +7,12 @@
     "astring": "./bin/astring"
   },
   "scripts": {
-    "test": "mocha test/index.js",
-    "full-test": "node test/scripts.js",
+    "test": "eslint src/astring.js && npm run build-debug && mocha test/index.js",
+    "test-live": "mocha --watch test/index.js",
+    "test-full": "node test/scripts.js",
     "prepublish": "npm run build",
     "build": "browserify --transform [ babelify ] --no-builtins --standalone astring --entry ./src/export.js --outfile dist/astring.js",
+    "build-debug": "browserify --transform [ babelify ] --no-builtins --debug --verbose --standalone astring --entry ./src/export.js --outfile dist/astring.debug.js",
     "start": "watchify --transform [ babelify ] --no-builtins --debug --verbose --standalone astring --entry ./src/export.js --outfile dist/astring.debug.js",
     "benchmark": "node ./test/benchmark.js"
   },
