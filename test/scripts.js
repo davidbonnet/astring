@@ -4,6 +4,7 @@ var path = require( 'path' )
 var glob = require( 'glob' )
 var acorn = require( 'acorn' )
 var astravel = require( 'astravel' )
+var normalizeNewline = require( 'normalize-newline' )
 var astring
 try {
 	astring = require( '../dist/astring.debug' )
@@ -47,7 +48,7 @@ console.log( 'Found', files.length, 'files, processing them…' )
 var processedFiles = 0, errorFiles = 0
 
 files.forEach( function( filename ) {
-	var code = fs.readFileSync( filename, 'utf8' )
+	var code = normalizeNewline( fs.readFileSync( filename, 'utf8' ) )
 	try {
 		var ast = acorn.parse( code, options )
 		stripLocation.go( ast )
