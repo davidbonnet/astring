@@ -33,10 +33,10 @@ cd astring
 npm install
 ```
 
-The path to the module file is `dist/astring.min.js` and can be linked to from an HTML webpage. When used in a browser environment, the module exposes a global variable `astring`:
+The path to the module file is `dist/astring.js` and can be linked to from an HTML webpage. When used in a browser environment, the module exposes a global variable `astring`:
 
 ```html
-<script src="astring.min.js" type="text/javascript"></script>
+<script src="astring.js" type="text/javascript"></script>
 ```
 
 
@@ -218,7 +218,7 @@ If you are already using a JavaScript 6 to 5 compiler for your project, or a Jav
 
 ### Development
 
-If you are working on Astring, you can use [Watchify](https://github.com/substack/watchify) to build automatically at each modification a non-minified version (along with a source map for easy debugging) located at `dist/astring.debug.js` by running:
+If you are working on Astring, you can use [Watchify](https://github.com/substack/watchify) to build automatically at each update the bundle (along with a source map for easy debugging) located at `dist/astring.debug.js` by running:
 
 ```bash
 npm start
