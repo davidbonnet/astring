@@ -194,7 +194,13 @@ function hasCallExpression( node ) {
 }
 
 
-let ForInStatement, FunctionDeclaration, RestElement, BinaryExpression, ArrayExpression, BlockStatement
+let
+	ForInStatement,
+	FunctionDeclaration,
+	RestElement,
+	BinaryExpression,
+	ArrayExpression,
+	BlockStatement
 
 
 export const defaultGenerator = {
@@ -465,7 +471,7 @@ export const defaultGenerator = {
 			this[ node.superClass.type ]( node.superClass, state )
 			output.write( ' ' )
 		}
-		this[ node.body.type ]( node.body, state )
+		this.ClassBody( node.body, state )
 	},
 	ImportDeclaration( node, state ) {
 		const { output } = state
@@ -725,20 +731,6 @@ export const defaultGenerator = {
 			}
 			this[ node.value.type ]( node.value, state )
 		}
-	},
-	PropertyPattern( node, state ) {
-		const { output } = state
-		if ( !node.shorthand ) {
-			if ( node.computed ) {
-				output.write( '[' )
-				this[ node.key.type ]( node.key, state )
-				output.write( ']' )
-			} else {
-				this[ node.key.type ]( node.key, state )
-			}
-			output.write( ': ' )
-		}
-		this[ node.pattern.type ]( node.pattern, state )
 	},
 	ObjectPattern( node, state ) {
 		const { output } = state
