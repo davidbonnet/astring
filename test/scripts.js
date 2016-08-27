@@ -5,14 +5,7 @@ var glob = require( 'glob' )
 var acorn = require( 'acorn' )
 var astravel = require( 'astravel' )
 var normalizeNewline = require( 'normalize-newline' )
-var astring
-try {
-	astring = require( '../dist/astring.debug' )
-	console.log( 'Using ./dist/astring.debug.js' )
-} catch ( error ) {
-	astring = require( '../dist/astring.min' )
-	console.log( 'Using ./dist/astring.min.js' )
-}
+var astring = require( '../dist/astring.debug' )
 
 
 var dependencies = Object.getOwnPropertyNames(
