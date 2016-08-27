@@ -1,11 +1,6 @@
 #!/usr/bin/env node
 
-var astring
-try {
-	astring = require( '../dist/astring' )
-} catch ( error ) {
-	astring = require( '../dist/astring.min' )
-}
+var astring = require( '../dist/astring' )
 var version = require( '../package' ).version
 var fs = require( 'fs' )
 var path = require( 'path' )
