@@ -8,10 +8,10 @@
 // Please use the GitHub bug tracker to report issues:
 // https://github.com/davidbonnet/astring/issues
 
-const { stringify } = JSON;
+const { stringify } = JSON
 
 
-const OPERATORS_PRECEDENCE = {
+const OPERATOR_PRECEDENCE = {
 	'||': 3,
 	'&&': 4,
 	'|': 5,
@@ -35,7 +35,7 @@ const OPERATORS_PRECEDENCE = {
 	'*': 12,
 	'%': 12,
 	'/': 12,
-	'**': 12
+	'**': 12,
 }
 
 
@@ -67,7 +67,7 @@ const EXPRESSIONS_PRECEDENCE = {
 	ConditionalExpression: 4,
 	AssignmentExpression: 3,
 	YieldExpression: 2,
-	RestElement: 1
+	RestElement: 1,
 }
 
 
@@ -104,12 +104,12 @@ function formatBinaryExpressionPart( node, parentNode, isRightHand, state, trave
 		if ( nodePrecedence === 13 || nodePrecedence === 14 ) {
 			// Either `LogicalExpression` or `BinaryExpression`
 			if ( isRightHand ) {
-				if ( OPERATORS_PRECEDENCE[ node.operator ] > OPERATORS_PRECEDENCE[ parentNode.operator ] ) {
+				if ( OPERATOR_PRECEDENCE[ node.operator ] > OPERATOR_PRECEDENCE[ parentNode.operator ] ) {
 					traveler[ node.type ]( node, state )
 					return
 				}
 			} else {
-				if ( OPERATORS_PRECEDENCE[ node.operator ] >= OPERATORS_PRECEDENCE[ parentNode.operator ] ) {
+				if ( OPERATOR_PRECEDENCE[ node.operator ] >= OPERATOR_PRECEDENCE[ parentNode.operator ] ) {
 					traveler[ node.type ]( node, state )
 					return
 				}
@@ -166,7 +166,11 @@ function formatComments( comments, output, indent, lineEnd ) {
 			output.write( '// ' + comment.value.trim() + '\n' )
 		else
 			// Block comment
-			output.write( '/*' + lineEnd + reindent( comment.value, indent ) + lineEnd + indent + '*/' + lineEnd )
+			output.write(
+				'/*' + lineEnd +
+				reindent( comment.value, indent ) + lineEnd +
+				indent + '*/' + lineEnd
+			)
 	}
 }
 
@@ -387,7 +391,6 @@ export const defaultGenerator = {
 		const { output } = state
 		output.write( 'for (' )
 		if ( node.init != null ) {
-			const { init } = node
 			state.noTrailingSemicolon = true
 			this[ node.init.type ]( node.init, state )
 			state.noTrailingSemicolon = false
@@ -475,11 +478,11 @@ export const defaultGenerator = {
 					output.write( ', ' )
 				specifier = specifiers[ i ]
 				const type = specifier.type[ 6 ]
-				if (type === 'D') {
+				if ( type === 'D' ) {
 					// ImportDefaultSpecifier
 					output.write( specifier.local.name )
 					i++
-				} else if (type === 'N') {
+				} else if ( type === 'N' ) {
 					// ImportNamespaceSpecifier
 					output.write( '* as ' + specifier.local.name )
 					i++
@@ -868,8 +871,10 @@ export const defaultGenerator = {
 	},
 	RegExpLiteral( node, state ) {
 		const { regex } = node
-		state.output.write( 'new RegExp(' + stringify( regex.pattern ) + ', ' + stringify( regex.flags ) + ')' )
-	}
+		state.output.write(
+			'new RegExp(' + stringify( regex.pattern ) + ', ' + stringify( regex.flags ) + ')'
+		)
+	},
 }
 
 
@@ -909,7 +914,7 @@ export default function astring( node, options ) {
 		lineEnd: '\n',
 		indentLevel: 0,
 		writeComments: false,
-		noTrailingSemicolon: false
+		noTrailingSemicolon: false,
 	} : {
 		// Functional options
 		output: options.output ? options.output : new Stream(),
@@ -920,7 +925,7 @@ export default function astring( node, options ) {
 		indentLevel: options.startingIndentLevel != null ? options.startingIndentLevel : 0,
 		writeComments: options.comments ? options.comments : false,
 		// Internal state
-		noTrailingSemicolon: false
+		noTrailingSemicolon: false,
 	}
 	// Travel through the AST node and generate the code
 	state.generator[ node.type ]( node, state )
