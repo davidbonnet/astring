@@ -871,7 +871,7 @@ class State {
 			this.write = this.writeToStream
 		} else {
 			this.output = ''
-	}
+		}
 		this.generator = setup.generator != null ? setup.generator : defaultGenerator
 		// Source map
 		this.map = setup.sourcemap ? new SourceMap() : null
