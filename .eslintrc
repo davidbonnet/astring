@@ -1,13 +1,4 @@
 {
-    "parserOptions": {
-        "ecmaVersion": 6,
-        "sourceType": "module",
-        "ecmaFeatures": {}
-    },
-    "env": {
-        "browser": true,
-        "node": true
-    },
 	"rules": {
 		"eol-last": "error",
 		"no-undef": "error",
@@ -72,5 +63,5 @@
 	"parserOptions": {
 		"ecmaVersion": 6,
 		"sourceType": "module",
-	},
+	}
 }
