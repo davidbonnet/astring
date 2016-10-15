@@ -11,7 +11,7 @@
 const { stringify } = JSON
 
 
-const OPERATORS_PRECEDENCE = {
+const OPERATOR_PRECEDENCE = {
 	'||': 3,
 	'&&': 4,
 	'|': 5,
@@ -35,7 +35,7 @@ const OPERATORS_PRECEDENCE = {
 	'*': 12,
 	'%': 12,
 	'/': 12,
-	'**': 12
+	'**': 12,
 }
 
 
@@ -67,7 +67,7 @@ const EXPRESSIONS_PRECEDENCE = {
 	ConditionalExpression: 4,
 	AssignmentExpression: 3,
 	YieldExpression: 2,
-	RestElement: 1
+	RestElement: 1,
 }
 
 
@@ -105,12 +105,12 @@ function formatBinaryExpressionPart( state, node, parentNode, isRightHand ) {
 		if ( nodePrecedence === 13 || nodePrecedence === 14 ) {
 			// Either `LogicalExpression` or `BinaryExpression`
 			if ( isRightHand ) {
-				if ( OPERATORS_PRECEDENCE[ node.operator ] > OPERATORS_PRECEDENCE[ parentNode.operator ] ) {
+				if ( OPERATOR_PRECEDENCE[ node.operator ] > OPERATOR_PRECEDENCE[ parentNode.operator ] ) {
 					generator[ node.type ]( node, state )
 					return
 				}
 			} else {
-				if ( OPERATORS_PRECEDENCE[ node.operator ] >= OPERATORS_PRECEDENCE[ parentNode.operator ] ) {
+				if ( OPERATOR_PRECEDENCE[ node.operator ] >= OPERATOR_PRECEDENCE[ parentNode.operator ] ) {
 					generator[ node.type ]( node, state )
 					return
 				}
@@ -167,7 +167,11 @@ function formatComments( state, comments, indent, lineEnd ) {
 			state.write( '// ' + comment.value.trim() + '\n' )
 		else
 			// Block comment
-			state.write( '/*' + lineEnd + reindent( comment.value, indent ) + lineEnd + indent + '*/' + lineEnd )
+			state.write(
+				'/*' + lineEnd +
+				reindent( comment.value, indent ) + lineEnd +
+				indent + '*/' + lineEnd
+			)
 	}
 }
 
@@ -191,7 +195,13 @@ function hasCallExpression( node ) {
 }
 
 
-let ForInStatement, FunctionDeclaration, RestElement, BinaryExpression, ArrayExpression
+let
+	ForInStatement,
+	FunctionDeclaration,
+	RestElement,
+	BinaryExpression,
+	ArrayExpression,
+	BlockStatement
 
 
 export const defaultGenerator = {
@@ -213,7 +223,7 @@ export const defaultGenerator = {
 		if ( writeComments && node.trailingComments != null )
 			formatComments( state, node.trailingComments, indent, lineEnd )
 	},
-	BlockStatement( node, state ) {
+	BlockStatement: BlockStatement = function( node, state ) {
 		const indent = state.indent.repeat( state.indentLevel++ )
 		const { lineEnd, writeComments } = state
 		const statementIndent = indent + state.indent
@@ -246,6 +256,7 @@ export const defaultGenerator = {
 		state.write( '}' )
 		state.indentLevel--
 	},
+	ClassBody: BlockStatement,
 	EmptyStatement( node, state ) {
 		state.write( ';' )
 	},
@@ -380,7 +391,7 @@ export const defaultGenerator = {
 		if ( node.init != null ) {
 			const { init } = node
 			state.noTrailingSemicolon = true
-			this[ node.init.type ]( node.init, state )
+			this[ init.type ]( init, state )
 			state.noTrailingSemicolon = false
 		}
 		state.write( '; ' )
@@ -448,7 +459,7 @@ export const defaultGenerator = {
 			this[ node.superClass.type ]( node.superClass, state )
 			state.write( ' ' )
 		}
-		this.BlockStatement( node.body, state )
+		this.ClassBody( node.body, state )
 	},
 	ImportDeclaration( node, state ) {
 		state.write( 'import ' )
@@ -461,11 +472,11 @@ export const defaultGenerator = {
 					state.write( ', ' )
 				specifier = specifiers[ i ]
 				const type = specifier.type[ 6 ]
-				if (type === 'D') {
+				if ( type === 'D' ) {
 					// ImportDefaultSpecifier
 					state.write( specifier.local.name )
 					i++
-				} else if (type === 'N') {
+				} else if ( type === 'N' ) {
 					// ImportNamespaceSpecifier
 					state.write( '* as ' + specifier.local.name )
 					i++
@@ -705,7 +716,7 @@ export const defaultGenerator = {
 		if ( node.properties.length > 0 ) {
 			const { properties } = node, { length } = properties
 			for ( let i = 0; ; ) {
-				this.Property( properties[ i ], state )
+				this[ properties[ i ].type ]( properties[ i ], state )
 				if ( ++i < length )
 					state.write( ', ' )
 				else
@@ -839,8 +850,10 @@ export const defaultGenerator = {
 	},
 	RegExpLiteral( node, state ) {
 		const { regex } = node
-		state.write( 'new RegExp(' + stringify( regex.pattern ) + ', ' + stringify( regex.flags ) + ')' )
-	}
+		state.write(
+			'new RegExp(' + stringify( regex.pattern ) + ', ' + stringify( regex.flags ) + ')'
+		)
+	},
 }
 
 
@@ -858,7 +871,7 @@ class State {
 			this.write = this.writeToStream
 		} else {
 			this.output = ''
-		}
+	}
 		this.generator = setup.generator != null ? setup.generator : defaultGenerator
 		// Source map
 		this.map = setup.sourcemap ? new SourceMap() : null
@@ -872,7 +885,7 @@ class State {
 		// Internal state
 		this.noTrailingSemicolon = false
 	}
-
+	
 	write( string ) {
 		this.output += string
 	}

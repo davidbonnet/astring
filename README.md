@@ -33,10 +33,10 @@ cd astring
 npm install
 ```
 
-The path to the module file is `dist/astring.min.js` and can be linked to from an HTML webpage. When used in a browser environment, the module exposes a global variable `astring`:
+The path to the module file is `dist/astring.js` and can be linked to from an HTML webpage. When used in a browser environment, the module exposes a global variable `astring`:
 
 ```html
-<script src="astring.min.js" type="text/javascript"></script>
+<script src="astring.js" type="text/javascript"></script>
 ```
 
 
@@ -128,7 +128,7 @@ console.log(code === formattedCode ? 'It works !' : 'Something went wrong…');
 
 Astring can easily be extended by updating or passing a custom code `generator`. A code `generator` consists of a mapping of node names and functions that take two arguments: `node` and `state`. The `node` points to the node from which to generate the code and the `state` exposes the `write` method that takes generated code strings.
 
-This example shows how to support the `await` keyword which is part of the [asynchronous functions proposal](https://github.com/tc39/ecmascript-asyncawait). The corresponding `AwaitExpression` node is based on [this suggested definition](https://github.com/estree/estree/blob/master/experimental/async-functions.md).
+This example shows how to support the `await` keyword which is part of the [asynchronous functions proposal](https://github.com/tc39/ecmascript-asyncawait). The corresponding `AwaitExpression` node is based on [this suggested definition](https://github.com/estree/estree/blob/master/es2017.md).
 
 ```javascript
 // Make sure the astring module is imported and that `Object.assign` is defined
@@ -142,7 +142,7 @@ var customGenerator = Object.assign({}, astring.defaultGenerator, {
 		}
 	}
 });
-// Generate a simple AST
+// Obtain a custom AST somehow (note that this AST is not obtained from a valid code)
 var ast = {
 	type: "AwaitExpression",
 	argument: {
@@ -206,36 +206,38 @@ All building scripts are defined in the `package.json` file and rely on the [Nod
 
 ### Production
 
-The source code of Astring is written in JavaScript 6 and located at `src/astring.js`. It is compiled down to a minified JavaScript 5 file located at `dist/astring.min.js` using [Browserify](http://browserify.org), [Babel](http://babeljs.io/) and [UglifyJS](https://github.com/mishoo/UglifyJS2). This is achieved by running:
-
-```bash
-npm install
-```
-
-If you are already using a JavaScript 6 to 5 compiler for your project, or a JavaScript 6 compliant interpreter, you can include the `src/astring.js` file directly.
-
-A non-minified and source map free version can be obtained at `dist/astring.js` by running:
+The source code of Astring is written in JavaScript 6 and located at `src/astring.js`. It is compiled down to a JavaScript 5 file located at `dist/astring.js` using [Browserify](http://browserify.org) and [Babel](http://babeljs.io/). This is achieved by running:
 
 ```bash
 npm run build
 ```
 
+If you are already using a JavaScript 6 to 5 compiler for your project, or a JavaScript 6 compliant interpreter, you can include the `src/astring.js` file directly.
+
 
 ### Development
 
-If you are working on Astring, you can use [Watchify](https://github.com/substack/watchify) to build automatically at each modification a non-minified version (along with a source map for easy debugging) located at `dist/astring.debug.js` by running:
+If you are working on Astring, you can use [Watchify](https://github.com/substack/watchify) to build automatically at each update the bundle (along with a source map for easy debugging) located at `dist/astring.debug.js` by running:
 
 ```bash
 npm start
 ```
 
+
 #### Tests
 
-While making changes to Astring, make sure it passes the tests by running:
+While making changes to Astring, make sure it passes the tests by running the following watcher:
 
 ```bash
-npm test
+npm run test-live
 ```
+
+You can also run tests on a large array of files:
+
+```bash
+npm run test-full
+```
+
 
 #### Benchmark
 
@@ -243,6 +245,15 @@ Also, make sure that the modifications don't alter the performance by running be
 
 ```bash
 npm run benchmark
+```
+
+
+#### Code format
+
+Finally, make sure that the code is well formatted:
+
+```bash
+eslint src/astring.js
 ```
 
 

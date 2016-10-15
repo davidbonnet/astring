@@ -1,22 +1,16 @@
 #!/usr/bin/env node
 
-var astring
-try {
-	astring = require( '../dist/astring.min' )
-} catch ( error ) {
-	astring = require( '../dist/astring' )
-}
+var astring = require( '../dist/astring' )
 var version = require( '../package' ).version
 var fs = require( 'fs' )
 var path = require( 'path' )
 
 
 var argv = process.argv.slice( 2 )
-var length = argv.length
 var options = {
 	indent: '\t',
 	lindeEnd: '\n',
-	startingIndentLevel: 0
+	startingIndentLevel: 0,
 }
 var files = []
 
@@ -33,7 +27,7 @@ function printVersion() {
 	process.exit( 0 )
 }
 
-for ( var i = 0; i < length; i++ ) {
+for ( var i = 0, length = argv.length; i < length; i++ ) {
 	var arg = argv[ i ]
 	if ( arg[ 0 ] === '-' ) {
 		switch ( arg ) {
@@ -86,9 +80,8 @@ if ( files.length === 0 ) {
 		}
 	} )
 } else {
-	length = files.length
 	var hasError = false
-	for ( var i = 0; i < length; i++ ) {
+	for ( var i = 0, length = files.length; i < length; i++ ) {
 		try {
 			var file = files[ i ]
 			astring( JSON.parse( fs.readFileSync( file, 'utf8' ) ), options )

@@ -4,14 +4,8 @@ var path = require( 'path' )
 var glob = require( 'glob' )
 var acorn = require( 'acorn' )
 var astravel = require( 'astravel' )
-var astring
-try {
-	astring = require( '../dist/astring.debug' )
-	console.log( 'Using ./dist/astring.debug.js' )
-} catch ( error ) {
-	astring = require( '../dist/astring.min' )
-	console.log( 'Using ./dist/astring.min.js' )
-}
+var normalizeNewline = require( 'normalize-newline' )
+var astring = require( '../dist/astring.debug' )
 
 
 var dependencies = Object.getOwnPropertyNames(
@@ -47,7 +41,7 @@ console.log( 'Found', files.length, 'files, processing them…' )
 var processedFiles = 0, errorFiles = 0
 
 files.forEach( function( filename ) {
-	var code = fs.readFileSync( filename, 'utf8' )
+	var code = normalizeNewline( fs.readFileSync( filename, 'utf8' ) )
 	try {
 		var ast = acorn.parse( code, options )
 		stripLocation.go( ast )
