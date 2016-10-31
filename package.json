@@ -28,7 +28,6 @@
   "author": "David Bonnet <david@bonnet.cc>",
   "license": "MIT",
   "devDependencies": {
-    "babel-preset-es2015-loose": "^7.0.0",
     "acorn": "^4.0.3",
     "astravel": "^0.3.13",
     "babel-preset-es2015": "^6.18.0",
@@ -38,7 +37,6 @@
     "escodegen": "^1.8.1",
     "eslint": "^3.9.0",
     "esotope": "^1.4.5",
-    "source-map": "^0.5.3",
     "glob": "^7.1.1",
     "mocha": "^3.1.2",
     "normalize-newline": "^3.0.0",
