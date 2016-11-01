@@ -9,12 +9,12 @@ A tiny and fast JavaScript code generator from an [ESTree](https://github.com/es
 
 Key features:
 
-- Generates JavaScript code up to [version 6](http://www.ecma-international.org/ecma-262/6.0/index.html).
+- Generates JavaScript code up to [version 7](https://tc39.github.io/ecma262/) and [finished proposals](https://github.com/tc39/proposals/blob/master/finished-proposals.md).
 - Works on [ESTree](https://github.com/estree/estree)-compliant ASTs such as the ones produced by [Acorn](https://github.com/marijnh/acorn).
-- Considerably faster than [Esotope](https://github.com/inikulin/esotope) (up to 4×), [Escodegen](https://github.com/estools/escodegen) (up to 10×), and [UglifyJS](https://github.com/mishoo/UglifyJS2) (up to 125×).
-- No dependencies and small footprint (≈ 16 KB minified, ≈ 4 KB gziped).
-- Supports comment generation with [Astravel](https://github.com/davidbonnet/astravel).
 - Extendable with custom AST node handlers.
+- Considerably faster than [Esotope](https://github.com/inikulin/esotope) (up to 4×), [Escodegen](https://github.com/estools/escodegen) (up to 10×), and [UglifyJS](https://github.com/mishoo/UglifyJS2) (up to 125×).
+- Supports comment generation with [Astravel](https://github.com/davidbonnet/astravel).
+- No dependencies and small footprint (≈ 16 KB minified, ≈ 4 KB gziped).
 
 
 ## Installation
