@@ -111,7 +111,7 @@
           if (commentsCheckbox.checked) {
             var comments = [];
             var ast = acorn.parse(textarea.value, {
-              ecmaVersion: 6,
+              ecmaVersion: 8,
               sourceType: 'module',
               locations: true,
               onComment: comments
@@ -128,7 +128,7 @@
             });
           } else {
             var ast = acorn.parse(textarea.value, {
-              ecmaVersion: 6,
+              ecmaVersion: 8,
               sourceType: 'module'
             });
             if (astCheckbox.checked) {
