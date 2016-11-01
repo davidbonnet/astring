@@ -35,7 +35,7 @@ const OPERATOR_PRECEDENCE = {
 	'*': 12,
 	'%': 12,
 	'/': 12,
-	'**': 12,
+	'**': 13,
 }
 
 
@@ -90,39 +90,39 @@ function formatSequence( state, nodes ) {
 }
 
 
+function expressionNeedsParenthesis( node, parentNode, isRightHand ) {
+	const nodePrecedence = EXPRESSIONS_PRECEDENCE[ node.type ]
+	const parentNodePrecedence = EXPRESSIONS_PRECEDENCE[ parentNode.type ]
+	if ( nodePrecedence !== parentNodePrecedence )
+		// Different node types
+		return nodePrecedence < parentNodePrecedence
+	if ( nodePrecedence !== 13 && nodePrecedence !== 14 )
+		// Not a `LogicalExpression` or `BinaryExpression`
+		return false
+	if ( node.operator === '**' && parentNode.operator === '**' )
+		// Exponentiation operator has right-to-left associativity
+		return !isRightHand
+	if ( isRightHand )
+		// Parenthesis are used if both operators have the same precedence
+		return OPERATOR_PRECEDENCE[ node.operator ] <= OPERATOR_PRECEDENCE[ parentNode.operator ]
+	return OPERATOR_PRECEDENCE[ node.operator ] < OPERATOR_PRECEDENCE[ parentNode.operator ]
+}
+
+
 function formatBinaryExpressionPart( state, node, parentNode, isRightHand ) {
 	/*
-	Writes into `state` a left-hand or right-hand expression `node` from a binary expression applying the provided `operator`.
+	Writes into `state` a left-hand or right-hand expression `node`
+	from a binary expression applying the provided `operator`.
 	The `isRightHand` parameter should be `true` if the `node` is a right-hand argument.
 	*/
 	const { generator } = state
-	const nodePrecedence = EXPRESSIONS_PRECEDENCE[ node.type ]
-	const parentNodePrecedence = EXPRESSIONS_PRECEDENCE[ parentNode.type ]
-	if ( nodePrecedence > parentNodePrecedence ) {
+	if ( expressionNeedsParenthesis( node, parentNode, isRightHand ) ) {
+		state.write( '(' )
 		generator[ node.type ]( node, state )
-		return
-	} else if ( nodePrecedence === parentNodePrecedence ) {
-		if ( nodePrecedence === 13 || nodePrecedence === 14 ) {
-			// Either `LogicalExpression` or `BinaryExpression`
-			if ( isRightHand ) {
-				if ( OPERATOR_PRECEDENCE[ node.operator ] > OPERATOR_PRECEDENCE[ parentNode.operator ] ) {
-					generator[ node.type ]( node, state )
-					return
-				}
-			} else {
-				if ( OPERATOR_PRECEDENCE[ node.operator ] >= OPERATOR_PRECEDENCE[ parentNode.operator ] ) {
-					generator[ node.type ]( node, state )
-					return
-				}
-			}
-		} else {
-			generator[ node.type ]( node, state )
-			return
-		}
+		state.write( ')' )
+	} else {
+		generator[ node.type ]( node, state )
 	}
-	state.write( '(' )
-	generator[ node.type ]( node, state )
-	state.write( ')' )
 }
 
 
@@ -420,6 +420,8 @@ export const defaultGenerator = {
 		state.write( 'debugger;' + state.lineEnd )
 	},
 	FunctionDeclaration: FunctionDeclaration = function( node, state ) {
+		if ( node.async )
+			state.write( 'async ' )
 		state.write( node.generator ? 'function* ' : 'function ' )
 		if ( node.id )
 			state.write( node.id.name )
@@ -549,14 +551,12 @@ export const defaultGenerator = {
 	MethodDefinition( node, state ) {
 		if ( node.static )
 			state.write( 'static ' )
-		switch ( node.kind[ 0 ] ) {
-			case 'g': // `get`
-			case 's': // `set`
-				state.write( node.kind + ' ' )
-				break
-			default:
-				break
-		}
+		const kind = node.kind[ 0 ]
+		if ( kind === 'g' || kind === 's' )
+			// Getter or setter
+			state.write( node.kind + ' ' )
+		if ( node.value.async )
+			state.write( 'async ' )
 		if ( node.value.generator )
 			state.write( '*' )
 		if ( node.computed ) {
@@ -575,7 +575,10 @@ export const defaultGenerator = {
 	},
 	ArrowFunctionExpression( node, state ) {
 		const { params } = node
+		if ( node.async )
+			state.write( 'async ' )
 		if ( params != null ) {
+			// Omit parenthesis if only one named parameter
 			if ( params.length === 1 && params[ 0 ].type[ 0 ] === 'I' ) {
 				// If params[0].type[0] starts with 'I', it can't be `ImportDeclaration` nor `IfStatement` and thus is `Identifier`
 				state.write( params[ 0 ].name )
@@ -585,6 +588,7 @@ export const defaultGenerator = {
 		}
 		state.write( ' => ' )
 		if ( node.body.type[ 0 ] === 'O' ) {
+			// Body is an object expression
 			state.write( '(' )
 			this.ObjectExpression( node.body, state )
 			state.write( ')' )
@@ -607,6 +611,12 @@ export const defaultGenerator = {
 		state.write( node.delegate ? 'yield*' : 'yield' )
 		if ( node.argument ) {
 			state.write( ' ' )
+			this[ node.argument.type ]( node.argument, state )
+		}
+	},
+	AwaitExpression( node, state ) {
+		state.write( 'await ' )
+		if ( node.argument ) {
 			this[ node.argument.type ]( node.argument, state )
 		}
 	},
@@ -912,6 +922,10 @@ class State {
 
 	writeToStreamAndMap( string, location ) {
 		this.output.write( string )
+	}
+
+	map( string ) {
+		
 	}
 
 	toString() {

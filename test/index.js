@@ -18,7 +18,7 @@ var stripLocation = astravel.makeTraveler( {
 		this.go( node.key, state )
 		// Always walk through value, regardless of `node.shorthand` flag
 		this.go( node.value, state )
-	}
+	},
 } )
 
 
@@ -27,8 +27,8 @@ describe( 'Syntax check', function() {
 	var dirname = path.join( __dirname, 'syntax' )
 	var files = fs.readdirSync( dirname ).sort()
 	var options = {
-		ecmaVersion: 6,
-		sourceType: 'module'
+		ecmaVersion: 8,
+		sourceType: 'module',
 	}
 	files.forEach( function( filename ) {
 		var code = normalizeNewline( fs.readFileSync( path.join( dirname, filename ), 'utf8' ) )
@@ -45,8 +45,8 @@ describe( 'Tree comparison', function() {
 	var dirname = path.join( __dirname, 'tree' )
 	var files = fs.readdirSync( dirname ).sort()
 	var options = {
-		ecmaVersion: 6,
-		sourceType: 'module'
+		ecmaVersion: 8,
+		sourceType: 'module',
 	}
 	files.forEach( function( filename ) {
 		var code = normalizeNewline( fs.readFileSync( path.join( dirname, filename ), 'utf8' ) )
@@ -81,13 +81,13 @@ describe( 'Comment generation', function() {
 	var dirname = path.join( __dirname, 'comment' )
 	var files = fs.readdirSync( dirname ).sort()
 	var options = {
-		comments: true
+		comments: true,
 	}
 	files.forEach( function( filename ) {
 		var code = normalizeNewline( fs.readFileSync( path.join( dirname, filename ), 'utf8' ) )
 		it( filename.substring( 0, filename.length - 3 ), function() {
 			var comments = []
-			var ast = acorn.parse( code, { ecmaVersion: 6, locations: true, onComment: comments } )
+			var ast = acorn.parse( code, { ecmaVersion: 8, locations: true, onComment: comments } )
 			astravel.attachComments( ast, comments )
 			assert.equal( astring( ast, options ), code )
 		} )
