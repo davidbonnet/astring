@@ -26,22 +26,22 @@ function benchmarkWithCode( code, name ) {
 	var ast = acorn.parse( code, {
 		ecmaVersion: 6,
 		sourceType: 'module',
-		locations: true
+		locations: true,
 	} )
 	var uglifyAst = null
 	try {
 		uglifyAst = uglify.parse( code )
 	} catch ( error ) {}
 	var uglifyOptions = {
-		beautify: true
+		beautify: true,
 	}
 	var nodentOptions = {
 		map: {
 			startLine: 0,
 			file: 'original',
 			sourceMapRoot: '/',
-			sourceContent: code
-		}
+			sourceContent: code,
+		},
 	}
 	// console.log( nodent( ast, nodentOptions ).map.toString() )
 	// console.log( astring( ast ) )
