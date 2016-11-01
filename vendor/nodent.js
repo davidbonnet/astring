@@ -1,8 +1,3 @@
-/*eslint-disable */
-
-// From: https://github.com/MatAtBread/nodent/blob/master/lib/output.js
-// Commit: https://github.com/MatAtBread/nodent/commit/c1c1029e158fc3d3316f44128e9f282ce287bc54
-
 'use strict';
 
 // This module is derived from Astring by David Bonnet (see below), but heavily
@@ -20,7 +15,7 @@
 // https://github.com/davidbonnet/astring/issues
 
 var SourceMapGenerator = require('source-map').SourceMapGenerator;
-var ForInStatement, RestElement, BinaryExpression, ArrayExpression, traveler;
+var ForInStatement, RestElement, BinaryExpression, ArrayExpression, BlockStatement;
 
 var repeat ;
 if ("".repeat) {
@@ -117,11 +112,20 @@ function precedence(node) {
 
 function out(node,state,type) {
     var f = this[type || node.type] ;
-    if (f)
+    if (f) {
+/*
+        try {
+            var attr = Object.keys(node).filter(k=>k[0]==='$').map(k=>k+(node[k]?"+":"-")) ;
+            if (attr.length) 
+                state.write(node,"/*"+attr.join(", ")+"\u002A/ ") ;
+        } catch (ex) {} ;
+*/        
         f.call(this, node, state);
-    else // Unknown node type - just spew its source
-        state.write(node,state.sourceAt(node.start,node.end)) ;
-} 
+    } else {
+        // Unknown node type - just spew its source
+        state.write(node,"/*"+node.type+"?*/ "+state.sourceAt(node.start,node.end)) ;
+    }
+}
 function expr(state, parent, node, assoc) {
     if (assoc===2 ||
             precedence(node) < precedence(parent) ||
@@ -133,9 +137,8 @@ function expr(state, parent, node, assoc) {
         this.out(node, state,node.type);
     }
 }
-function formatParameters(node, state) {
-    var param, params;
-    params = node.params;
+function formatParameters(params, state) {
+    var param;
     state.write(null, '(');
     if (params != null && params.length > 0) {
         this.out(params[0], state,params[0].type);
@@ -147,7 +150,7 @@ function formatParameters(node, state) {
     }
     state.write(null, ') ');
 }
-traveler = {
+var traveler = {
     out: out,
     expr: expr,
     formatParameters: formatParameters,
@@ -163,7 +166,7 @@ traveler = {
             state.write(null, lineEnd);
         }
     },
-    BlockStatement: function (node, state) {
+    BlockStatement: BlockStatement = function (node, state) {
         var statements, statement;
         var indent = repeat(state.indent, state.indentLevel++);
         var lineEnd = state.lineEnd;
@@ -190,8 +193,12 @@ traveler = {
         } : null, '}');
         state.indentLevel--;
     },
+    ClassBody: BlockStatement,
     EmptyStatement: function (node, state) {
         state.write(node, ';');
+    },
+    ParenthesizedExpression: function (node, state) {
+        this.expr(state, node, node.expression, 2);
     },
     ExpressionStatement: function (node, state) {
         if (node.expression.type === 'FunctionExpression' || node.expression.type === 'ObjectExpression') {
@@ -299,16 +306,18 @@ traveler = {
         state.write(node, 'try ');
         this.out(node.block, state,node.block.type);
         if (node.handler) {
-            handler = node.handler;
-            state.write(handler, ' catch (');
-            this.out(handler.param, state,handler.param.type);
-            state.write(null, ') ');
-            this.out(handler.body, state,handler.body.type);
+            this.out(node.handler, state, node.handler.type)
         }
         if (node.finalizer) {
             state.write(node.finalizer, ' finally ');
             this.out(node.finalizer, state,node.finalizer.type);
         }
+    },
+    CatchClause: function (node, state) {
+        state.write(node, ' catch (');
+        this.out(node.param, state, node.param.type);
+        state.write(null, ') ');
+        this.out(node.body, state, node.body.type);
     },
     WhileStatement: function (node, state) {
         state.write(node, 'while (');
@@ -375,7 +384,7 @@ traveler = {
         state.write(node, node.generator ? 'function* ' : 'function ');
         if (node.id)
             state.write(node.id, node.id.name);
-        this.formatParameters(node, state);
+        this.formatParameters(node.params, state);
         this.out(node.body, state,node.body.type);
     },
     FunctionDeclaration: function (node, state) {
@@ -517,8 +526,33 @@ traveler = {
         } else {
             this.out(node.key, state,node.key.type);
         }
-        this.formatParameters(node.value, state);
+        this.formatParameters(node.value.params, state);
         this.out(node.value.body, state,node.value.body.type);
+    },
+    ClassMethod: function (node,state){
+        if (node.async)
+            state.write(node, 'async ');
+        if (node.static)
+            state.write(node, 'static ');
+        switch (node.kind) {
+            case 'get':
+            case 'set':
+                state.write(node, node.kind, ' ');
+                break;
+            default:
+                break;
+        }
+        if (node.generator)
+          state.write(null, '*');
+        if (node.computed) {
+            state.write(null, '[');
+            this.out(node.key, state,node.key.type);
+            state.write(null, ']');
+        } else {
+            this.out(node.key, state,node.key.type);
+        }
+        this.formatParameters(node.params, state);
+        this.out(node.body, state, node.body.type);
     },
     ClassExpression: function (node, state) {
         this.out(node, state,'ClassDeclaration');
@@ -526,7 +560,7 @@ traveler = {
     ArrowFunctionExpression: function (node, state) {
         if (node.async)
             state.write(node, 'async ');
-        this.formatParameters(node, state);
+        this.formatParameters(node.params, state);
         state.write(node, '=> ');
         if (node.body.type === 'ObjectExpression' || node.body.type === 'SequenceExpression') {
             state.write(null, '(');
@@ -548,7 +582,7 @@ traveler = {
     },
     SpreadElement: RestElement,
     YieldExpression: function (node, state) {
-        state.write(node, 'yield');
+        state.write(node, node.delegate ? 'yield*' : 'yield');
         if (node.argument) {
             state.write(null, ' ');
             this.expr(state, node, node.argument);
@@ -692,7 +726,7 @@ traveler = {
           state.write(null, '(');
         this.expr(state, node, node.left);
         state.write(node, ' ', operator, ' ');
-        this.expr(state, node, node.right);
+        this.expr(state, node, node.right, node.right.type==='ArrowFunctionExpression'?2:0);
         if (operator==='in' && state.inForInit)
           state.write(null, ')');
     },
@@ -873,7 +907,7 @@ module.exports = function (node, options, originalSource) {
         indentLevel: 0,
         wrapColumn: 80
     };
-    traveler[node.type](node, st);
+    traveler.out(node, st);
     trailingComments = node.$comments || [];
     st.write(node, st.lineEnd);
     var result = lines.join(st.lineEnd);
