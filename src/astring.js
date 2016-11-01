@@ -430,6 +430,8 @@ export const defaultGenerator = {
 	},
 	FunctionDeclaration: FunctionDeclaration = function( node, state ) {
 		const { output } = state
+		if ( node.async )
+			output.write( 'async ' )
 		output.write( node.generator ? 'function* ' : 'function ' )
 		if ( node.id )
 			output.write( node.id.name )
@@ -566,14 +568,12 @@ export const defaultGenerator = {
 		const { output } = state
 		if ( node.static )
 			output.write( 'static ' )
-		switch ( node.kind[ 0 ] ) {
-			case 'g': // `get`
-			case 's': // `set`
-				output.write( node.kind + ' ' )
-				break
-			default:
-				break
-		}
+		const kind = node.kind[ 0 ]
+		if ( kind === 'g' || kind === 's' )
+			// Getter or setter
+			output.write( node.kind + ' ' )
+		if ( node.value.async )
+			output.write( 'async ' )
 		if ( node.value.generator )
 			output.write( '*' )
 		if ( node.computed ) {
@@ -593,9 +593,13 @@ export const defaultGenerator = {
 	ArrowFunctionExpression( node, state ) {
 		const { output } = state
 		const { params } = node
+		if ( node.async )
+			output.write( 'async ' )
 		if ( params != null ) {
+			// Omit parenthesis if only one named parameter
 			if ( params.length === 1 && params[ 0 ].type[ 0 ] === 'I' ) {
-				// If params[0].type[0] starts with 'I', it can't be `ImportDeclaration` nor `IfStatement` and thus is `Identifier`
+				// If params[0].type[0] starts with 'I',
+				// it can't be `ImportDeclaration` nor `IfStatement` and thus is `Identifier`
 				output.write( params[ 0 ].name )
 			} else {
 				formatSequence( node.params, state, this )
@@ -603,6 +607,7 @@ export const defaultGenerator = {
 		}
 		output.write( ' => ' )
 		if ( node.body.type[ 0 ] === 'O' ) {
+			// Body is an object expression
 			output.write( '(' )
 			this.ObjectExpression( node.body, state )
 			output.write( ')' )
@@ -626,6 +631,12 @@ export const defaultGenerator = {
 		output.write( node.delegate ? 'yield*' : 'yield' )
 		if ( node.argument ) {
 			output.write( ' ' )
+			this[ node.argument.type ]( node.argument, state )
+		}
+	},
+	AwaitExpression( node, state ) {
+		state.output.write( 'await ' )
+		if ( node.argument ) {
 			this[ node.argument.type ]( node.argument, state )
 		}
 	},
