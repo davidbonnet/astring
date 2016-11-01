@@ -90,38 +90,38 @@ function formatSequence( nodes, state, traveler ) {
 }
 
 
-function formatBinaryExpressionPart( node, parentNode, isRightHand, state, traveler ) {
-	/*
-	Formats into the `output` stream a left-hand or right-hand expression `node` from a binary expression applying the provided `operator`.
-	The `isRightHand` parameter should be `true` if the `node` is a right-hand argument.
-	*/
+function expressionNeedsParenthesis( node, parentNode, isRightHand ) {
 	const nodePrecedence = EXPRESSIONS_PRECEDENCE[ node.type ]
 	const parentNodePrecedence = EXPRESSIONS_PRECEDENCE[ parentNode.type ]
-	if ( nodePrecedence > parentNodePrecedence ) {
+	if ( nodePrecedence !== parentNodePrecedence )
+		// Different node types
+		return nodePrecedence < parentNodePrecedence
+	if ( nodePrecedence !== 13 && nodePrecedence !== 14 )
+		// Not a `LogicalExpression` or `BinaryExpression`
+		return false
+	if ( node.operator === '**' && parentNode.operator === '**' )
+		// Exponentiation operator has right-to-left associativity
+		return !isRightHand
+	if ( isRightHand )
+		// Parenthesis are used if both operators have the same precedence
+		return OPERATOR_PRECEDENCE[ node.operator ] <= OPERATOR_PRECEDENCE[ parentNode.operator ]
+	return OPERATOR_PRECEDENCE[ node.operator ] < OPERATOR_PRECEDENCE[ parentNode.operator ]
+}
+
+
+function formatBinaryExpressionPart( node, parentNode, isRightHand, state, traveler ) {
+	/*
+	Formats into the `output` stream a left-hand or right-hand expression `node`
+	from a binary expression applying the provided `operator`.
+	The `isRightHand` parameter should be `true` if the `node` is a right-hand argument.
+	*/
+	if ( expressionNeedsParenthesis( node, parentNode, isRightHand ) ) {
+		state.output.write( '(' )
 		traveler[ node.type ]( node, state )
-		return
-	} else if ( nodePrecedence === parentNodePrecedence ) {
-		if ( nodePrecedence === 13 || nodePrecedence === 14 ) {
-			// Either `LogicalExpression` or `BinaryExpression`
-			if ( isRightHand ) {
-				if ( OPERATOR_PRECEDENCE[ node.operator ] > OPERATOR_PRECEDENCE[ parentNode.operator ] ) {
-					traveler[ node.type ]( node, state )
-					return
-				}
-			} else {
-				if ( OPERATOR_PRECEDENCE[ node.operator ] >= OPERATOR_PRECEDENCE[ parentNode.operator ] ) {
-					traveler[ node.type ]( node, state )
-					return
-				}
-			}
-		} else {
-			traveler[ node.type ]( node, state )
-			return
-		}
+		state.output.write( ')' )
+	} else {
+		traveler[ node.type ]( node, state )
 	}
-	state.output.write( '(' )
-	traveler[ node.type ]( node, state )
-	state.output.write( ')' )
 }
 
 
