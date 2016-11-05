@@ -4,6 +4,7 @@ var uglify = require( 'uglify-js' )
 var escodegen = require( 'escodegen' ).generate
 var esotope = require( 'esotope' ).generate
 var nodent = require( '../vendor/nodent' )
+var recast = require( 'recast' )
 var astring
 try {
 	astring = require( '../dist/astring.min' )
@@ -28,6 +29,10 @@ function benchmarkWithCode( code, name ) {
 		sourceType: 'module',
 		locations: true,
 	} )
+	var recastAst = null
+	try {
+		recastAst = recast.parse( code )
+	} catch ( error ) {}
 	var uglifyAst = null
 	try {
 		uglifyAst = uglify.parse( code )
@@ -60,6 +65,9 @@ function benchmarkWithCode( code, name ) {
 	} )
 	.add( 'nodent', function() {
 		nodent( ast, nodentOptions )
+	} )
+	.add( 'recast', function() {
+		recast.print( recastAst ).code
 	} )
 	// add listeners
 	.on( 'cycle', function( event ) {

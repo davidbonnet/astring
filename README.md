@@ -12,7 +12,7 @@ Key features:
 - Generates JavaScript code up to [version 7](https://tc39.github.io/ecma262/) and [finished proposals](https://github.com/tc39/proposals/blob/master/finished-proposals.md).
 - Works on [ESTree](https://github.com/estree/estree)-compliant ASTs such as the ones produced by [Acorn](https://github.com/marijnh/acorn).
 - Extendable with custom AST node handlers.
-- Considerably faster than [Esotope](https://github.com/inikulin/esotope) (up to 4×), [Escodegen](https://github.com/estools/escodegen) (up to 10×), and [UglifyJS](https://github.com/mishoo/UglifyJS2) (up to 125×).
+- Considerably faster than [Esotope](https://github.com/inikulin/esotope) (up to 4×), [Escodegen](https://github.com/estools/escodegen) (up to 10×), [UglifyJS](https://github.com/mishoo/UglifyJS2) (up to 125×), and [Recast](https://github.com/benjamn/recast) (up to 600×).
 - Supports comment generation with [Astravel](https://github.com/davidbonnet/astravel).
 - No dependencies and small footprint (≈ 16 KB minified, ≈ 4 KB gziped).
 
