@@ -420,11 +420,12 @@ export const defaultGenerator = {
 		state.write( 'debugger;' + state.lineEnd )
 	},
 	FunctionDeclaration: FunctionDeclaration = function( node, state ) {
-		if ( node.async )
-			state.write( 'async ' )
-		state.write( node.generator ? 'function* ' : 'function ' )
-		if ( node.id )
-			state.write( node.id.name )
+		state.write(
+			( node.async ? 'async ' : '' ) +
+			( node.generator ? 'function* ' : 'function ' ) +
+			( node.id ? node.id.name : '' ),
+			node
+		)
 		formatSequence( state, node.params )
 		state.write( ' ' )
 		this[ node.body.type ]( node.body, state )
@@ -452,10 +453,11 @@ export const defaultGenerator = {
 		}
 	},
 	ClassDeclaration( node, state ) {
-		state.write( 'class ' )
-		if ( node.id ) {
-			state.write( node.id.name + ' ' )
-		}
+		state.write(
+			'class ' +
+			( node.id ? node.id.name : ' ' ),
+			node
+		)
 		if ( node.superClass ) {
 			state.write( 'extends ' )
 			this[ node.superClass.type ]( node.superClass, state )
@@ -468,11 +470,11 @@ export const defaultGenerator = {
 		const { specifiers } = node
 		const { length } = specifiers
 		if ( length > 0 ) {
-			let i = 0, specifier
+			let i = 0
 			while ( i < length ) {
 				if ( i > 0 )
 					state.write( ', ' )
-				specifier = specifiers[ i ]
+				const specifier = specifiers[ i ]
 				const type = specifier.type[ 6 ]
 				if ( type === 'D' ) {
 					// ImportDefaultSpecifier
@@ -490,9 +492,9 @@ export const defaultGenerator = {
 			if ( i < length ) {
 				state.write( '{' )
 				for ( ; ; ) {
-					specifier = specifiers[ i ]
-					let { name } = specifier.imported
-					state.write( name )
+					const specifier = specifiers[ i ]
+					const { name } = specifier.imported
+					state.write( name, specifier )
 					if ( name !== specifier.local.name ) {
 						state.write( ' as ' + specifier.local.name )
 					}
