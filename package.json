@@ -7,12 +7,11 @@
     "astring": "./bin/astring"
   },
   "scripts": {
-    "test": "mocha test/index.js",
+    "test": "tap test/index.js",
     "full-test": "node test/scripts.js",
-    "prepublish": "browserify --transform [ babelify ] --plugin [ minifyify --no-map ] --no-builtins --standalone astring --entry ./src/export.js --outfile dist/astring.min.js",
-    "build": "browserify --transform [ babelify ] --no-builtins --standalone astring --entry ./src/export.js --outfile dist/astring.js",
-    "coverage": "browserify --transform [ babelify ] --transform [ browserify-istanbul --ignore \"**/node_modules/**\" ] --no-builtins --standalone astring --entry ./src/export.js --outfile dist/astring.instrumented.js",
-    "start": "watchify --transform [ babelify ] --no-builtins --debug --verbose --standalone astring --entry ./src/export.js --outfile dist/astring.debug.js",
+    "prepublish": "babel src/astring.js --out-file dist/astring.min.js --presets=babili",
+    "build": "babel src/astring.js --out-file dist/astring.js",
+    "start": "babel src/astring.js --watch --out-file dist/astring.js --source-maps inline",
     "benchmark": "node ./test/benchmark.js"
   },
   "keywords": [
@@ -29,20 +28,22 @@
   "devDependencies": {
     "acorn": "^3.0.4",
     "astravel": "^0.3.11",
-    "babel-preset-es2015": "^6.0.14",
-    "babelify": "^7.2.0",
+    "babel-cli": "^6.24.0",
+    "babel-plugin-transform-es2015-modules-umd": "^6.24.0",
+    "babel-preset-babili": "0.0.12",
+    "babel-preset-latest": "^6.24.0",
     "benchmark": "^2.0.0",
-    "browserify": "^12.0.1",
-    "esast": "mason-lang/esast",
-    "escodegen": "^1.6.1",
-    "eslint": "^2.2.0",
-    "esotope": "^1.4.5",
+    "eslint": "^3.18.0",
+    "eslint-plugin-import": "^2.2.0",
     "glob": "^7.0.0",
-    "minifyify": "^7.0.3",
-    "mocha": "^2.2.5",
     "source-map": "^0.5.3",
     "string.prototype.repeat": "^0.2.0",
-    "uglify-js": "^2.6.0",
-    "watchify": "^3.6.0"
+    "tap": "^10.3.0"
+  },
+  "optionalDependencies": {
+    "esast": "mason-lang/esast",
+    "escodegen": "^1.6.1",
+    "esotope": "^1.4.5",
+    "uglify-js": "^2.6.0"
   }
 }
