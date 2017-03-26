@@ -455,7 +455,7 @@ export const defaultGenerator = {
 	ClassDeclaration( node, state ) {
 		state.write(
 			'class ' +
-			( node.id ? node.id.name : ' ' ),
+			( node.id ? `${node.id.name} ` : '' ),
 			node
 		)
 		if ( node.superClass ) {
