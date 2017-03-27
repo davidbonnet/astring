@@ -3,41 +3,39 @@ var acorn = require( 'acorn' )
 var uglify = require( 'uglify-js' )
 var escodegen = require( 'escodegen' ).generate
 var esotope = require( 'esotope' ).generate
-var esast = require( 'esast/dist/render' ).default
 var nodent = require( '../vendor/nodent' )
-var jsonToEsast = require( 'esast/dist/fromJson' ).default
 var astring
 try {
-	astring = require( '../dist/astring.debug' )
-	console.log( 'Using ./dist/astring.debug.js' )
+	astring = require( '../dist/astring.min' )
+	console.log( 'Using ./dist/astring.min.js' )
 } catch ( error ) {
 	try {
-		astring = require( '../dist/astring.min' )
-		console.log( 'Using ./dist/astring.min.js' )
-	} catch ( error ) {
 		astring = require( '../dist/astring' )
 		console.log( 'Using ./dist/astring.js' )
+	} catch ( error ) {
+		astring = require( '../dist/astring.debug' )
+		console.log( 'Using ./dist/astring.debug.js' )
 	}
 }
 var fs = require( 'fs' )
 var path = require( 'path' )
 
 
-function benchmarkWithCode( code ) {
+function benchmarkWithCode( code, name ) {
+	console.log( '\nTesting "%s" (code length: %d)', name, code.length )
 	var ast = acorn.parse( code, {
 		ecmaVersion: 6,
 		sourceType: 'module'
 	} )
-
-	var uglifyAst = uglify.parse( code )
+	var uglifyAst = null
+	try {
+		uglifyAst = uglify.parse( code )
+	} catch ( error ) {}
 	var uglifyOptions = {
 		beautify: true
 	}
-
-	console.log( '\n\nTesting code:' )
-	console.log( astring( ast ) )
-
-	;( new Benchmark.Suite )
+	// console.log( astring( ast ) )
+	; ( new Benchmark.Suite )
 	.add( 'escodegen', function() {
 		escodegen( ast )
 	} )
@@ -49,9 +47,6 @@ function benchmarkWithCode( code ) {
 	} )
 	.add( 'uglify', function() {
 		uglifyAst.print_to_string( uglifyOptions )
-	} )
-	.add( 'esast', function() {
-		esast( jsonToEsast( ast ) )
 	} )
 	.add( 'nodent', function() {
 		nodent( ast )
@@ -66,9 +61,12 @@ function benchmarkWithCode( code ) {
 	.run()
 }
 
-code = fs.readFileSync( path.join( __dirname, 'index.js' ), 'utf8' )
-benchmarkWithCode( code )
+var code = fs.readFileSync( path.join( __dirname, 'index.js' ), 'utf8' )
+benchmarkWithCode( code, 'test file' )
 
-benchmarkWithCode( 'var a = 2;' )
+var code = fs.readFileSync( path.join( __dirname, 'tree', 'es6.js' ), 'utf8' )
+benchmarkWithCode( code, 'everything' )
+
+benchmarkWithCode( 'var a = 2;', 'tiny instruction' )
 
 

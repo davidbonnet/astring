@@ -1,5 +1,11 @@
 /node_modules
-/dist/astring.js
+/vendor
 /dist/astring.debug.js
+/dist/.keep
 /test
 /src
+/local
+/.babelrc
+/.eslint*
+/.travis.yml
+/.npmignore

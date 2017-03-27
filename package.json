@@ -1,8 +1,8 @@
 {
   "name": "astring",
-  "version": "0.4.11",
+  "version": "0.8.0",
   "description": "JavaScript code generator from an ESTree-compliant AST.",
-  "main": "./dist/astring.min.js",
+  "main": "./dist/astring.js",
   "bin": {
     "astring": "./bin/astring"
   },
@@ -35,8 +35,8 @@
     "benchmark": "^2.0.0",
     "eslint": "^3.18.0",
     "eslint-plugin-import": "^2.2.0",
-    "glob": "^7.0.0",
-    "source-map": "^0.5.3",
+    "glob": "^7.1.1",
+    "normalize-newline": "^3.0.0",
     "string.prototype.repeat": "^0.2.0",
     "tap": "^10.3.0"
   },

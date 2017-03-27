@@ -20,6 +20,7 @@
       "sourceType": "module"
     },
     "rules": {
+        "no-undef": "error",
         "indent": ["error", "tab", {
             "SwitchCase": 1
         }],
@@ -63,11 +64,29 @@
             "afterColon": true,
             "mode": "strict"
         }],
+        "keyword-spacing": ["error", {
+            "before": true,
+            "after": true,
+        }],
+        "arrow-spacing": ["error", {
+            "before": true,
+            "after": true
+        }],
+        "no-inline-comments": "off",
+        "max-len": ["error", 100, 2, {
+            "tabWidth": 2,
+            "ignoreUrls": true,
+            "ignoreComments": true,
+        }],
         "no-trailing-spaces": "error",
         "computed-property-spacing": ["error", "always"],
         "no-multiple-empty-lines": ["error", {
             "max": 2
         }],
-        "eol-last": "error"
+        "eol-last": "error",
+        "no-restricted-globals": ["error",
+            "find",
+            "event"
+        ]
     }
 }

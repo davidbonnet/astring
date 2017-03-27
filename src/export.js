@@ -1,2 +1,4 @@
 require( 'string.prototype.repeat' )
-module.exports = require( './astring' ).default
+var astring = require( './astring' )
+astring.default.defaultGenerator = astring.defaultGenerator
+module.exports = astring.default

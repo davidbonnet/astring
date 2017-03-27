@@ -1,5 +1,6 @@
 const fs = require( 'fs' )
 const path = require( 'path' )
+const normalizeNewline = require( 'normalize-newline' )
 const { test } = require( 'tap' )
 const acorn = require( 'acorn' )
 const astravel = require( 'astravel' )
@@ -11,6 +12,7 @@ const stripLocation = astravel.makeTraveler( {
 	go( node, state ) {
 		delete node.start
 		delete node.end
+		delete node.raw
 		this[ node.type ]( node, state )
 	},
 	Property( node, state ) {
@@ -29,7 +31,7 @@ test( 'Syntax check', assert => {
 		sourceType: 'module',
 	}
 	files.forEach( filename => {
-		const code = fs.readFileSync( path.join( dirname, filename ), 'utf8' )
+		const code = normalizeNewline( fs.readFileSync( path.join( dirname, filename ), 'utf8' ) )
 		assert.test( filename.substring( 0, filename.length - 3 ), assert => {
 			const ast = acorn.parse( code, options )
 			assert.equal( astring( ast ), code )
@@ -48,7 +50,7 @@ test( 'Tree comparison', assert => {
 		sourceType: 'module',
 	}
 	files.forEach( filename => {
-		const code = fs.readFileSync( path.join( dirname, filename ), 'utf8' )
+		const code = normalizeNewline( fs.readFileSync( path.join( dirname, filename ), 'utf8' ) )
 		assert.test( filename.substring( 0, filename.length - 3 ), assert => {
 			const ast = acorn.parse( code, options )
 			const formattedAst = acorn.parse( astring( ast ), options )
@@ -66,7 +68,7 @@ test( 'Deprecated syntax check', assert => {
 	const dirname = path.join( __dirname, 'deprecated' )
 	const files = fs.readdirSync( dirname ).sort()
 	files.forEach( filename => {
-		const code = fs.readFileSync( path.join( dirname, filename ), 'utf8' )
+		const code = normalizeNewline( fs.readFileSync( path.join( dirname, filename ), 'utf8' ) )
 		const version = parseInt( filename.substring( 2, filename.length - 3 ) )
 		assert.test( 'es' + version, assert => {
 			const ast = acorn.parse( code, { ecmaVersion: version } )
@@ -85,7 +87,7 @@ test( 'Comment generation', assert => {
 		comments: true,
 	}
 	files.forEach( filename => {
-		const code = fs.readFileSync( path.join( dirname, filename ), 'utf8' )
+		const code = normalizeNewline( fs.readFileSync( path.join( dirname, filename ), 'utf8' ) )
 		assert.test( filename.substring( 0, filename.length - 3 ), assert => {
 			const comments = []
 			const ast = acorn.parse( code, {
@@ -100,5 +102,3 @@ test( 'Comment generation', assert => {
 	} )
 	assert.end()
 } )
-
-

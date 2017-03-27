@@ -21,3 +21,7 @@ b = new A().toString();
 c = new x.A().toString();
 d = new x.y().z();
 var r = (/ab+c/i).exec('abc');
+a = b ** 2 * 3;
+c = (d ** 2) ** 3;
+e = f ** 2 ** 3;
+f = a + (b = 3);
