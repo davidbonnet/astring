@@ -9,7 +9,8 @@
   "scripts": {
     "test": "tap --harmony test/index.js",
     "test-scripts": "tap --harmony test/scripts.js",
-    "prepublish": "babel src/astring.js --out-file dist/astring.min.js --presets=babili",
+    "prepublish": "npm run build && npm run build-minified",
+    "build-minified": "babel src/astring.js --out-file dist/astring.min.js --presets=babili",
     "build": "babel src/astring.js --out-file dist/astring.js",
     "start": "babel src/astring.js --watch --out-file dist/astring.js --source-maps inline",
     "benchmark": "node ./test/benchmark.js"
