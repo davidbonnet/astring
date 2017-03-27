@@ -4,19 +4,7 @@ var uglify = require( 'uglify-js' )
 var escodegen = require( 'escodegen' ).generate
 var esotope = require( 'esotope' ).generate
 var nodent = require( '../vendor/nodent' )
-var astring
-try {
-	astring = require( '../dist/astring.min' )
-	console.log( 'Using ./dist/astring.min.js' )
-} catch ( error ) {
-	try {
-		astring = require( '../dist/astring' )
-		console.log( 'Using ./dist/astring.js' )
-	} catch ( error ) {
-		astring = require( '../dist/astring.debug' )
-		console.log( 'Using ./dist/astring.debug.js' )
-	}
-}
+var astring = require( '../dist/astring' ).default
 var fs = require( 'fs' )
 var path = require( 'path' )
 
@@ -24,8 +12,8 @@ var path = require( 'path' )
 function benchmarkWithCode( code, name ) {
 	console.log( '\nTesting "%s" (code length: %d)', name, code.length )
 	var ast = acorn.parse( code, {
-		ecmaVersion: 6,
-		sourceType: 'module'
+		ecmaVersion: 8,
+		sourceType: 'module',
 	} )
 	var uglifyAst = null
 	try {
