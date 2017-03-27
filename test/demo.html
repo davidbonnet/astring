@@ -73,7 +73,7 @@
     }
   </style>
   <script type="text/javascript" src="../node_modules/acorn/dist/acorn.js"></script>
-  <script type="text/javascript" src="../dist/astring.debug.js"></script>
+  <script type="text/javascript" src="../dist/astring.js"></script>
   <script type="text/javascript" src="../node_modules/astravel/dist/astravel.min.js"></script>
 </head>
 <body>
@@ -89,6 +89,8 @@
   </p>
   <pre id="output"></pre>
   <script type="text/javascript">
+
+    var astring = astring.default;
 
     (function() {
       var textarea = document.getElementById('console');
