@@ -8,7 +8,7 @@
   },
   "scripts": {
     "test": "tap --harmony test/index.js",
-    "full-test": "node test/scripts.js",
+    "test-scripts": "tap --harmony test/scripts.js",
     "prepublish": "babel src/astring.js --out-file dist/astring.min.js --presets=babili",
     "build": "babel src/astring.js --out-file dist/astring.js",
     "start": "babel src/astring.js --watch --out-file dist/astring.js --source-maps inline",
