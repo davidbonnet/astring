@@ -33,7 +33,7 @@ const OPERATORS_PRECEDENCE = {
 	'*': 12,
 	'%': 12,
 	'/': 12,
-	'**': 12
+	'**': 12,
 }
 
 
@@ -65,7 +65,7 @@ const EXPRESSIONS_PRECEDENCE = {
 	ConditionalExpression: 4,
 	AssignmentExpression: 3,
 	YieldExpression: 2,
-	RestElement: 1
+	RestElement: 1,
 }
 
 
@@ -127,17 +127,17 @@ function reindent( text, indentation ) {
 	/*
 	Returns the `text` string reindented with the provided `indentation`.
 	*/
-	text = text.trimRight()
+	const trimmedText = text.trimRight()
 	let indents = '\n'
 	let secondLine = false
-	const { length } = text
+	const { length } = trimmedText
 	for ( let i = 0; i < length; i++ ) {
-		let char = text[ i ]
+		let char = trimmedText[ i ]
 		if ( secondLine ) {
 			if ( char === ' ' || char === '\t' ) {
 				indents += char
 			} else {
-				return indentation + text.trimLeft().split( indents ).join( '\n' + indentation )
+				return indentation + trimmedText.trimLeft().split( indents ).join( '\n' + indentation )
 			}
 		} else {
 			if ( char === '\n' ) {
@@ -145,7 +145,7 @@ function reindent( text, indentation ) {
 			}
 		}
 	}
-	return indentation + text.trimLeft()
+	return indentation + trimmedText.trimLeft()
 }
 
 
@@ -173,14 +173,15 @@ function hasCallExpression( node ) {
 	/*
 	Returns `true` if the provided `node` contains a call expression and `false` otherwise.
 	*/
-	while ( node != null ) {
-		let { type } = node
+	let currentNode = node
+	while ( currentNode != null ) {
+		let { type } = currentNode
 		if ( type[ 0 ] === 'C' && type[ 1 ] === 'a' ) {
 			// Is CallExpression
 			return true
 		} else if ( type[ 0 ] === 'M' && type[ 1 ] === 'e' && type[ 2 ] === 'm' ) {
 			// Is MemberExpression
-			node = node.object
+			currentNode = currentNode.object
 		} else {
 			return false
 		}
@@ -188,7 +189,7 @@ function hasCallExpression( node ) {
 }
 
 
-var ForInStatement, FunctionDeclaration, RestElement, BinaryExpression, ArrayExpression
+let ForInStatement, FunctionDeclaration, RestElement, BinaryExpression, ArrayExpression
 
 
 let traveler = {
@@ -853,7 +854,7 @@ let traveler = {
 		state.code.push(
 			node.meta.name,
 			'.',
-			node.property.name
+			node.property.name,
 		)
 	},
 	Identifier( node, state ) {
@@ -861,7 +862,7 @@ let traveler = {
 	},
 	Literal( node, state ) {
 		state.code.push( node.raw )
-	}
+	},
 }
 
 
@@ -880,7 +881,7 @@ export default function astring( node, options ) {
 		indent: '\t',
 		lineEnd: '\n',
 		indentLevel: 0,
-		writeComments: false
+		writeComments: false,
 	} : {
 		// Will contain the resulting code as an array of code strings
 		code: [],
@@ -888,7 +889,7 @@ export default function astring( node, options ) {
 		indent: options.indent != null ? options.indent : '\t',
 		lineEnd: options.lineEnd != null ? options.lineEnd : '\n',
 		indentLevel: options.startingIndentLevel != null ? options.startingIndentLevel : 0,
-		writeComments: options.comments ? options.comments : false
+		writeComments: options.comments ? options.comments : false,
 	}
 	// Travel through the AST node and generate the code
 	traveler[ node.type ]( node, state )
