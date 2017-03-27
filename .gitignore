@@ -2,3 +2,7 @@
 /dist
 /local
 npm-debug.log
+*.sublime-project
+*.sublime-workspace
+/coverage
+/.nyc_output
