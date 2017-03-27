@@ -1,111 +1,104 @@
-var assert = require( 'assert' )
-var fs = require( 'fs' )
-var path = require( 'path' )
-var acorn = require( 'acorn' )
-var astravel = require( 'astravel' )
-var astring = require( '../dist/astring.instrumented' )
+const fs = require( 'fs' )
+const path = require( 'path' )
+const { test } = require( 'tap' )
+const acorn = require( 'acorn' )
+const astravel = require( 'astravel' )
 
-// try {
-// 	astring = require( '../dist/astring.instrumented' )
-// 	console.log( 'Using ./dist/astring.instrumented.js' )
-// } catch ( error ) {
-// 	try {
-// 		astring = require( '../dist/astring.debug' )
-// 		console.log( 'Using ./dist/astring.debug.js' )
-// 	} catch ( error ) {
-// 		try {
-// 			astring = require( '../dist/astring.min' )
-// 			console.log( 'Using ./dist/astring.min.js' )
-// 		} catch ( error ) {
-// 			astring = require( '../dist/astring' )
-// 			console.log( 'Using ./dist/astring.js' )
-// 		}
-// 	}
-// }
+const astring = require( '../dist/astring' ).default
 
 
-var stripLocation = astravel.makeTraveler( {
-	go: function( node, state ) {
+const stripLocation = astravel.makeTraveler( {
+	go( node, state ) {
 		delete node.start
 		delete node.end
 		this[ node.type ]( node, state )
 	},
-	Property: function( node, state ) {
+	Property( node, state ) {
 		this.go( node.key, state )
 		// Always walk through value, regardless of `node.shorthand` flag
 		this.go( node.value, state )
-	}
+	},
 } )
 
 
-describe( 'Syntax check', function() {
-	this.timeout( 0 )
-	var dirname = path.join( __dirname, 'syntax' )
-	var files = fs.readdirSync( dirname ).sort()
-	var options = {
-		ecmaVersion: 6,
-		sourceType: 'module'
+test( 'Syntax check', assert => {
+	const dirname = path.join( __dirname, 'syntax' )
+	const files = fs.readdirSync( dirname ).sort()
+	const options = {
+		ecmaVersion: 8,
+		sourceType: 'module',
 	}
-	files.forEach( function( filename ) {
-		var code = fs.readFileSync( path.join( dirname, filename ), 'utf8' )
-		it( filename.substring( 0, filename.length - 3 ), function() {
-			var ast = acorn.parse( code, options )
+	files.forEach( filename => {
+		const code = fs.readFileSync( path.join( dirname, filename ), 'utf8' )
+		assert.test( filename.substring( 0, filename.length - 3 ), assert => {
+			const ast = acorn.parse( code, options )
 			assert.equal( astring( ast ), code )
+			assert.end()
 		} )
 	} )
+	assert.end()
 } )
 
 
-describe( 'Tree comparison', function() {
-	this.timeout( 0 )
-	var dirname = path.join( __dirname, 'tree' )
-	var files = fs.readdirSync( dirname ).sort()
-	var options = {
-		ecmaVersion: 6,
-		sourceType: 'module'
+test( 'Tree comparison', assert => {
+	const dirname = path.join( __dirname, 'tree' )
+	const files = fs.readdirSync( dirname ).sort()
+	const options = {
+		ecmaVersion: 8,
+		sourceType: 'module',
 	}
-	files.forEach( function( filename ) {
-		var code = fs.readFileSync( path.join( dirname, filename ), 'utf8' )
-		it( filename.substring( 0, filename.length - 3 ), function() {
-			var ast = acorn.parse( code, options )
-			var formattedAst = acorn.parse( astring( ast ), options )
+	files.forEach( filename => {
+		const code = fs.readFileSync( path.join( dirname, filename ), 'utf8' )
+		assert.test( filename.substring( 0, filename.length - 3 ), assert => {
+			const ast = acorn.parse( code, options )
+			const formattedAst = acorn.parse( astring( ast ), options )
 			stripLocation.go( ast )
 			stripLocation.go( formattedAst )
 			assert.deepEqual( formattedAst, ast )
+			assert.end()
 		} )
 	} )
+	assert.end()
 } )
 
 
-describe( 'Deprecated syntax check', function() {
-	this.timeout( 0 )
-	var dirname = path.join( __dirname, 'deprecated' )
-	var files = fs.readdirSync( dirname ).sort()
-	files.forEach( function( filename ) {
-		var code = fs.readFileSync( path.join( dirname, filename ), 'utf8' )
-		var version = parseInt( filename.substring( 2, filename.length - 3 ) )
-		it( 'es' + version, function() {
-			var ast = acorn.parse( code, { ecmaVersion: version } )
+test( 'Deprecated syntax check', assert => {
+	const dirname = path.join( __dirname, 'deprecated' )
+	const files = fs.readdirSync( dirname ).sort()
+	files.forEach( filename => {
+		const code = fs.readFileSync( path.join( dirname, filename ), 'utf8' )
+		const version = parseInt( filename.substring( 2, filename.length - 3 ) )
+		assert.test( 'es' + version, assert => {
+			const ast = acorn.parse( code, { ecmaVersion: version } )
 			assert.equal( astring( ast ), code )
+			assert.end()
 		} )
 	} )
+	assert.end()
 } )
 
 
-describe( 'Comment generation', function() {
-	this.timeout( 0 )
-	var dirname = path.join( __dirname, 'comment' )
-	var files = fs.readdirSync( dirname ).sort()
-	var options = {
-		comments: true
+test( 'Comment generation', assert => {
+	const dirname = path.join( __dirname, 'comment' )
+	const files = fs.readdirSync( dirname ).sort()
+	const options = {
+		comments: true,
 	}
-	files.forEach( function( filename ) {
-		var code = fs.readFileSync( path.join( dirname, filename ), 'utf8' )
-		it( filename.substring( 0, filename.length - 3 ), function() {
-			var comments = []
-			var ast = acorn.parse( code, { ecmaVersion: 6, locations: true, onComment: comments } )
+	files.forEach( filename => {
+		const code = fs.readFileSync( path.join( dirname, filename ), 'utf8' )
+		assert.test( filename.substring( 0, filename.length - 3 ), assert => {
+			const comments = []
+			const ast = acorn.parse( code, {
+				ecmaVersion: 8,
+				locations: true,
+				onComment: comments,
+			} )
 			astravel.attachComments( ast, comments )
 			assert.equal( astring( ast, options ), code )
+			assert.end()
 		} )
 	} )
+	assert.end()
 } )
+
+
