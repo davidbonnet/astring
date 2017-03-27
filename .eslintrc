@@ -77,6 +77,7 @@
             "tabWidth": 2,
             "ignoreUrls": true,
             "ignoreComments": true,
+            "ignoreStrings": true,
         }],
         "no-trailing-spaces": "error",
         "computed-property-spacing": ["error", "always"],
