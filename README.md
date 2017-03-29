@@ -238,7 +238,7 @@ All building scripts are defined in the `package.json` file and rely on the [Nod
 
 ### Production
 
-The source code of Astring is written in JavaScript 6 and located at `src/astring.js`. It is compiled down to a JavaScript 5 file located at `dist/astring.js` using [Browserify](http://browserify.org) and [Babel](http://babeljs.io/). This is achieved by running:
+The source code of Astring is written in JavaScript 6 and located at `src/astring.js`. It is compiled down to a JavaScript 5 file located at `dist/astring.js`, with its source map at `dist/astring.js.map` using [Babel](http://babeljs.io/). This is achieved by running:
 
 ```bash
 npm run build
