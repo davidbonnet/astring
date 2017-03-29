@@ -7,7 +7,7 @@
     "astring": "./bin/astring"
   },
   "scripts": {
-    "test": "tap --harmony test/index.js --coverage",
+    "test": "babel test/index.js --out-file test/test.js --no-babelrc --presets=latest && tap test/test.js --coverage",
     "coverage": "tap --harmony test/index.js --coverage --coverage-report=html",
     "test-scripts": "tap --harmony test/scripts.js",
     "prepublish": "npm run build && npm run build-minified",

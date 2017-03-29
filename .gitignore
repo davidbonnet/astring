@@ -1,5 +1,6 @@
 *.sublime-project
 *.sublime-workspace
+/test/test.js
 /.nyc_output
 /coverage
 /dist
