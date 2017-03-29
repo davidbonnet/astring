@@ -1,8 +1,8 @@
-/node_modules
-/dist
-/local
-npm-debug.log
 *.sublime-project
 *.sublime-workspace
-/coverage
 /.nyc_output
+/coverage
+/dist
+/local
+/node_modules
+npm-debug.log
