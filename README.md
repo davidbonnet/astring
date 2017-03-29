@@ -4,6 +4,7 @@
 [![NPM Version](https://img.shields.io/npm/v/astring.svg)](https://www.npmjs.org/package/astring)
 [![Dependency Status](https://david-dm.org/davidbonnet/astring.svg)](https://david-dm.org/davidbonnet/astring)
 [![devDependency Status](https://david-dm.org/davidbonnet/astring/dev-status.svg)](https://david-dm.org/davidbonnet/astring#info=devDependencies)
+[![Coverage Status](https://coveralls.io/repos/github/davidbonnet/astring/badge.svg?branch=coverage)](https://coveralls.io/github/davidbonnet/astring?branch=coverage)
 
 A tiny and fast JavaScript code generator from an [ESTree](https://github.com/estree/estree)-compliant AST.
 
@@ -17,9 +18,10 @@ Key features:
 - No dependencies and small footprint (≈ 16 KB minified, ≈ 4 KB gziped).
 
 
+
 ## Installation
 
-The easiest way is to install it with the [Node Package Manager](https://www.npmjs.com/package/astring):
+Install with the [Node Package Manager](https://www.npmjs.com/package/astring):
 
 ```bash
 npm install astring
@@ -33,10 +35,32 @@ cd astring
 npm install
 ```
 
-The path to the module file is `dist/astring.js` and can be linked to from an HTML webpage. When used in a browser environment, the module exposes a global variable `astring`:
+A browser-ready minified version of Astring is available at `dist/astring.min.js`.
+
+
+
+## Import
+
+With JavaScript 6 modules:
+
+```js
+import astring, { defaultGenerator } from 'astring';
+```
+
+With CommonJS:
+
+```js
+const { default: astring, defaultGenerator } = require('astring');
+```
+
+When used in a browser environment, the module exposes a global variable `astring`. The main function is accessible through the `default` property:
 
 ```html
-<script src="astring.js" type="text/javascript"></script>
+<script src="astring.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+	var defaultGenerator = astring.defaultGenerator;
+	var astring = astring.default;
+</script>
 ```
 
 
