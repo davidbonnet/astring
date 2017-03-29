@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-var astring = require( '../dist/astring' )
+var astring = require( '../dist/astring' ).default
 var version = require( '../package' ).version
 var fs = require( 'fs' )
 var path = require( 'path' )
