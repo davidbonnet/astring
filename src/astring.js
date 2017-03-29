@@ -565,6 +565,49 @@ export const defaultGenerator = {
 		this.Literal( node.source, state )
 		output.write( ';' )
 	},
+	ExportDeclaration( node, state ) {
+		const { output } = state
+		output.write( 'export ' )
+		if ( node.default )
+			output.write( 'default ' )
+		if ( node.declaration ) {
+			this[ node.declaration.type ]( node.declaration, state )
+		} else {
+			const { specifiers } = node, { length } = specifiers
+
+			const isDefaultOrBatch = node.default || (
+				length === 1 &&
+				specifiers[ 0 ].type === 'ExportBatchSpecifier'
+			)
+			if ( !isDefaultOrBatch)
+				output.write( '{' )
+			if ( length > 0 ) {
+				for ( let i = 0; ; ) {
+					let specifier = specifiers[ i ]
+					if ( specifier.type === 'ExportBatchSpecifier' )
+						output.write( '*' )
+					else {
+						let { name } = specifier.id
+						output.write( name )
+						if ( specifier.name && name !== specifier.name.name )
+							output.write( ' as ' + specifier.name.name )
+					}
+					if ( ++i < length )
+						output.write( ', ' )
+					else
+						break
+				}
+			}
+			if ( !isDefaultOrBatch)
+				output.write( '}' )
+			if ( node.source ) {
+				output.write( ' from ' )
+				this[ node.source.type ]( node.source, state )
+			}
+			output.write( ';' )
+		}
+
+	},
 	MethodDefinition( node, state ) {
 		const { output } = state
 		if ( node.static )
