@@ -41,11 +41,5 @@
     "normalize-newline": "^3.0.0",
     "string.prototype.repeat": "^0.2.0",
     "tap": "^10.3.0"
-  },
-  "optionalDependencies": {
-    "esast": "mason-lang/esast",
-    "escodegen": "^1.6.1",
-    "esotope": "^1.4.5",
-    "uglify-js": "^2.6.0"
   }
 }

@@ -1,3 +1,8 @@
+/*
+Before running benchmarks, install third parties by running:
+npm install mason-lang/esast escodegen@1.6 esotope@1.4 uglify-js@2.6
+*/
+
 var Benchmark = require( 'benchmark' )
 var acorn = require( 'acorn' )
 var uglify = require( 'uglify-js' )
