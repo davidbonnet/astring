@@ -35,5 +35,6 @@ function g() {
 	// …instruction 7:
 	instruction7;
 	// Trailing line comment
+	// Another comment
 }
 // Last line comment

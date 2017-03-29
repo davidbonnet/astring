@@ -1,4 +1,8 @@
-/node_modules
+*.sublime-project
+*.sublime-workspace
+/.nyc_output
+/coverage
 /dist
 /local
+/node_modules
 npm-debug.log

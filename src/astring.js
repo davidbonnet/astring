@@ -129,17 +129,17 @@ function reindent( text, indentation ) {
 	/*
 	Returns the `text` string reindented with the provided `indentation`.
 	*/
-	text = text.trimRight()
+	const trimmedText = text.trimRight()
 	let indents = '\n'
 	let secondLine = false
-	const { length } = text
+	const { length } = trimmedText
 	for ( let i = 0; i < length; i++ ) {
-		let char = text[ i ]
+		let char = trimmedText[ i ]
 		if ( secondLine ) {
 			if ( char === ' ' || char === '\t' ) {
 				indents += char
 			} else {
-				return indentation + text.trimLeft().split( indents ).join( '\n' + indentation )
+				return indentation + trimmedText.trimLeft().split( indents ).join( '\n' + indentation )
 			}
 		} else {
 			if ( char === '\n' ) {
@@ -147,7 +147,7 @@ function reindent( text, indentation ) {
 			}
 		}
 	}
-	return indentation + text.trimLeft()
+	return indentation + trimmedText.trimLeft()
 }
 
 
@@ -169,7 +169,7 @@ function formatComments( comments, output, indent, lineEnd ) {
 			output.write(
 				'/*' + lineEnd +
 				reindent( comment.value, indent ) + lineEnd +
-				indent + '*/' + lineEnd
+				indent + '*/' + lineEnd,
 			)
 	}
 }
@@ -179,14 +179,15 @@ function hasCallExpression( node ) {
 	/*
 	Returns `true` if the provided `node` contains a call expression and `false` otherwise.
 	*/
-	while ( node != null ) {
-		let { type } = node
+	let currentNode = node
+	while ( currentNode != null ) {
+		let { type } = currentNode
 		if ( type[ 0 ] === 'C' && type[ 1 ] === 'a' ) {
 			// Is CallExpression
 			return true
 		} else if ( type[ 0 ] === 'M' && type[ 1 ] === 'e' && type[ 2 ] === 'm' ) {
 			// Is MemberExpression
-			node = node.object
+			currentNode = currentNode.object
 		} else {
 			return false
 		}
@@ -884,13 +885,13 @@ export const defaultGenerator = {
 		} else if ( node.regex != null ) {
 			this.RegExpLiteral( node, state )
 		} else {
-			state.output.write( stringify( node.value ) )			
+			state.output.write( stringify( node.value ) )
 		}
 	},
 	RegExpLiteral( node, state ) {
 		const { regex } = node
 		state.output.write(
-			'new RegExp(' + stringify( regex.pattern ) + ', ' + stringify( regex.flags ) + ')'
+			'new RegExp(' + stringify( regex.pattern ) + ', ' + stringify( regex.flags ) + ')',
 		)
 	},
 }
@@ -901,7 +902,7 @@ class Stream {
 	constructor() {
 		this.data = ''
 	}
-	
+
 	write( string ) {
 		this.data += string
 	}
