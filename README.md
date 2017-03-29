@@ -4,7 +4,7 @@
 [![NPM Version](https://img.shields.io/npm/v/astring.svg)](https://www.npmjs.org/package/astring)
 [![Dependency Status](https://david-dm.org/davidbonnet/astring.svg)](https://david-dm.org/davidbonnet/astring)
 [![devDependency Status](https://david-dm.org/davidbonnet/astring/dev-status.svg)](https://david-dm.org/davidbonnet/astring#info=devDependencies)
-[![Coverage Status](https://coveralls.io/repos/github/davidbonnet/astring/badge.svg?branch=coverage)](https://coveralls.io/github/davidbonnet/astring?branch=coverage)
+[![Coverage Status](https://coveralls.io/repos/github/davidbonnet/astring/badge.svg?branch=master)](https://coveralls.io/github/davidbonnet/astring?branch=master)
 
 A tiny and fast JavaScript code generator from an [ESTree](https://github.com/estree/estree)-compliant AST.
 
