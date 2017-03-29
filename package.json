@@ -8,11 +8,12 @@
   },
   "scripts": {
     "test": "tap --harmony test/index.js --coverage",
+    "coverage": "tap --harmony test/index.js --coverage --coverage-report=html",
     "test-scripts": "tap --harmony test/scripts.js",
     "prepublish": "npm run build && npm run build-minified",
-    "build-minified": "babel src/astring.js --out-file dist/astring.min.js --presets=babili",
-    "build": "babel src/astring.js --out-file dist/astring.js",
-    "start": "babel src/astring.js --watch --out-file dist/astring.js --source-maps inline",
+    "build-minified": "babel src/astring.js --out-file dist/astring.min.js --presets=babili --source-maps=true",
+    "build": "babel src/astring.js --out-file dist/astring.js --source-maps=true",
+    "start": "babel src/astring.js --watch --out-file dist/astring.js --source-maps=true",
     "benchmark": "node ./test/benchmark.js"
   },
   "keywords": [
