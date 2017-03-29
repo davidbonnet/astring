@@ -44,13 +44,13 @@ A browser-ready minified version of Astring is available at `dist/astring.min.js
 With JavaScript 6 modules:
 
 ```js
-import astring, { defaultGenerator } from 'astring';
+import generate, { defaultGenerator } from 'astring';
 ```
 
 With CommonJS:
 
 ```js
-const { default: astring, defaultGenerator } = require('astring');
+const { default: generate, defaultGenerator } = require('astring');
 ```
 
 When used in a browser environment, the module exposes a global variable `astring`. The main function is accessible through the `default` property:
@@ -59,7 +59,7 @@ When used in a browser environment, the module exposes a global variable `astrin
 <script src="astring.min.js" type="text/javascript"></script>
 <script type="text/javascript">
 	var defaultGenerator = astring.defaultGenerator;
-	var astring = astring.default;
+	var generate = astring.default;
 </script>
 ```
 
@@ -69,7 +69,8 @@ When used in a browser environment, the module exposes a global variable `astrin
 
 A [live demo](http://bonnet.cc/astring/demo.html) showing Astring in action is available.
 
-The `astring` module consists of a function that takes two arguments: `node` and `options`. It returns a string representing the rendered code of the provided AST `node`. However, if an `output` stream is provided in the options, it writes to that stream and returns it.
+The default export of the `astring` module is a function that takes two arguments: `node` and `options`. It returns a string representing the rendered code of the provided AST `node`. However, if an `output` stream is provided in the options, it writes to that stream and returns it.
+
 The `options` are:
 
 - `indent`: string to use for indentation (defaults to `"\t"`)
@@ -79,18 +80,21 @@ The `options` are:
 - `output`: output stream to write the rendered code to (defaults to `null`)
 - `generator`: custom code generator (defaults to `astring.defaultGenerator`)
 
+Examples below are written in JavaScript 5 with Astring imported _à la CommonJS_.
+
 ### Example
 
 This example uses [Acorn](https://github.com/marijnh/acorn), a blazingly fast JavaScript AST producer and therefore the perfect companion of Astring.
 
 ```javascript
 // Make sure acorn and astring modules are imported
+var generate = astring.default;
 // Set example code
 var code = "let answer = 4 + 7 * 5 + 3;\n";
 // Parse it into an AST
 var ast = acorn.parse(code, { ecmaVersion: 6 });
 // Format it into a code string
-var formattedCode = astring(ast, {
+var formattedCode = generate(ast, {
 	indent: '   ',
 	lineEnd: '\n'
 });
@@ -104,12 +108,13 @@ This example for [Node](http://nodejs.org) shows how to use writable streams to 
 
 ```javascript
 // Make sure acorn and astring modules are imported
+var generate = astring.default;
 // Set example code
 var code = "let answer = 4 + 7 * 5 + 3;\n";
 // Parse it into an AST
 var ast = acorn.parse(code, { ecmaVersion: 6 });
 // Format it and write the result to stdout
-var stream = astring(ast, {
+var stream = generate(ast, {
 	output: process.stdout
 });
 // The returned value is the output stream
@@ -122,6 +127,7 @@ Astring supports comment generation, provided they are stored on the AST nodes. 
 
 ```javascript
 // Make sure acorn, astravel and astring modules are imported
+var generate = astring.default;
 // Set example code
 var code = [
 	"// Compute the answer to everything",
@@ -139,7 +145,7 @@ var ast = acorn.parse(code, {
 // Attach comments to AST nodes
 astravel.attachComments(ast, comments);
 // Format it into a code string
-var formattedCode = astring(ast, {
+var formattedCode = generate(ast, {
 	indent: '   ',
 	lineEnd: '\n',
 	comments: true
@@ -156,6 +162,7 @@ This example shows how to support the `await` keyword which is part of the [asyn
 
 ```javascript
 // Make sure the astring module is imported and that `Object.assign` is defined
+var generate = astring.default;
 // Create a custom generator that inherits from Astring's default generator
 var customGenerator = Object.assign({}, astring.defaultGenerator, {
 	AwaitExpression: function(node, state) {
@@ -186,7 +193,7 @@ var ast = {
 	sourceType: "module"
 };
 // Format it
-var code = astring(ast, {
+var code = generate(ast, {
 	generator: customGenerator
 });
 // Check it
@@ -251,16 +258,22 @@ npm start
 
 #### Tests
 
-While making changes to Astring, make sure it passes the tests by running the following watcher:
+While making changes to Astring, make sure it passes the tests:
 
 ```bash
-npm run test-live
+npm test
+```
+
+You can also get an HTML report of the coverage:
+
+```bash
+npm run coverage
 ```
 
 You can also run tests on a large array of files:
 
 ```bash
-npm run test-full
+npm run test-scripts
 ```
 
 
