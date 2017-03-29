@@ -21,6 +21,8 @@ Key features:
 
 ## Installation
 
+> :warning: Astring relies on `String.prototype.repeat(amount)`. If the environment running Astring does not define this method, add [`string.prototype.repeat`](https://www.npmjs.com/package/string.prototype.repeat) or [`babel-polyfill`](https://www.npmjs.com/package/babel-polyfill).
+
 Install with the [Node Package Manager](https://www.npmjs.com/package/astring):
 
 ```bash
