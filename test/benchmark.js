@@ -1,51 +1,58 @@
 /*
 Before running benchmarks, install third parties by running:
-npm install mason-lang/esast escodegen@1.6 esotope@1.4 uglify-js@2.6
+npm install mason-lang/esast escodegen@1.8 esotope@1.4 uglify-js@2.8 babel-generator@6.24
 */
 
-var Benchmark = require( 'benchmark' )
-var acorn = require( 'acorn' )
-var uglify = require( 'uglify-js' )
-var escodegen = require( 'escodegen' ).generate
-var esotope = require( 'esotope' ).generate
-var nodent = require( '../vendor/nodent' )
-var astring = require( '../dist/astring' ).default
-var fs = require( 'fs' )
-var path = require( 'path' )
+const Benchmark = require( 'benchmark' )
+const acorn = require( 'acorn' )
+const uglify = require( 'uglify-js' )
+const escodegen = require( 'escodegen' ).generate
+const esotope = require( 'esotope' ).generate
+const nodent = require( '../vendor/nodent' )
+const astring = require( '../dist/astring' ).generate
+const babylon = require( 'babylon' )
+const babel = require( 'babel-generator' ).default
+const fs = require( 'fs' )
+const path = require( 'path' )
 
 
 function benchmarkWithCode( code, name ) {
 	console.log( '\nTesting "%s" (code length: %d)', name, code.length )
-	var ast = acorn.parse( code, {
+	const ast = acorn.parse( code, {
 		ecmaVersion: 8,
 		sourceType: 'module',
 	} )
-	var uglifyAst = null
+	let uglifyAst = null
 	try {
 		uglifyAst = uglify.parse( code )
 	} catch ( error ) {}
-	var uglifyOptions = {
-		beautify: true
+	const uglifyOptions = {
+		beautify: true,
 	}
-	// console.log( astring( ast ) )
+	const babelAst = babylon.parse( code, {
+		sourceType: 'module',
+	} )
 	; ( new Benchmark.Suite )
-	.add( 'escodegen', function() {
+	.add( 'escodegen', () => {
 		escodegen( ast )
 	} )
-	.add( 'esotope', function() {
+	.add( 'esotope', () => {
 		esotope( ast )
 	} )
-	.add( 'astring', function() {
+	.add( 'astring', () => {
 		astring( ast )
 	} )
-	.add( 'uglify', function() {
+	.add( 'uglify', () => {
 		uglifyAst.print_to_string( uglifyOptions )
 	} )
-	.add( 'nodent', function() {
+	.add( 'nodent', () => {
 		nodent( ast )
 	} )
+	.add( 'babel', () => {
+		babel( babelAst, {}, code ).code
+	} )
 	// add listeners
-	.on( 'cycle', function( event ) {
+	.on( 'cycle', ( event ) => {
 		console.log( String( event.target ) )
 	} )
 	.on( 'complete', function() {
@@ -54,11 +61,16 @@ function benchmarkWithCode( code, name ) {
 	.run()
 }
 
-var code = fs.readFileSync( path.join( __dirname, 'index.js' ), 'utf8' )
-benchmarkWithCode( code, 'test file' )
 
-var code = fs.readFileSync( path.join( __dirname, 'tree', 'es6.js' ), 'utf8' )
-benchmarkWithCode( code, 'everything' )
+benchmarkWithCode(
+	fs.readFileSync( path.join( __dirname, '_benchmark.js' ), 'utf8' ),
+	'benchmark file',
+)
+
+benchmarkWithCode(
+	fs.readFileSync( path.join( __dirname, 'tree', 'es6.js' ), 'utf8' ),
+	'everything',
+)
 
 benchmarkWithCode( 'var a = 2;', 'tiny instruction' )
 
