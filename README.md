@@ -291,7 +291,13 @@ npm run test-scripts
 
 #### Benchmark
 
-Also, make sure that the modifications don't alter the performance by running benchmarks that compare Astring against other code generators:
+The benchmark compares Astring against other code generators. These are not included in the dependencies and should be installed first:
+
+```bash
+npm install mason-lang/esast escodegen@1.8 esotope@1.4 uglify-js@2.8 babel-generator@6.24
+```
+
+Benchmarks can be exectued with:
 
 ```bash
 npm run benchmark
