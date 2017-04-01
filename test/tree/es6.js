@@ -93,7 +93,7 @@ null; true; false;
 0x0; 0X0; 0x0123456789abcdefABCDEF;
 0b0; 0B0; 0b01; 0b10; 0b10101010;
 0o0; 0O0; 0o01234567;
-2e308;
+2e307;
 
 ""; "'"; "\'\"\\\b\f\n\r\t\v\0";
 "\x01\x23\x45\x67\x89\xAB\xCD\xEF\xab\xcd\xef";

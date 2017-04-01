@@ -130,17 +130,17 @@ function reindent( text, indentation ) {
 	/*
 	Returns the `text` string reindented with the provided `indentation`.
 	*/
-	text = text.trimRight()
+	const trimmedText = text.trimRight()
 	let indents = '\n'
 	let secondLine = false
-	const { length } = text
+	const { length } = trimmedText
 	for ( let i = 0; i < length; i++ ) {
-		let char = text[ i ]
+		let char = trimmedText[ i ]
 		if ( secondLine ) {
 			if ( char === ' ' || char === '\t' ) {
 				indents += char
 			} else {
-				return indentation + text.trimLeft().split( indents ).join( '\n' + indentation )
+				return indentation + trimmedText.trimLeft().split( indents ).join( '\n' + indentation )
 			}
 		} else {
 			if ( char === '\n' ) {
@@ -148,7 +148,7 @@ function reindent( text, indentation ) {
 			}
 		}
 	}
-	return indentation + text.trimLeft()
+	return indentation + trimmedText.trimLeft()
 }
 
 
@@ -170,7 +170,7 @@ function formatComments( state, comments, indent, lineEnd ) {
 			state.write(
 				'/*' + lineEnd +
 				reindent( comment.value, indent ) + lineEnd +
-				indent + '*/' + lineEnd
+				indent + '*/' + lineEnd,
 			)
 	}
 }
@@ -180,14 +180,15 @@ function hasCallExpression( node ) {
 	/*
 	Returns `true` if the provided `node` contains a call expression and `false` otherwise.
 	*/
-	while ( node != null ) {
-		let { type } = node
+	let currentNode = node
+	while ( currentNode != null ) {
+		let { type } = currentNode
 		if ( type[ 0 ] === 'C' && type[ 1 ] === 'a' ) {
 			// Is CallExpression
 			return true
 		} else if ( type[ 0 ] === 'M' && type[ 1 ] === 'e' && type[ 2 ] === 'm' ) {
 			// Is MemberExpression
-			node = node.object
+			currentNode = currentNode.object
 		} else {
 			return false
 		}
@@ -204,7 +205,7 @@ let
 	BlockStatement
 
 
-export const defaultGenerator = {
+export const baseGenerator = {
 	Program( node, state ) {
 		const indent = state.indent.repeat( state.indentLevel )
 		const { lineEnd, writeComments } = state
@@ -424,7 +425,7 @@ export const defaultGenerator = {
 			( node.async ? 'async ' : '' ) +
 			( node.generator ? 'function* ' : 'function ' ) +
 			( node.id ? node.id.name : '' ),
-			node
+			node,
 		)
 		formatSequence( state, node.params )
 		state.write( ' ' )
@@ -456,7 +457,7 @@ export const defaultGenerator = {
 		state.write(
 			'class ' +
 			( node.id ? `${node.id.name} ` : '' ),
-			node
+			node,
 		)
 		if ( node.superClass ) {
 			state.write( 'extends ' )
@@ -862,9 +863,7 @@ export const defaultGenerator = {
 	},
 	RegExpLiteral( node, state ) {
 		const { regex } = node
-		state.write(
-			'new RegExp(' + stringify( regex.pattern ) + ', ' + stringify( regex.flags ) + ')'
-		)
+		state.write( `/${regex.pattern}/${regex.flags}` )
 	},
 }
 
@@ -884,7 +883,7 @@ class State {
 		} else {
 			this.output = ''
 		}
-		this.generator = setup.generator != null ? setup.generator : defaultGenerator
+		this.generator = setup.generator != null ? setup.generator : baseGenerator
 		// Source map
 		this.map = setup.sourcemap ? new SourceMap() : null
 		this.line = 1
@@ -897,7 +896,7 @@ class State {
 		// Internal state
 		this.noTrailingSemicolon = false
 	}
-	
+
 	write( string ) {
 		this.output += string
 	}
@@ -927,7 +926,7 @@ class State {
 	}
 
 	map( string ) {
-		
+
 	}
 
 	toString() {
@@ -950,7 +949,7 @@ class SourceMap {
 }
 
 
-export default function astring( node, options ) {
+export function generate( node, options ) {
 	/*
 	Returns a string representing the rendered code of the provided AST `node`.
 	The `options` are:
@@ -960,7 +959,7 @@ export default function astring( node, options ) {
 	- `startingIndentLevel`: indent level to start from (default to `0`)
 	- `comments`: generate comments if `true` (defaults to `false`)
 	- `output`: output stream to write the rendered code to (defaults to `null`)
-	- `generator`: custom code generator (defaults to `defaultGenerator`)
+	- `generator`: custom code generator (defaults to `baseGenerator`)
 	*/
 	const state = new State( options )
 	// Travel through the AST node and generate the code

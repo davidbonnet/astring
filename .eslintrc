@@ -1,67 +1,93 @@
 {
-	"rules": {
-		"eol-last": "error",
-		"no-undef": "error",
-		"indent": ["error", "tab", {
-			"SwitchCase": 1
-		}],
-		"quotes": ["error", "single"],
-		"linebreak-style": ["error", "unix"],
-		"semi": ["error", "never"],
-		"no-underscore-dangle": "off",
-		"no-multi-spaces": "error",
-		"camelcase": "off",
-		"no-console": "off",
-		"new-cap": "off",
-		"brace-style": ["error", "1tbs", {
-			"allowSingleLine": true
-		}],
-		"no-unused-vars": ["error", {
-			"vars": "all",
-			"args": "none"
-		}],
-		"semi-spacing": ["error", {
-			"before": false,
-			"after": true
-		}],
-		"space-in-parens": ["error", "always"],
-		"object-curly-spacing": ["error", "always"],
-		"array-bracket-spacing": ["error", "always"],
-		"computed-property-spacing": ["error", "always"],
-		"arrow-spacing": ["error", {
-			"before": true,
-			"after": true
-		}],
-		"no-inline-comments": "off",
-		"max-len": ["error", 100, 2, {
-			"tabWidth": 2,
-			"ignoreUrls": true,
-			"ignoreComments": true,
-		}],
-		"key-spacing": ["error", {
-			"beforeColon": false,
-			"afterColon": true,
-			"mode": "strict"
-		}],
-		"space-infix-ops": "error",
-		"keyword-spacing": ["error", {
-			"before": true,
-			"after": true,
-		}],
-		"comma-dangle": ["error", "always-multiline"],
-		"no-restricted-globals": ["error",
-			"find",
-			"event"
-		]
-	},
-	"env": {
-		"es6": true,
-		"browser": true,
-		"node": true,
-		"mocha": true,
-	},
-	"parserOptions": {
-		"ecmaVersion": 7,
-		"sourceType": "module",
-	}
+    "extends": [
+        "plugin:import/errors"
+    ],
+    "plugins": [
+        "import"
+    ],
+    "settings": {
+        "import/ignore": [
+            "node_modules"
+        ]
+    },
+    "env": {
+        "es6": true,
+        "browser": true,
+        "node": true
+    },
+    "parserOptions": {
+      "ecmaVersion": 8,
+      "sourceType": "module"
+    },
+    "rules": {
+        "no-undef": "error",
+        "indent": ["error", "tab", {
+            "SwitchCase": 1
+        }],
+        "quotes": ["error", "single"],
+        "linebreak-style": ["error", "unix"],
+        "semi": ["error", "never"],
+        "no-underscore-dangle": "off",
+        "camelcase": ["error", {
+            "properties": "always"
+        }],
+        "no-console": "off",
+        "new-cap": "off",
+        "no-multi-spaces": "error",
+        "no-unused-vars": ["error", {
+            "vars": "all",
+            "args": "none"
+        }],
+        "no-var": "error",
+        "no-dupe-keys": "error",
+        "no-dupe-args": "error",
+        "no-const-assign": "error",
+        "no-param-reassign": "error",
+        "comma-spacing": ["error", {
+            "before": false,
+            "after": true
+        }],
+        "comma-dangle": [ "error", {
+          "arrays": "always-multiline",
+          "objects": "always-multiline",
+          "imports": "always-multiline",
+          "exports": "always-multiline",
+          "functions": "always-multiline",
+        } ],
+        "space-in-parens": ["error", "always"],
+        "space-before-function-paren": ["error", "never"],
+        "array-bracket-spacing": ["error", "always"],
+        "object-curly-spacing": ["error", "always"],
+        "block-spacing": ["error", "always"],
+        "key-spacing": ["error", {
+            "beforeColon": false,
+            "afterColon": true,
+            "mode": "strict"
+        }],
+        "keyword-spacing": ["error", {
+            "before": true,
+            "after": true,
+        }],
+        "arrow-spacing": ["error", {
+            "before": true,
+            "after": true
+        }],
+        "no-inline-comments": "off",
+        "max-len": ["error", 100, 2, {
+            "tabWidth": 2,
+            "ignoreUrls": true,
+            "ignoreComments": true,
+            "ignoreStrings": true,
+        }],
+        "no-trailing-spaces": "error",
+        "computed-property-spacing": ["error", "always"],
+        "no-multiple-empty-lines": ["error", {
+            "max": 2
+        }],
+        "eol-last": "error",
+        "no-restricted-globals": ["error",
+            "find",
+            "event"
+        ]
+    }
 }

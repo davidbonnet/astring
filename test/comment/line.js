@@ -21,13 +21,17 @@ function g() {
 		default:
 			break;
 	}
+	// Comment above object
 	var point = {
+		// More line comments
 		// Line comment for property x:
 		x: 0,
 		// Line comment for property y:
 		y: 1
 		// Trailing line comment of point object
 	};
+	// Comment after object
+	// Comments before empty object
 	var object = {};
 	instruction6;
 	// Several line comments
@@ -35,5 +39,6 @@ function g() {
 	// …instruction 7:
 	instruction7;
 	// Trailing line comment
+	// Another comment
 }
 // Last line comment

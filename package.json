@@ -1,20 +1,20 @@
 {
   "name": "astring",
-  "version": "0.8.0",
+  "version": "0.10.0",
   "description": "JavaScript code generator from an ESTree-compliant AST.",
   "main": "./dist/astring.js",
   "bin": {
     "astring": "./bin/astring"
   },
   "scripts": {
-    "test": "eslint src/astring.js && npm run build-debug && mocha test/index.js",
-    "test-live": "mocha --watch test/index.js",
-    "test-full": "node test/scripts.js",
-    "prepublish": "npm run build",
-    "build": "browserify --transform [ babelify ] --no-builtins --standalone astring --entry ./src/export.js --outfile dist/astring.js",
-    "build-debug": "browserify --transform [ babelify ] --no-builtins --debug --verbose --standalone astring --entry ./src/export.js --outfile dist/astring.debug.js",
-    "start": "watchify --transform [ babelify ] --no-builtins --debug --verbose --standalone astring --entry ./src/export.js --outfile dist/astring.debug.js",
-    "benchmark": "node ./test/benchmark.js"
+    "test": "babel test/index.js --out-file test/_index.js --no-babelrc --presets=latest && tap test/_index.js --coverage",
+    "coverage": "tap --harmony test/index.js --coverage --coverage-report=html",
+    "test-scripts": "tap --harmony test/scripts.js",
+    "prepublish": "npm run build && npm run build-minified",
+    "build-minified": "cross-env BABEL_ENV=minified babel src/astring.js --out-file dist/astring.min.js --source-maps=true",
+    "build": "babel src/astring.js --out-file dist/astring.js --source-maps=true",
+    "start": "babel src/astring.js --watch --out-file dist/astring.js --source-maps=true",
+    "benchmark": "babel test/benchmark.js --out-file test/_benchmark.js --no-babelrc --presets=latest && node ./test/_benchmark.js"
   },
   "keywords": [
     "ast",
@@ -28,21 +28,20 @@
   "author": "David Bonnet <david@bonnet.cc>",
   "license": "MIT",
   "devDependencies": {
-    "acorn": "^4.0.3",
-    "astravel": "^0.3.13",
-    "babel-preset-es2015": "^6.18.0",
-    "babelify": "^7.3.0",
-    "benchmark": "^2.1.2",
-    "browserify": "^13.1.1",
-    "escodegen": "^1.8.1",
-    "eslint": "^3.9.0",
-    "esotope": "^1.4.5",
+    "acorn": "^5.0.2",
+    "astravel": "^0.3.11",
+    "babel-cli": "^6.24.0",
+    "babel-plugin-transform-es2015-modules-umd": "^6.24.0",
+    "babel-preset-babili": "0.0.12",
+    "babel-preset-latest": "^6.24.0",
+    "benchmark": "^2.0.0",
+    "cross-env": "^4.0.0",
+    "eslint": "^3.18.0",
+    "eslint-plugin-import": "^2.2.0",
     "glob": "^7.1.1",
-    "mocha": "^3.1.2",
     "normalize-newline": "^3.0.0",
     "recast": "^0.11.16",
     "string.prototype.repeat": "^0.2.0",
-    "uglify-js": "^2.7.4",
-    "watchify": "^3.6.0"
+    "tap": "^10.3.0"
   }
 }
