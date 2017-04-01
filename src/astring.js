@@ -888,7 +888,7 @@ class State {
 				original: null,
 				generated: this,
 				name: undefined,
-				source: setup.fileName,
+				source: setup.sourceMap.file || setup.sourceMap._file,
 			}
 		}
 		// Internal state
