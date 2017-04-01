@@ -890,9 +890,7 @@ export const baseGenerator = {
 	},
 	RegExpLiteral( node, state ) {
 		const { regex } = node
-		state.output.write(
-			'new RegExp(' + stringify( regex.pattern ) + ', ' + stringify( regex.flags ) + ')',
-		)
+		state.output.write( `/${regex.pattern}/${regex.flags}` )
 	},
 }
 
