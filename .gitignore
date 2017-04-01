@@ -1,6 +1,6 @@
-*.sublime-project
-*.sublime-workspace
-/test/test.js
+/*.sublime-project
+/*.sublime-workspace
+/test/_*.js
 /.nyc_output
 /coverage
 /dist

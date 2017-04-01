@@ -1,5 +1,5 @@
-*.sublime-project
-*.sublime-workspace
+/*.sublime-project
+/*.sublime-workspace
 /.babelrc
 /.eslint*
 /.npmignore
