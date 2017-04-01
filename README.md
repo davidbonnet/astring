@@ -34,7 +34,7 @@ Checkout the [live demo](http://bonnet.cc/astring/demo.html) showing Astring in 
 
 ## Installation
 
-> :warning: Astring relies on `String.prototype.repeat(amount)`. If the environment running Astring does not define this method, use [`string.prototype.repeat`](https://www.npmjs.com/package/string.prototype.repeat) or [`babel-polyfill`](https://www.npmjs.com/package/babel-polyfill).
+> :warning: Astring relies on `String.prototype.repeat(amount)` and `String.prototype.endsWith(string)`. If the environment running Astring does not define these methods, use [`string.prototype.repeat`](https://www.npmjs.com/package/string.prototype.repeat), [`string.prototype.endsWith`](https://www.npmjs.com/package/string.prototype.endswith) or [`babel-polyfill`](https://www.npmjs.com/package/babel-polyfill).
 
 Install with the [Node Package Manager](https://www.npmjs.com/package/astring):
 
