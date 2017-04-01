@@ -1,6 +1,6 @@
 /*
 Before running benchmarks, install third parties by running:
-npm install mason-lang/esast escodegen@1.8 esotope@1.4 uglify-js@2.8 babel-generator@6.24
+npm install escodegen@1.8 esotope@1.4 uglify-js@2.8 babel-generator@6.24
 */
 
 const Benchmark = require( 'benchmark' )
@@ -73,5 +73,3 @@ benchmarkWithCode(
 )
 
 benchmarkWithCode( 'var a = 2;', 'tiny instruction' )
-
-
