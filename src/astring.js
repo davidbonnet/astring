@@ -126,29 +126,19 @@ function formatBinaryExpressionPart( state, node, parentNode, isRightHand ) {
 }
 
 
-function reindent( text, indentation ) {
+function reindent( state, text, indent, lineEnd ) {
 	/*
-	Returns the `text` string reindented with the provided `indentation`.
+	Writes into `state` the `text` string reindented with the provided `indent`.
 	*/
-	const trimmedText = text.trimRight()
-	let indents = '\n'
-	let secondLine = false
-	const { length } = trimmedText
-	for ( let i = 0; i < length; i++ ) {
-		let char = trimmedText[ i ]
-		if ( secondLine ) {
-			if ( char === ' ' || char === '\t' ) {
-				indents += char
-			} else {
-				return indentation + trimmedText.trimLeft().split( indents ).join( '\n' + indentation )
-			}
-		} else {
-			if ( char === '\n' ) {
-				secondLine = true
-			}
-		}
+	const trimmedText = text.trim()
+	if ( trimmedText === '' ) {
+		return
 	}
-	return indentation + trimmedText.trimLeft()
+	const lines = text.trim().split( '\n' )
+	const { length } = lines
+	for ( let i = 0; i < length; i++ ) {
+		state.write( indent + lines[ i ].trim() + lineEnd )
+	}
 }
 
 
@@ -162,16 +152,15 @@ function formatComments( state, comments, indent, lineEnd ) {
 	for ( let i = 0; i < length; i++ ) {
 		let comment = comments[ i ]
 		state.write( indent )
-		if ( comment.type[ 0 ] === 'L' )
+		if ( comment.type[ 0 ] === 'L' ) {
 			// Line comment
 			state.write( '// ' + comment.value.trim() + '\n' )
-		else
+		} else {
 			// Block comment
-			state.write(
-				'/*' + lineEnd +
-				reindent( comment.value, indent ) + lineEnd +
-				indent + '*/' + lineEnd,
-			)
+			state.write( '/*' + lineEnd )
+			reindent( state, comment.value, indent, lineEnd )
+			state.write( indent + '*/' + lineEnd )
+		}
 	}
 }
 
@@ -479,11 +468,11 @@ export const baseGenerator = {
 				const type = specifier.type[ 6 ]
 				if ( type === 'D' ) {
 					// ImportDefaultSpecifier
-					state.write( specifier.local.name )
+					state.write( specifier.local.name, specifier )
 					i++
 				} else if ( type === 'N' ) {
 					// ImportNamespaceSpecifier
-					state.write( '* as ' + specifier.local.name )
+					state.write( '* as ' + specifier.local.name, specifier )
 					i++
 				} else {
 					// ImportSpecifier
@@ -529,7 +518,7 @@ export const baseGenerator = {
 				for ( let i = 0; ; ) {
 					let specifier = specifiers[ i ]
 					let { name } = specifier.local
-					state.write( name )
+					state.write( name, specifier )
 					if ( name !== specifier.exported.name )
 						state.write( ' as ' + specifier.exported.name )
 					if ( ++i < length )
@@ -577,14 +566,13 @@ export const baseGenerator = {
 		this.ClassDeclaration( node, state )
 	},
 	ArrowFunctionExpression( node, state ) {
+		state.write( node.async ? 'async ' : '', node )
 		const { params } = node
-		if ( node.async )
-			state.write( 'async ' )
 		if ( params != null ) {
 			// Omit parenthesis if only one named parameter
 			if ( params.length === 1 && params[ 0 ].type[ 0 ] === 'I' ) {
 				// If params[0].type[0] starts with 'I', it can't be `ImportDeclaration` nor `IfStatement` and thus is `Identifier`
-				state.write( params[ 0 ].name )
+				state.write( params[ 0 ].name, params[ 0 ] )
 			} else {
 				formatSequence( state, node.params )
 			}
@@ -600,10 +588,10 @@ export const baseGenerator = {
 		}
 	},
 	ThisExpression( node, state ) {
-		state.write( 'this' )
+		state.write( 'this', node )
 	},
 	Super( node, state ) {
-		state.write( 'super' )
+		state.write( 'super', node )
 	},
 	RestElement: RestElement = function( node, state ) {
 		state.write( '...' )
@@ -847,23 +835,23 @@ export const baseGenerator = {
 		}
 	},
 	MetaProperty( node, state ) {
-		state.write( node.meta.name + '.' + node.property.name )
+		state.write( node.meta.name + '.' + node.property.name, node )
 	},
 	Identifier( node, state ) {
-		state.write( node.name )
+		state.write( node.name, node )
 	},
 	Literal( node, state ) {
 		if ( node.raw != null ) {
-			state.write( node.raw )
+			state.write( node.raw, node )
 		} else if ( node.regex != null ) {
 			this.RegExpLiteral( node, state )
 		} else {
-			state.write( stringify( node.value ) )
+			state.write( stringify( node.value ), node )
 		}
 	},
 	RegExpLiteral( node, state ) {
 		const { regex } = node
-		state.write( `/${regex.pattern}/${regex.flags}` )
+		state.write( `/${regex.pattern}/${regex.flags}`, node )
 	},
 }
 
@@ -884,66 +872,80 @@ class State {
 			this.output = ''
 		}
 		this.generator = setup.generator != null ? setup.generator : baseGenerator
-		// Source map
-		this.map = setup.sourcemap ? new SourceMap() : null
-		this.line = 1
-		this.column = 0
 		// Formating setup
 		this.indent = setup.indent != null ? setup.indent : '\t'
 		this.lineEnd = setup.lineEnd != null ? setup.lineEnd : '\n'
 		this.indentLevel = setup.startingIndentLevel != null ? setup.startingIndentLevel : 0
 		this.writeComments = setup.comments ? setup.comments : false
+		// Source map
+		if ( setup.sourceMap != null ) {
+			this.write = setup.output == null ? this.writeAndMap : this.writeToStreamAndMap
+			this.sourceMap = setup.sourceMap
+			this.line = 1
+			this.column = 0
+			this.lineEndSize = this.lineEnd.split( '\n' ).length - 1
+			this.mapping = {
+				original: null,
+				generated: this,
+				name: undefined,
+				source: setup.fileName,
+			}
+		}
 		// Internal state
 		this.noTrailingSemicolon = false
 	}
 
-	write( string ) {
-		this.output += string
+	write( code ) {
+		this.output += code
 	}
 
-	writeToStream( string ) {
-		this.output.write( string )
+	writeToStream( code ) {
+		this.output.write( code )
 	}
 
-	writeAndMap( string, location ) {
-		this.output += string
-		if ( location != null ) {
-			this.map.add( this.sourceFile, location, this )
+	writeAndMap( code, node ) {
+		this.output += code
+		this.map( code, node )
+	}
+
+	writeToStreamAndMap( code, node ) {
+		this.output.write( code )
+		this.map( code, node )
+	}
+
+	map( code, node ) {
+		if ( node != null ) {
+			const { mapping } = this
+			mapping.original = node.loc.start
+			mapping.name = node.name
+			this.sourceMap.addMapping( mapping )
 		}
-		const { length } = string
-		if ( length > 0 ) {
-			if ( string.charCodeAt( string.length - 1 ) === 10 ) {
-				this.line++
-				this.column = 0
+		if ( code.length > 0 ) {
+			if ( this.lineEndSize > 0 ) {
+				if ( code.endsWith( this.lineEnd ) ) {
+					this.line += this.lineEndSize
+					this.column = 0
+				} else if ( code[ code.length - 1 ] === '\n' ) {
+					// Case of inline comment
+					this.line++
+					this.column = 0
+				} else {
+					this.column += code.length
+				}
 			} else {
-				this.column += length
+				if ( code[ code.length - 1 ] === '\n' ) {
+					// Case of inline comment
+					this.line++
+					this.column = 0
+				} else {
+					this.column += code.length
+				}
 			}
 		}
 	}
 
-	writeToStreamAndMap( string, location ) {
-		this.output.write( string )
-	}
-
-	map( string ) {
-
-	}
-
 	toString() {
 		return this.output
-	}
-
-}
-
-
-class SourceMap {
-
-	constructor() {
-
-	}
-
-	add( fileName, originalLocation, generatedLocation ) {
-
 	}
 
 }
