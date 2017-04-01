@@ -21,7 +21,7 @@ A tiny and fast JavaScript code generator from an [ESTree](https://github.com/es
 Checkout the [live demo](http://bonnet.cc/astring/demo.html) showing Astring in action.
 
 
-## Sumamry
+## Contents
 
 - [Installation](#installation)
 - [Import](#import)
