@@ -5,7 +5,8 @@ const { test } = require( 'tap' )
 const acorn = require( 'acorn' )
 const astravel = require( 'astravel' )
 
-const astring = require( '../dist/astring' ).default
+const { generate } = require( '../dist/astring' )
+const { generate: generateMinified } = require( '../dist/astring.min' )
 
 
 const stripLocation = astravel.makeTraveler( {
@@ -23,6 +24,18 @@ const stripLocation = astravel.makeTraveler( {
 } )
 
 
+function check( callback ) {
+	/*
+	Checks the non-minified (source) and minified version of the generator.
+	*/
+	return assert => {
+		assert.test( 'source', assert => callback( assert, generate ) )
+		assert.test( 'minified', assert => callback( assert, generateMinified ) )
+		assert.end()
+	}
+}
+
+
 test( 'Syntax check', assert => {
 	const dirname = path.join( __dirname, 'syntax' )
 	const files = fs.readdirSync( dirname ).sort()
@@ -32,11 +45,11 @@ test( 'Syntax check', assert => {
 	}
 	files.forEach( filename => {
 		const code = normalizeNewline( fs.readFileSync( path.join( dirname, filename ), 'utf8' ) )
-		assert.test( filename.substring( 0, filename.length - 3 ), assert => {
+		assert.test( filename.substring( 0, filename.length - 3 ), check( ( assert, generate ) => {
 			const ast = acorn.parse( code, options )
-			assert.equal( astring( ast ), code )
+			assert.equal( generate( ast ), code )
 			assert.end()
-		} )
+		} ) )
 	} )
 	assert.end()
 } )
@@ -51,14 +64,14 @@ test( 'Tree comparison', assert => {
 	}
 	files.forEach( filename => {
 		const code = normalizeNewline( fs.readFileSync( path.join( dirname, filename ), 'utf8' ) )
-		assert.test( filename.substring( 0, filename.length - 3 ), assert => {
+		assert.test( filename.substring( 0, filename.length - 3 ), check( ( assert, generate ) => {
 			const ast = acorn.parse( code, options )
-			const formattedAst = acorn.parse( astring( ast ), options )
 			stripLocation.go( ast )
+			const formattedAst = acorn.parse( generate( ast ), options )
 			stripLocation.go( formattedAst )
 			assert.deepEqual( formattedAst, ast )
 			assert.end()
-		} )
+		} ) )
 	} )
 	assert.end()
 } )
@@ -70,11 +83,11 @@ test( 'Deprecated syntax check', assert => {
 	files.forEach( filename => {
 		const code = normalizeNewline( fs.readFileSync( path.join( dirname, filename ), 'utf8' ) )
 		const version = parseInt( filename.substring( 2, filename.length - 3 ) )
-		assert.test( 'es' + version, assert => {
+		assert.test( 'es' + version, check( ( assert, generate ) => {
 			const ast = acorn.parse( code, { ecmaVersion: version } )
-			assert.equal( astring( ast ), code )
+			assert.equal( generate( ast ), code )
 			assert.end()
-		} )
+		} ) )
 	} )
 	assert.end()
 } )
@@ -88,7 +101,7 @@ test( 'Comment generation', assert => {
 	}
 	files.forEach( filename => {
 		const code = normalizeNewline( fs.readFileSync( path.join( dirname, filename ), 'utf8' ) )
-		assert.test( filename.substring( 0, filename.length - 3 ), assert => {
+		assert.test( filename.substring( 0, filename.length - 3 ), check( ( assert, generate ) => {
 			const comments = []
 			const ast = acorn.parse( code, {
 				ecmaVersion: 8,
@@ -96,9 +109,9 @@ test( 'Comment generation', assert => {
 				onComment: comments,
 			} )
 			astravel.attachComments( ast, comments )
-			assert.equal( astring( ast, options ), code )
+			assert.equal( generate( ast, options ), code )
 			assert.end()
-		} )
+		} ) )
 	} )
 	assert.end()
 } )

@@ -204,7 +204,7 @@ let
 	BlockStatement
 
 
-export const defaultGenerator = {
+export const baseGenerator = {
 	Program( node, state ) {
 		const indent = state.indent.repeat( state.indentLevel )
 		const { lineEnd, output, writeComments } = state
@@ -914,7 +914,7 @@ class Stream {
 }
 
 
-export default function astring( node, options ) {
+export function generate( node, options ) {
 	/*
 	Returns a string representing the rendered code of the provided AST `node`.
 	The `options` are:
@@ -924,11 +924,11 @@ export default function astring( node, options ) {
 	- `startingIndentLevel`: indent level to start from (default to `0`)
 	- `comments`: generate comments if `true` (defaults to `false`)
 	- `output`: output stream to write the rendered code to (defaults to `null`)
-	- `generator`: custom code generator (defaults to `defaultGenerator`)
+	- `generator`: custom code generator (defaults to `baseGenerator`)
 	*/
 	const state = options == null ? {
 		output: new Stream(),
-		generator: defaultGenerator,
+		generator: baseGenerator,
 		indent: '\t',
 		lineEnd: '\n',
 		indentLevel: 0,
@@ -937,7 +937,7 @@ export default function astring( node, options ) {
 	} : {
 		// Functional options
 		output: options.output ? options.output : new Stream(),
-		generator: options.generator ? options.generator : defaultGenerator,
+		generator: options.generator ? options.generator : baseGenerator,
 		// Formating options
 		indent: options.indent != null ? options.indent : '\t',
 		lineEnd: options.lineEnd != null ? options.lineEnd : '\n',

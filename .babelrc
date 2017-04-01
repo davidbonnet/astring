@@ -8,5 +8,19 @@
 	],
 	"plugins": [
 		"transform-es2015-modules-umd"
-	]
+	],
+	"env": {
+		"minified": {
+			"presets": [
+				[ "babili", {
+					"mangle": {
+						"blacklist": {
+							"generate": true,
+							"baseGenerator": true
+						}
+					}
+				}]
+			],
+		}
+	}
 }

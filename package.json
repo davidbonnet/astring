@@ -7,11 +7,11 @@
     "astring": "./bin/astring"
   },
   "scripts": {
-    "test": "babel test/index.js --out-file test/test.js --no-babelrc --presets=latest && tap test/test.js --coverage",
+    "test": "babel test/index.js --out-file test/_index.js --no-babelrc --presets=latest && tap test/_index.js --coverage",
     "coverage": "tap --harmony test/index.js --coverage --coverage-report=html",
     "test-scripts": "tap --harmony test/scripts.js",
     "prepublish": "npm run build && npm run build-minified",
-    "build-minified": "babel src/astring.js --out-file dist/astring.min.js --presets=babili --source-maps=true",
+    "build-minified": "cross-env BABEL_ENV=minified babel src/astring.js --out-file dist/astring.min.js --source-maps=true",
     "build": "babel src/astring.js --out-file dist/astring.js --source-maps=true",
     "start": "babel src/astring.js --watch --out-file dist/astring.js --source-maps=true",
     "benchmark": "node ./test/benchmark.js"
@@ -35,6 +35,7 @@
     "babel-preset-babili": "0.0.12",
     "babel-preset-latest": "^6.24.0",
     "benchmark": "^2.0.0",
+    "cross-env": "^4.0.0",
     "eslint": "^3.18.0",
     "eslint-plugin-import": "^2.2.0",
     "glob": "^7.1.1",
