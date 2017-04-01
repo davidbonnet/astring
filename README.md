@@ -14,13 +14,14 @@ A tiny and fast JavaScript code generator from an [ESTree](https://github.com/es
 - Works on [ESTree](https://github.com/estree/estree)-compliant ASTs such as the ones produced by [Acorn](https://github.com/marijnh/acorn).
 - Extendable with custom AST node handlers.
 - Considerably faster than [Babel](https://github.com/babel/babel) (up to 50×), [Esotope](https://github.com/inikulin/esotope) (up to 4×), [Escodegen](https://github.com/estools/escodegen) (up to 10×), and [UglifyJS](https://github.com/mishoo/UglifyJS2) (up to 125×).
+- Supports source map generation with [Source Map](https://github.com/mozilla/source-map#sourcemapgenerator).
 - Supports comment generation with [Astravel](https://github.com/davidbonnet/astravel).
 - No dependencies and small footprint (≈ 16 KB minified, ≈ 4 KB gziped).
 
 Checkout the [live demo](http://bonnet.cc/astring/demo.html) showing Astring in action.
 
 
-### Overview
+## Contents
 
 - [Installation](#installation)
 - [Import](#import)
@@ -82,7 +83,8 @@ When used in a browser environment, the module exposes a global variable `astrin
 
 The `astring` module exposes the following properties:
 
-### `generate(node: object, options: object): string | stream`
+
+### `generate(node: object, options: object): string | object`
 
 Returns a string representing the rendered code of the provided AST `node`. However, if an `output` stream is provided in the options, it writes to that stream and returns it.
 
@@ -94,6 +96,8 @@ The `options` are:
 - `comments`: generate comments if `true` (defaults to `false`)
 - `output`: output stream to write the rendered code to (defaults to `null`)
 - `generator`: custom code generator (defaults to `astring.baseGenerator`)
+- `sourceMap`: [source map generator](https://github.com/mozilla/source-map#sourcemapgenerator) (defaults to `null`)
+
 
 ### `baseGenerator: object`
 
@@ -119,10 +123,38 @@ var ast = acorn.parse(code, { ecmaVersion: 6 });
 // Format it into a code string
 var formattedCode = astring.generate(ast, {
 	indent: '   ',
-	lineEnd: '\n'
+	lineEnd: '\n',
 });
 // Check it
 console.log((code === formattedCode) ? 'It works !' : 'Something went wrong…');
+```
+
+
+### Generating source maps
+
+This example uses the source map generator from the [Source Map](https://github.com/mozilla/source-map#sourcemapgenerator) module.
+
+```javascript
+// Make sure acorn, source-map and astring modules are imported
+var code = "function add(a, b) { return a + b; }\n";
+var ast = acorn.parse(code, {
+	ecmaVersion: 6,
+	sourceType: 'module',
+	// Locations are needed in order for the source map generator to work
+	locations: true,
+});
+// Create empty source map generator
+var map = new sourceMap.SourceMapGenerator({
+	// Set a file name
+	file: 'script.js',
+});
+var formattedCode = generate(ast, {
+	indent: '    ',
+	// Enable source maps
+	sourceMap: map,
+});
+// Display generated source map
+console.log(map.toString());
 ```
 
 
@@ -138,7 +170,7 @@ var code = "let answer = 4 + 7 * 5 + 3;\n";
 var ast = acorn.parse(code, { ecmaVersion: 6 });
 // Format it and write the result to stdout
 var stream = astring.generate(ast, {
-	output: process.stdout
+	output: process.stdout,
 });
 // The returned value is the output stream
 console.log('stream is process.stdout?', stream === process.stdout);
@@ -156,14 +188,14 @@ var code = [
 	"// Compute the answer to everything",
 	"let answer = 4 + 7 * 5 + 3;",
 	"// Display it",
-	"console.log(answer);"
+	"console.log(answer);",
 ].join('\n') + '\n';
 // Parse it into an AST and retrieve the list of comments
 var comments = [];
 var ast = acorn.parse(code, {
 	ecmaVersion: 6,
 	locations: true,
-	onComment: comments
+	onComment: comments,
 });
 // Attach comments to AST nodes
 astravel.attachComments(ast, comments);
@@ -171,7 +203,7 @@ astravel.attachComments(ast, comments);
 var formattedCode = astring.generate(ast, {
 	indent: '   ',
 	lineEnd: '\n',
-	comments: true
+	comments: true,
 });
 // Check it
 console.log(code === formattedCode ? 'It works !' : 'Something went wrong…');
@@ -180,7 +212,7 @@ console.log(code === formattedCode ? 'It works !' : 'Something went wrong…');
 
 ### Extending
 
-Astring can easily be extended by updating or passing a custom code `generator`. A code `generator` consists of a mapping of node names and functions that take two arguments: `node` and `state`. The `node` points to the node from which to generate the code and the `state` holds various values and objects, the most important one being the `output` code stream.
+Astring can easily be extended by updating or passing a custom code `generator`. A code `generator` consists of a mapping of node names and functions that take two arguments: `node` and `state`. The `node` points to the node from which to generate the code and the `state` exposes the `write` method that takes generated code strings.
 
 This example shows how to support the `await` keyword which is part of the [asynchronous functions proposal](https://github.com/tc39/ecmascript-asyncawait). The corresponding `AwaitExpression` node is based on [this suggested definition](https://github.com/estree/estree/blob/master/es2017.md).
 
@@ -189,7 +221,7 @@ This example shows how to support the `await` keyword which is part of the [asyn
 // Create a custom generator that inherits from Astring's base generator
 var customGenerator = Object.assign({}, astring.baseGenerator, {
 	AwaitExpression: function(node, state) {
-		state.output.write('await ');
+		state.write('await ');
 		var argument = node.argument;
 		if (argument != null) {
 			this[argument.type](argument, state);
@@ -198,26 +230,19 @@ var customGenerator = Object.assign({}, astring.baseGenerator, {
 });
 // Obtain a custom AST somehow (note that this AST is not obtained from a valid code)
 var ast = {
-	type: "Program",
-	body: [{
-		type: "ExpressionStatement",
-		expression: {
-			type: "AwaitExpression",
-			argument: {
-				type: "CallExpression",
-				callee: {
-					type: "Identifier",
-					name: "callable"
-				},
-				arguments: []	
-			}
-		}
-	}],
-	sourceType: "module"
+	type: "AwaitExpression",
+	argument: {
+		type: "CallExpression",
+		callee: {
+			type: "Identifier",
+			name: "callable",
+		},
+		arguments: [],
+	},
 };
 // Format it
 var code = astring.generate(ast, {
-	generator: customGenerator
+	generator: customGenerator,
 });
 // Check it
 console.log(code === 'await callable();\n' ? 'It works!' : 'Something went wrong…');
@@ -235,14 +260,14 @@ The `bin/astring` utility can be used to convert a JSON-formatted ESTree complia
 - `-h`, `--help`: print a usage message and exit
 - `-v`, `--version`: print package version and exit
 
-The utility reads the AST from `stdin` or from a provided list of files, and prints out the resulting code.
+The utility reads the AST from a provided list of files or from `stdin` if none is supplied and prints the generated code.
 
 ### Example
 
 As in the previous example, these examples use [Acorn](https://github.com/marijnh/acorn) to get the JSON-formatted AST. This command pipes the AST output by Acorn from a `script.js` file to Astring and writes the formatted JavaScript code into a `result.js` file:
 
 ```bash
-acorn --ecma6 script.js | astring --indent "  " > result.js
+cat script.js | acorn --ecma6 | astring --indent "  " > result.js
 ```
 
 This command does the same, but reads the AST from an intermediary file:
@@ -250,6 +275,12 @@ This command does the same, but reads the AST from an intermediary file:
 ```bash
 acorn --ecma6 script.js > ast.json
 astring --indent "  " ast.json > result.js
+```
+
+This command reads JavaScript 6 code from `stdin` and outputs a prettified version:
+
+```bash
+cat | acorn --ecma6 | astring --indent "  "
 ```
 
 
