@@ -71,7 +71,7 @@ When used in a browser environment, the module exposes a global variable `astrin
 
 The `astring` module exposes the following properties:
 
-### `generate(node: object, options: object) -> string`
+### `generate(node: object, options: object): string | stream`
 
 Returns a string representing the rendered code of the provided AST `node`. However, if an `output` stream is provided in the options, it writes to that stream and returns it.
 
