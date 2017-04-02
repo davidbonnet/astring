@@ -134,7 +134,7 @@ console.log((code === formattedCode) ? 'It works !' : 'Something went wrong…')
 This example uses the source map generator from the [Source Map](https://github.com/mozilla/source-map#sourcemapgenerator) module.
 
 ```javascript
-// Make sure acorn, source-map and astring modules are imported
+// Make sure acorn, sourceMap and astring modules are imported
 var code = "function add(a, b) { return a + b; }\n";
 var ast = acorn.parse(code, {
 	ecmaVersion: 6,
