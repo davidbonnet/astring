@@ -11,6 +11,15 @@
 const { stringify } = JSON
 
 
+if ( !String.prototype.repeat ) {
+	throw new Error( 'String.prototype.repeat is undefined, see https://github.com/davidbonnet/astring#installation' )
+}
+
+if ( !String.prototype.endsWith ) {
+	throw new Error( 'String.prototype.endsWith is undefined, see https://github.com/davidbonnet/astring#installation' )
+}
+
+
 const OPERATOR_PRECEDENCE = {
 	'||': 3,
 	'&&': 4,
