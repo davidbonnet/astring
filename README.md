@@ -67,7 +67,7 @@ With CommonJS:
 const { generate } = require('astring');
 ```
 
-When used in a browser environment, the module exposes a global variable `astring`. The main function is accessible through the `default` property:
+When used in a browser environment, the module exposes a global variable `astring`:
 
 ```html
 <script src="astring.min.js" type="text/javascript"></script>
@@ -307,7 +307,7 @@ npm run build-minified
 
 ### Development
 
-If you are working on Astring, you can use [Watchify](https://github.com/substack/watchify) to build automatically at each update the bundle (along with a source map for easy debugging) located at `dist/astring.debug.js` by running:
+If you are working on Astring, you can enable Babel's watch mode to automatically generate `dist/astring.js` and `dist/astring.js.map` at each update by running:
 
 ```bash
 npm start
