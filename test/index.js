@@ -93,6 +93,26 @@ test( 'Deprecated syntax check', assert => {
 } )
 
 
+test( 'Output stream', assert => {
+	const code = 'const a = 42;\n'
+	const output = {
+		buffer: '',
+		write( code ) {
+			this.buffer += code
+		},
+	}
+	const ast = parse( code, {
+		ecmaVersion: 8,
+	} )
+	const result = generate( ast, {
+		output,
+	} )
+	assert.equal( result, output )
+	assert.equal( result.buffer, code )
+	assert.end()
+} )
+
+
 test( 'Comment generation', assert => {
 	const dirname = path.join( __dirname, 'comment' )
 	const files = fs.readdirSync( dirname ).sort()
