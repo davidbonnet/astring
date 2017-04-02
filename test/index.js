@@ -2,7 +2,7 @@ const fs = require( 'fs' )
 const path = require( 'path' )
 const normalizeNewline = require( 'normalize-newline' )
 const { test } = require( 'tap' )
-const acorn = require( 'acorn' )
+const { parse } = require( 'acorn' )
 const astravel = require( 'astravel' )
 
 const { generate } = require( '../dist/astring' )
@@ -46,7 +46,7 @@ test( 'Syntax check', assert => {
 	files.forEach( filename => {
 		const code = normalizeNewline( fs.readFileSync( path.join( dirname, filename ), 'utf8' ) )
 		assert.test( filename.substring( 0, filename.length - 3 ), check( ( assert, generate ) => {
-			const ast = acorn.parse( code, options )
+			const ast = parse( code, options )
 			assert.equal( generate( ast ), code )
 			assert.end()
 		} ) )
@@ -65,9 +65,9 @@ test( 'Tree comparison', assert => {
 	files.forEach( filename => {
 		const code = normalizeNewline( fs.readFileSync( path.join( dirname, filename ), 'utf8' ) )
 		assert.test( filename.substring( 0, filename.length - 3 ), check( ( assert, generate ) => {
-			const ast = acorn.parse( code, options )
+			const ast = parse( code, options )
 			stripLocation.go( ast )
-			const formattedAst = acorn.parse( generate( ast ), options )
+			const formattedAst = parse( generate( ast ), options )
 			stripLocation.go( formattedAst )
 			assert.deepEqual( formattedAst, ast )
 			assert.end()
@@ -84,7 +84,7 @@ test( 'Deprecated syntax check', assert => {
 		const code = normalizeNewline( fs.readFileSync( path.join( dirname, filename ), 'utf8' ) )
 		const version = parseInt( filename.substring( 2, filename.length - 3 ) )
 		assert.test( 'es' + version, check( ( assert, generate ) => {
-			const ast = acorn.parse( code, { ecmaVersion: version } )
+			const ast = parse( code, { ecmaVersion: version } )
 			assert.equal( generate( ast ), code )
 			assert.end()
 		} ) )
@@ -103,7 +103,7 @@ test( 'Comment generation', assert => {
 		const code = normalizeNewline( fs.readFileSync( path.join( dirname, filename ), 'utf8' ) )
 		assert.test( filename.substring( 0, filename.length - 3 ), check( ( assert, generate ) => {
 			const comments = []
-			const ast = acorn.parse( code, {
+			const ast = parse( code, {
 				ecmaVersion: 8,
 				locations: true,
 				onComment: comments,
@@ -113,5 +113,35 @@ test( 'Comment generation', assert => {
 			assert.end()
 		} ) )
 	} )
+	assert.end()
+} )
+
+
+test( 'Source map generation', assert => {
+	const code = 'function f(x) {\n\treturn x;\n}\n'
+	const sourceMap = {
+		mappings: [],
+		_file: 'script.js',
+		addMapping( { original, generated: { line, column }, name, source } ) {
+			const generated = { line, column }
+			assert.same( generated, original )
+			assert.equal( source, this._file )
+			this.mappings.push( {
+				original,
+				generated,
+				name,
+				source,
+			} )
+		},
+	}
+	const ast = parse( code, {
+		ecmaVersion: 8,
+		locations: true,
+	} )
+	const formattedCode = generate( ast, {
+		sourceMap,
+	} )
+	assert.equal( sourceMap.mappings.length, 3 )
+	assert.equal( formattedCode, code )
 	assert.end()
 } )
