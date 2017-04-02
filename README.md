@@ -145,11 +145,10 @@ var ast = acorn.parse(code, {
 });
 // Create empty source map generator
 var map = new sourceMap.SourceMapGenerator({
-	// Set a file name
+	// Source file name must be set and will be used for mappings
 	file: 'script.js',
 });
 var formattedCode = generate(ast, {
-	indent: '    ',
 	// Enable source maps
 	sourceMap: map,
 });
