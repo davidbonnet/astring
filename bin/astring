@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-var astring = require( '../dist/astring' ).default
+var generate = require( '../dist/astring' ).generate
 var version = require( '../package' ).version
 var fs = require( 'fs' )
 var path = require( 'path' )
@@ -73,7 +73,7 @@ if ( files.length === 0 ) {
 	} )
 	.on( 'end', function() {
 		try {
-			astring( JSON.parse( data ), options )
+			generate( JSON.parse( data ), options )
 		} catch ( error ) {
 			console.error( 'Error: ' + error.message )
 			process.exit( 1 )
@@ -84,7 +84,7 @@ if ( files.length === 0 ) {
 	for ( var i = 0, length = files.length; i < length; i++ ) {
 		try {
 			var file = files[ i ]
-			astring( JSON.parse( fs.readFileSync( file, 'utf8' ) ), options )
+			generate( JSON.parse( fs.readFileSync( file, 'utf8' ) ), options )
 		} catch ( error ) {
 			console.error( 'Error: ' + error.message )
 			if ( hasError !== true )
