@@ -1,8 +1,8 @@
 <!DOCTYPE HTML>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<title>JavaScript Prettifier</title>
+  <meta charset="UTF-8">
+  <title>JavaScript Prettifier</title>
   <style type="text/css">
     * {
       font-size 12px;
@@ -86,6 +86,7 @@
     <label><input type="checkbox" id="comments" /> Include comments</label>
     <label><input type="number" id="indentation" value="3" min="0" step="1" style="width: 3em" /> Indentation spaces</label>
     <label><input type="checkbox" id="ast" /> Only show the AST</label>
+    <button id="setlink">Set link</button>
   </p>
   <pre id="output"></pre>
   <script type="text/javascript">
@@ -96,6 +97,7 @@
       var commentsCheckbox = document.getElementById('comments');
       var indentationTextbox = document.getElementById('indentation');
       var astCheckbox = document.getElementById('ast');
+      var linkButton = document.getElementById('setlink');
 
       function makeSpaces(amount) {
         var result = '';
@@ -104,7 +106,7 @@
         return result;
       }
 
-      function update(event) {
+      function update() {
         try {
           var indentAmount = parseInt(indentationTextbox.value);
           var indent = makeSpaces(indentAmount);
@@ -149,14 +151,27 @@
         textarea.className = '';
       }
 
+      function onHashChange() {
+        var code = window.location.hash.substr(1);
+        textarea.value = decodeURI(code);
+        update();
+      }
+      window.addEventListener('hashchange', onHashChange, false);
+
+      function setLink() {
+        window.location.hash = '#' + encodeURI(textarea.value);
+      }
+
+      linkButton.addEventListener('click', setLink, false);
       textarea.addEventListener('input', update, false);
       commentsCheckbox.addEventListener('change', update, false);
       indentationTextbox.addEventListener('change', update, false);
       astCheckbox.addEventListener('change', update, false);
+
+      onHashChange();
 
     })();
 
   </script>
 </body>
 </html>
-
