@@ -7,14 +7,14 @@
     "astring": "./bin/astring"
   },
   "scripts": {
-    "test": "babel test/index.js --out-file test/_index.js --no-babelrc --presets=latest && tap test/_index.js --coverage",
+    "test": "babel test/index.js --out-file test/_index.js --no-babelrc --presets=env && tap test/_index.js --coverage",
     "coverage": "tap --harmony test/index.js --coverage --coverage-report=html",
     "test-scripts": "tap --harmony test/scripts.js",
     "prepublish": "npm run build && npm run build-minified",
     "build-minified": "cross-env BABEL_ENV=minified babel src/astring.js --out-file dist/astring.min.js --source-maps=true",
     "build": "babel src/astring.js --out-file dist/astring.js --source-maps=true",
     "start": "babel src/astring.js --watch --out-file dist/astring.js --source-maps=true",
-    "benchmark": "babel test/benchmark.js --out-file test/_benchmark.js --no-babelrc --presets=latest && node ./test/_benchmark.js",
+    "benchmark": "babel test/benchmark.js --out-file test/_benchmark.js --no-babelrc --presets=env && node ./test/_benchmark.js",
     "prettier": "prettier --print-width 80 --tab-width 2 --no-semi --single-quote --trailing-comma es5 --list-different \"src/**/*.js\" \"test/{index,scripts,benchmark}.js\" \"bin/astring\"",
     "prettify": "prettier --print-width 80 --tab-width 2 --no-semi --single-quote --trailing-comma es5 --write \"src/**/*.js\" \"test/**/*.js\" \"bin/astring\""
   },
