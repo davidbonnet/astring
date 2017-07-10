@@ -53,6 +53,9 @@ const OPERATOR_PRECEDENCE = {
   '**': 13,
 }
 
+// Enables parenthesis regardless of precedence
+const NEEDS_PARENTHESES = 17
+
 const EXPRESSIONS_PRECEDENCE = {
   // Definitions
   ArrayExpression: 20,
@@ -67,12 +70,11 @@ const EXPRESSIONS_PRECEDENCE = {
   MemberExpression: 19,
   CallExpression: 19,
   NewExpression: 19,
-  ArrowFunctionExpression: 18,
   // Other definitions
-  // Value 17 enables parenthesis in an `ExpressionStatement` node
-  ClassExpression: 17,
-  FunctionExpression: 17,
-  ObjectExpression: 17,
+  ArrowFunctionExpression: NEEDS_PARENTHESES,
+  ClassExpression: NEEDS_PARENTHESES,
+  FunctionExpression: NEEDS_PARENTHESES,
+  ObjectExpression: NEEDS_PARENTHESES,
   // Other operations
   UpdateExpression: 16,
   UnaryExpression: 15,
@@ -104,6 +106,9 @@ function formatSequence(state, nodes) {
 
 function expressionNeedsParenthesis(node, parentNode, isRightHand) {
   const nodePrecedence = EXPRESSIONS_PRECEDENCE[node.type]
+  if (nodePrecedence === NEEDS_PARENTHESES) {
+    return true
+  }
   const parentNodePrecedence = EXPRESSIONS_PRECEDENCE[parentNode.type]
   if (nodePrecedence !== parentNodePrecedence) {
     // Different node types
@@ -273,7 +278,7 @@ export const baseGenerator = {
   ExpressionStatement(node, state) {
     const precedence = EXPRESSIONS_PRECEDENCE[node.expression.type]
     if (
-      precedence === 17 ||
+      precedence === NEEDS_PARENTHESES ||
       (precedence === 3 && node.expression.left.type[0] === 'O')
     ) {
       // Should always have parentheses or is an AssignmentExpression to an ObjectPattern
