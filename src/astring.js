@@ -985,7 +985,7 @@ class State {
   }
 
   map(code, node) {
-    if (node != null) {
+    if (node != null && node.loc != null) {
       const { mapping } = this
       mapping.original = node.loc.start
       mapping.name = node.name
