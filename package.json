@@ -18,11 +18,7 @@
     "prettier": "prettier --print-width 80 --tab-width 2 --no-semi --single-quote --trailing-comma es5 --list-different \"src/**/*.js\" \"test/{index,scripts,benchmark}.js\" \"bin/astring\"",
     "prettify": "prettier --print-width 80 --tab-width 2 --no-semi --single-quote --trailing-comma es5 --write \"src/**/*.js\" \"test/**/*.js\" \"bin/astring\""
   },
-  "keywords": [
-    "ast",
-    "code generator",
-    "estree"
-  ],
+  "keywords": ["ast", "codegen", "code generator", "estree"],
   "repository": {
     "type": "git",
     "url": "https://github.com/davidbonnet/astring.git"
