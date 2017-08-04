@@ -443,6 +443,12 @@ export const baseGenerator = {
     state.write('debugger;' + state.lineEnd)
   },
   FunctionDeclaration: (FunctionDeclaration = function(node, state) {
+    // Save the `noTrailingSemicolon` state for cases where a function
+    // declaration is nested within a context that ordinarily does not
+    // permit semicolons on VariableDeclarations (e.g., `for` loops).
+    // See: https://github.com/davidbonnet/astring/issues/24
+    const noTrailingSemicolonSave = state.noTrailingSemicolon;
+    state.noTrailingSemicolon = false;
     state.write(
       (node.async ? 'async ' : '') +
         (node.generator ? 'function* ' : 'function ') +
@@ -452,6 +458,7 @@ export const baseGenerator = {
     formatSequence(state, node.params)
     state.write(' ')
     this[node.body.type](node.body, state)
+    state.noTrailingSemicolon = noTrailingSemicolonSave;
   }),
   FunctionExpression: FunctionDeclaration,
   VariableDeclaration(node, state) {
