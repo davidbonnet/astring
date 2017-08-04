@@ -1,11 +1,10 @@
 # Astring
 
-[![Greenkeeper badge](https://badges.greenkeeper.io/davidbonnet/astring.svg)](https://greenkeeper.io/)
-
 [![Build Status](https://travis-ci.org/davidbonnet/astring.svg?branch=master)](https://travis-ci.org/davidbonnet/astring)
 [![Coverage Status](https://coveralls.io/repos/github/davidbonnet/astring/badge.svg?branch=master)](https://coveralls.io/github/davidbonnet/astring?branch=master)
 [![NPM Version](https://img.shields.io/npm/v/astring.svg)](https://www.npmjs.org/package/astring)
 [![devDependency Status](https://david-dm.org/davidbonnet/astring/dev-status.svg)](https://david-dm.org/davidbonnet/astring?type=dev)
+[![Greenkeeper badge](https://badges.greenkeeper.io/davidbonnet/astring.svg)](https://greenkeeper.io/)
 
 A tiny and fast JavaScript code generator from an [ESTree](https://github.com/estree/estree)-compliant AST.
 
