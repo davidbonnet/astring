@@ -1,5 +1,7 @@
 # Astring
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/davidbonnet/astring.svg)](https://greenkeeper.io/)
+
 [![Build Status](https://travis-ci.org/davidbonnet/astring.svg?branch=master)](https://travis-ci.org/davidbonnet/astring)
 [![Coverage Status](https://coveralls.io/repos/github/davidbonnet/astring/badge.svg?branch=master)](https://coveralls.io/github/davidbonnet/astring?branch=master)
 [![NPM Version](https://img.shields.io/npm/v/astring.svg)](https://www.npmjs.org/package/astring)
