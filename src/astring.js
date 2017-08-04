@@ -82,6 +82,7 @@ const EXPRESSIONS_PRECEDENCE = {
   LogicalExpression: 13,
   ConditionalExpression: 4,
   AssignmentExpression: 3,
+  AwaitExpression: 2,
   YieldExpression: 2,
   RestElement: 1,
 }
