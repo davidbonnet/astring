@@ -5,5 +5,7 @@ const a = {
 };
 const h = async () => {};
 async function j() {
+	(await g()).a;
+	await g().a;
 	return await f();
 }
