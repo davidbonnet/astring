@@ -207,6 +207,23 @@ function hasCallExpression(node) {
   }
 }
 
+function formatVariableDeclaration(state, node) {
+  /*
+  Writes into `state` a variable declaration.
+  */
+  const { generator } = state
+  const { declarations } = node
+  state.write(node.kind + ' ')
+  const { length } = declarations
+  if (length > 0) {
+    generator.VariableDeclarator(declarations[0], state)
+    for (let i = 1; i < length; i++) {
+      state.write(', ')
+      generator.VariableDeclarator(declarations[i], state)
+    }
+  }
+}
+
 let ForInStatement,
   FunctionDeclaration,
   RestElement,
@@ -410,9 +427,11 @@ export const baseGenerator = {
     state.write('for (')
     if (node.init != null) {
       const { init } = node
-      state.noTrailingSemicolon = true
-      this[init.type](init, state)
-      state.noTrailingSemicolon = false
+      if (init.type[0] === 'V') {
+        formatVariableDeclaration(state, init)
+      } else {
+        this[init.type](init, state)
+      }
     }
     state.write('; ')
     if (node.test) {
@@ -427,11 +446,12 @@ export const baseGenerator = {
   },
   ForInStatement: (ForInStatement = function(node, state) {
     state.write('for (')
-    const { left } = node,
-      { type } = left
-    state.noTrailingSemicolon = true
-    this[type](left, state)
-    state.noTrailingSemicolon = false
+    const { left } = node
+    if (left.type[0] === 'V') {
+      formatVariableDeclaration(state, left)
+    } else {
+      this[left.type](left, state)
+    }
     // Identifying whether node.type is `ForInStatement` or `ForOfStatement`
     state.write(node.type[3] === 'I' ? ' in ' : ' of ')
     this[node.right.type](node.right, state)
@@ -455,19 +475,8 @@ export const baseGenerator = {
   }),
   FunctionExpression: FunctionDeclaration,
   VariableDeclaration(node, state) {
-    const { declarations } = node
-    state.write(node.kind + ' ')
-    const { length } = declarations
-    if (length > 0) {
-      this.VariableDeclarator(declarations[0], state)
-      for (let i = 1; i < length; i++) {
-        state.write(', ')
-        this.VariableDeclarator(declarations[i], state)
-      }
-    }
-    if (state.noTrailingSemicolon !== true) {
-      state.write(';')
-    }
+    formatVariableDeclaration(state, node)
+    state.write(';')
   },
   VariableDeclarator(node, state) {
     this[node.id.type](node.id, state)
@@ -962,8 +971,6 @@ class State {
         source: setup.sourceMap.file || setup.sourceMap._file,
       }
     }
-    // Internal state
-    this.noTrailingSemicolon = false
   }
 
   write(code) {
