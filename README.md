@@ -317,7 +317,7 @@ npm start
 
 #### Tests
 
-While making changes to Astring, make sure it passes the tests:
+While making changes to Astring, make sure it passes the tests (it checks code formatting and unit tests):
 
 ```bash
 npm test
@@ -341,24 +341,14 @@ npm run test-scripts
 The benchmark compares Astring against other code generators. These are not included in the dependencies and should be installed first:
 
 ```bash
-npm install escodegen@1.8 esotope@1.4 uglify-js@2.8 babel-generator@6.24
+npm install escodegen esotope uglify-js babel-generator
 ```
 
-Benchmarks can be run with:
+Benchmarks can be run using Node in version 8 with:
 
 ```bash
 npm run benchmark
 ```
-
-
-#### Code format
-
-Finally, make sure that the code is well formatted:
-
-```bash
-eslint src/astring.js
-```
-
 
 
 ## Roadmap
