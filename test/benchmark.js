@@ -7,11 +7,10 @@ const Benchmark = require('benchmark')
 const acorn = require('acorn')
 const uglify = require('uglify-js')
 const escodegen = require('escodegen').generate
-const esotope = require('esotope').generate
-const nodent = require('../vendor/nodent')
 const astring = require('../dist/astring').generate
 const babylon = require('babylon')
 const babel = require('babel-generator').default
+const prettier = require('prettier').format
 const fs = require('fs')
 const path = require('path')
 
@@ -25,19 +24,19 @@ function benchmarkWithCode(code, name) {
   let uglifyAst = null
   try {
     uglifyAst = uglify.parse(code)
-  } catch (error) {}
+  } catch (error) {
+    // Ignore
+  }
   const uglifyOptions = {
     beautify: true,
   }
   const babelAst = babylon.parse(code, {
     sourceType: 'module',
   })
+  const returnBabelAst = () => babelAst
   new Benchmark.Suite()
     .add('escodegen', () => {
       escodegen(ast)
-    })
-    .add('esotope', () => {
-      esotope(ast)
     })
     .add('astring', () => {
       astring(ast)
@@ -45,11 +44,11 @@ function benchmarkWithCode(code, name) {
     .add('uglify', () => {
       uglifyAst.print_to_string(uglifyOptions)
     })
-    .add('nodent', () => {
-      nodent(ast)
-    })
     .add('babel', () => {
       babel(babelAst, {}, code).code
+    })
+    .add('prettier', () => {
+      prettier(code, returnBabelAst)
     })
     // add listeners
     .on('cycle', event => {
