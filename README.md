@@ -59,13 +59,13 @@ A browser-ready minified version of Astring is available at `dist/astring.min.js
 With JavaScript 6 modules:
 
 ```js
-import { generate } from 'astring';
+import { generate } from 'astring'
 ```
 
 With CommonJS:
 
 ```js
-const { generate } = require('astring');
+const { generate } = require('astring')
 ```
 
 When used in a browser environment, the module exposes a global variable `astring`:
@@ -73,7 +73,7 @@ When used in a browser environment, the module exposes a global variable `astrin
 ```html
 <script src="astring.min.js" type="text/javascript"></script>
 <script type="text/javascript">
-	var generate = astring.generate;
+  var generate = astring.generate
 </script>
 ```
 
@@ -122,8 +122,8 @@ var code = "let answer = 4 + 7 * 5 + 3;\n";
 var ast = acorn.parse(code, { ecmaVersion: 6 });
 // Format it into a code string
 var formattedCode = astring.generate(ast, {
-	indent: '   ',
-	lineEnd: '\n',
+  indent: '   ',
+  lineEnd: '\n',
 });
 // Check it
 console.log((code === formattedCode) ? 'It works !' : 'Something went wrong…');
@@ -136,24 +136,24 @@ This example uses the source map generator from the [Source Map](https://github.
 
 ```javascript
 // Make sure acorn, sourceMap and astring modules are imported
-var code = "function add(a, b) { return a + b; }\n";
+var code = 'function add(a, b) { return a + b; }\n'
 var ast = acorn.parse(code, {
-	ecmaVersion: 6,
-	sourceType: 'module',
-	// Locations are needed in order for the source map generator to work
-	locations: true,
-});
+  ecmaVersion: 6,
+  sourceType: 'module',
+  // Locations are needed in order for the source map generator to work
+  locations: true,
+})
 // Create empty source map generator
 var map = new sourceMap.SourceMapGenerator({
-	// Source file name must be set and will be used for mappings
-	file: 'script.js',
-});
+  // Source file name must be set and will be used for mappings
+  file: 'script.js',
+})
 var formattedCode = generate(ast, {
-	// Enable source maps
-	sourceMap: map,
-});
+  // Enable source maps
+  sourceMap: map,
+})
 // Display generated source map
-console.log(map.toString());
+console.log(map.toString())
 ```
 
 
@@ -164,15 +164,15 @@ This example for [Node](http://nodejs.org) shows how to use writable streams to 
 ```javascript
 // Make sure acorn and astring modules are imported
 // Set example code
-var code = "let answer = 4 + 7 * 5 + 3;\n";
+var code = 'let answer = 4 + 7 * 5 + 3;\n'
 // Parse it into an AST
-var ast = acorn.parse(code, { ecmaVersion: 6 });
+var ast = acorn.parse(code, { ecmaVersion: 6 })
 // Format it and write the result to stdout
 var stream = astring.generate(ast, {
-	output: process.stdout,
-});
+  output: process.stdout,
+})
 // The returned value is the output stream
-console.log('stream is process.stdout?', stream === process.stdout);
+console.log('stream is process.stdout?', stream === process.stdout)
 ```
 
 
@@ -183,29 +183,30 @@ Astring supports comment generation, provided they are stored on the AST nodes. 
 ```javascript
 // Make sure acorn, astravel and astring modules are imported
 // Set example code
-var code = [
-	"// Compute the answer to everything",
-	"let answer = 4 + 7 * 5 + 3;",
-	"// Display it",
-	"console.log(answer);",
-].join('\n') + '\n';
+var code =
+  [
+    '// Compute the answer to everything',
+    'let answer = 4 + 7 * 5 + 3;',
+    '// Display it',
+    'console.log(answer);',
+  ].join('\n') + '\n'
 // Parse it into an AST and retrieve the list of comments
-var comments = [];
+var comments = []
 var ast = acorn.parse(code, {
-	ecmaVersion: 6,
-	locations: true,
-	onComment: comments,
-});
+  ecmaVersion: 6,
+  locations: true,
+  onComment: comments,
+})
 // Attach comments to AST nodes
-astravel.attachComments(ast, comments);
+astravel.attachComments(ast, comments)
 // Format it into a code string
 var formattedCode = astring.generate(ast, {
-	indent: '   ',
-	lineEnd: '\n',
-	comments: true,
-});
+  indent: '   ',
+  lineEnd: '\n',
+  comments: true,
+})
 // Check it
-console.log(code === formattedCode ? 'It works !' : 'Something went wrong…');
+console.log(code === formattedCode ? 'It works !' : 'Something went wrong…')
 ```
 
 
@@ -219,32 +220,34 @@ This example shows how to support the `await` keyword which is part of the [asyn
 // Make sure the astring module is imported and that `Object.assign` is defined
 // Create a custom generator that inherits from Astring's base generator
 var customGenerator = Object.assign({}, astring.baseGenerator, {
-	AwaitExpression: function(node, state) {
-		state.write('await ');
-		var argument = node.argument;
-		if (argument != null) {
-			this[argument.type](argument, state);
-		}
-	}
-});
+  AwaitExpression: function(node, state) {
+    state.write('await ')
+    var argument = node.argument
+    if (argument != null) {
+      this[argument.type](argument, state)
+    }
+  },
+})
 // Obtain a custom AST somehow (note that this AST is not obtained from a valid code)
 var ast = {
-	type: "AwaitExpression",
-	argument: {
-		type: "CallExpression",
-		callee: {
-			type: "Identifier",
-			name: "callable",
-		},
-		arguments: [],
-	},
-};
+  type: 'AwaitExpression',
+  argument: {
+    type: 'CallExpression',
+    callee: {
+      type: 'Identifier',
+      name: 'callable',
+    },
+    arguments: [],
+  },
+}
 // Format it
 var code = astring.generate(ast, {
-	generator: customGenerator,
-});
+  generator: customGenerator,
+})
 // Check it
-console.log(code === 'await callable();\n' ? 'It works!' : 'Something went wrong…');
+console.log(
+  code === 'await callable();\n' ? 'It works!' : 'Something went wrong…'
+)
 ```
 
 
@@ -302,7 +305,7 @@ If you are already using a JavaScript 6 to 5 compiler for your project, or a Jav
 A minified version of Astring located at `dist/astring.min.js` along with its source map at `dist/astring.min.js.map` can be generated by running:
 
 ```bash
-npm run build-minified
+npm run build:minified
 ```
 
 
@@ -332,7 +335,7 @@ npm run coverage
 You can also run tests on a large array of files:
 
 ```bash
-npm run test-scripts
+npm run test:scripts
 ```
 
 
@@ -349,6 +352,7 @@ Benchmarks can be run using Node in version 8 with:
 ```bash
 npm run benchmark
 ```
+
 
 
 ## Roadmap
