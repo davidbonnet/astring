@@ -31,7 +31,7 @@
   "license": "MIT",
   "devDependencies": {
     "acorn": "^5.0.2",
-    "astravel": "^0.3.11",
+    "astravel": "^0.4.0",
     "babel-cli": "^6.24.0",
     "babel-preset-babili": "^0.1.4",
     "babel-preset-env": "^1.5.2",
