@@ -1,18 +1,50 @@
 {
-  "presets": [
-    [
-      "env",
-      {
-        "loose": true
-      }
-    ]
-  ],
-  "plugins": [
-    "transform-es2015-modules-umd"
-  ],
   "env": {
+    "production": {
+      "presets": [
+        [
+          "env",
+          {
+            "loose": true,
+            "modules": "umd"
+          }
+        ]
+      ]
+    },
+    "development": {
+      "presets": [
+        [
+          "env",
+          {
+            "loose": true,
+            "modules": "umd"
+          }
+        ]
+      ]
+    },
+    "test": {
+      "presets": [
+        [
+          "env",
+          {
+            "loose": true,
+            "modules": false,
+            "targets": {
+              "node": "current"
+            }
+          }
+        ]
+      ]
+    },
     "minified": {
       "presets": [
+        [
+          "env",
+          {
+            "loose": true,
+            "modules": "umd"
+          }
+        ],
         [
           "babili",
           {
