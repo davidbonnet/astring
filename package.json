@@ -7,7 +7,7 @@
     "astring": "./bin/astring"
   },
   "scripts": {
-    "test": "babel test/index.js --out-file test/_index.js --no-babelrc --presets=env && tap test/_index.js --coverage",
+    "test": "npm run prettier && babel test/index.js --out-file test/_index.js --no-babelrc --presets=env && tap test/_index.js --coverage",
     "codecov": "tap --coverage-report=lcov && codecov",
     "coverage": "tap --harmony test/index.js --coverage --coverage-report=html",
     "test-scripts": "tap --harmony test/scripts.js",
@@ -19,12 +19,7 @@
     "prettier": "prettier --print-width 80 --tab-width 2 --no-semi --single-quote --trailing-comma es5 --list-different \"src/**/*.js\" \"test/{index,scripts,benchmark}.js\" \"bin/astring\"",
     "prettify": "prettier --print-width 80 --tab-width 2 --no-semi --single-quote --trailing-comma es5 --write \"src/**/*.js\" \"test/**/*.js\" \"bin/astring\""
   },
-  "keywords": [
-    "ast",
-    "codegen",
-    "code generator",
-    "estree"
-  ],
+  "keywords": ["ast", "codegen", "code generator", "estree"],
   "repository": {
     "type": "git",
     "url": "https://github.com/davidbonnet/astring.git"
@@ -46,7 +41,6 @@
     "glob": "^7.1.1",
     "normalize-newline": "^3.0.0",
     "prettier": "^1.5.0",
-    "string.prototype.repeat": "^0.2.0",
     "tap": "^10.7.0"
   }
 }
