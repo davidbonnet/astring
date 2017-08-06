@@ -4,18 +4,10 @@ const glob = require('glob')
 const acorn = require('acorn')
 const astravel = require('astravel')
 const normalizeNewline = require('normalize-newline')
-const astring = require('../dist/astring').default
+const { generate } = require('../dist/astring')
 const { test } = require('tap')
-const packageInfo = require('../package.json')
 
-const dependencies = [
-  ...Object.getOwnPropertyNames(packageInfo.devDependencies),
-  ...Object.getOwnPropertyNames(packageInfo.optionalDependencies),
-]
-const pattern = path.join(
-  __dirname,
-  `../node_modules/{${dependencies.join(',')}}/**/*.js`
-)
+const pattern = path.join(__dirname, `../node_modules/**/*.js`)
 const options = {
   ecmaVersion: 8,
   sourceType: 'module',
@@ -39,9 +31,15 @@ test('Test scripts', assert => {
     assert.test(filename, assert => {
       try {
         const code = normalizeNewline(fs.readFileSync(filename, 'utf8'))
-        const ast = acorn.parse(code, options)
+        let ast
+        try {
+          ast = acorn.parse(code, options)
+        } catch (error) {
+          assert.end()
+          return
+        }
         stripLocation.go(ast)
-        const formattedAst = acorn.parse(astring(ast), options)
+        const formattedAst = acorn.parse(generate(ast), options)
         stripLocation.go(formattedAst)
         assert.deepEqual(formattedAst, ast)
       } catch (error) {
