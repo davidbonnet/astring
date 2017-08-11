@@ -13,7 +13,7 @@ A tiny and fast JavaScript code generator from an [ESTree](https://github.com/es
 - Generates JavaScript code up to [version 7](https://tc39.github.io/ecma262/) and [finished proposals](https://github.com/tc39/proposals/blob/master/finished-proposals.md).
 - Works on [ESTree](https://github.com/estree/estree)-compliant ASTs such as the ones produced by [Acorn](https://github.com/marijnh/acorn).
 - Extendable with custom AST node handlers.
-- Considerably faster than [Escodegen](https://github.com/estools/escodegen) (up to 10×), [Babel](https://github.com/babel/babel) (up to 50×), [UglifyJS](https://github.com/mishoo/UglifyJS2) (up to 125×), and [Prettier](https://github.com/prettier/prettier) (up to 380×).
+- Considerably faster than [Bublé](https://gitlab.com/Rich-Harris/buble) (up to 5×), [Escodegen](https://github.com/estools/escodegen) (up to 10×), [Babel](https://github.com/babel/babel) (up to 50×), [UglifyJS](https://github.com/mishoo/UglifyJS2) (up to 125×), and [Prettier](https://github.com/prettier/prettier) (up to 380×).
 - Supports source map generation with [Source Map](https://github.com/mozilla/source-map#sourcemapgenerator).
 - Supports comment generation with [Astravel](https://github.com/davidbonnet/astravel).
 - No dependencies and small footprint (≈ 16 KB minified, ≈ 4 KB gziped).
@@ -344,7 +344,7 @@ npm run test:scripts
 The benchmark compares Astring against other code generators. These are not included in the dependencies and should be installed first:
 
 ```bash
-npm install escodegen uglify-js babel-generator
+npm install escodegen@1.8 uglify-js@2 babel-generator@6 buble@0.15
 ```
 
 Benchmarks can be run using Node in version 8 with:

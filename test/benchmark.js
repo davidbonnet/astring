@@ -1,26 +1,28 @@
 /*
 Before running benchmarks, install third parties by running:
-npm install escodegen@1.8 esotope@1.4 uglify-js@2.8 babel-generator@6.24
+npm install escodegen@1.8 uglify-js@2 babel-generator@6 buble@0.15
 */
 
 const Benchmark = require('benchmark')
-const acorn = require('acorn')
+const acorn = require('acorn').parse
 const uglify = require('uglify-js')
 const escodegen = require('escodegen').generate
 const astring = require('../dist/astring').generate
 const babylon = require('babylon')
 const babel = require('babel-generator').default
 const prettier = require('prettier').format
+const buble = require('buble').transform
 const fs = require('fs')
 const path = require('path')
 
 function benchmarkWithCode(code, name) {
   // eslint-disable-next-line no-console
   console.log('\nTesting "%s" (code length: %d)', name, code.length)
-  const ast = acorn.parse(code, {
+  const acornOptions = {
     ecmaVersion: 8,
     sourceType: 'module',
-  })
+  }
+  const ast = acorn(code, acornOptions)
   let uglifyAst = null
   try {
     uglifyAst = uglify.parse(code)
@@ -33,6 +35,41 @@ function benchmarkWithCode(code, name) {
   const babelAst = babylon.parse(code, {
     sourceType: 'module',
   })
+  const bubleOptions = {
+    transforms: {
+      arrow: false,
+      classes: false,
+      collections: false,
+      computedProperty: false,
+      conciseMethodProperty: false,
+      constLoop: false,
+      constRedef: false,
+      defaultParameter: false,
+      destructuring: false,
+      extendNatives: false,
+      forOf: false,
+      generator: false,
+      letConst: false,
+      letLoop: false,
+      letLoopScope: false,
+      moduleExport: false,
+      moduleImport: false,
+      numericLiteral: false,
+      objectProto: false,
+      objectSuper: false,
+      oldOctalLiteral: false,
+      parameterDestructuring: false,
+      spreadRest: false,
+      stickyRegExp: false,
+      symbol: false,
+      templateString: false,
+      unicodeEscape: false,
+      unicodeIdentifier: false,
+      unicodeRegExp: false,
+      exponentiation: false,
+      reservedProperties: false,
+    },
+  }
   const returnBabelAst = () => babelAst
   new Benchmark.Suite()
     .add('escodegen', () => {
@@ -49,6 +86,12 @@ function benchmarkWithCode(code, name) {
     })
     .add('prettier', () => {
       prettier(code, returnBabelAst)
+    })
+    .add('acorn + astring', () => {
+      astring(acorn(code, acornOptions))
+    })
+    .add('acorn + buble', () => {
+      buble(code, bubleOptions).code
     })
     // add listeners
     .on('cycle', event => {
