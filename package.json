@@ -42,7 +42,7 @@
     "eslint-plugin-import": "^2.6.0",
     "glob": "^7.1.1",
     "normalize-newline": "^3.0.0",
-    "prettier": "^1.5.0",
+    "prettier": "^1.7.2",
     "tap": "^10.7.0"
   }
 }
