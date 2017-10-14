@@ -8,7 +8,7 @@
   },
   "scripts": {
     "test:build": "cross-env BABEL_ENV=test babel test/index.js --out-file test/_index.js",
-    "test": "npm run prettier && npm run test:build && tap test/_index.js --coverage",
+    "test": "npm run prettier && npm run test:build && npm run build:minified && tap test/_index.js --coverage",
     "codecov": "tap --coverage-report=lcov && codecov",
     "coverage": "tap --coverage-report=html",
     "test:scripts:build": "cross-env BABEL_ENV=test babel test/scripts.js --out-file test/_scripts.js",
@@ -22,7 +22,13 @@
     "prettier": "prettier --print-width 80 --tab-width 2 --no-semi --single-quote --trailing-comma es5 --list-different \"src/**/*.js\" \"test/{index,scripts,benchmark}.js\" \"bin/astring\"",
     "prettify": "prettier --print-width 80 --tab-width 2 --no-semi --single-quote --trailing-comma es5 --write \"src/**/*.js\" \"test/{index,scripts,benchmark}.js\" \"bin/astring\""
   },
-  "keywords": ["ast", "codegen", "code generator", "estree", "astravel"],
+  "keywords": [
+    "ast",
+    "codegen",
+    "code generator",
+    "estree",
+    "astravel"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/davidbonnet/astring.git"
