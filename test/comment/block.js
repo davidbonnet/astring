@@ -5,10 +5,17 @@ Block comment for this script file.
 Block comment for function f.
 */
 function f() {}
+/**
+* JSDoc block comment.
+* @param {string} a - Some string to test
+*/
+function g(a) {
+	return a;
+}
 /*
 Block comment for function g.
 */
-function g() {
+function h() {
 	/*
 	Block comment inside of function g.
 	*/

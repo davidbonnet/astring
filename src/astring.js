@@ -156,14 +156,15 @@ function reindent(state, text, indent, lineEnd) {
   /*
   Writes into `state` the `text` string reindented with the provided `indent`.
   */
-  const trimmedText = text.trim()
-  if (trimmedText === '') {
-    return
-  }
-  const lines = text.trim().split('\n')
-  const { length } = lines
-  for (let i = 0; i < length; i++) {
-    state.write(indent + lines[i].trim() + lineEnd)
+  const lines = text.split('\n')
+  const end = lines.length - 1
+  state.write(lines[0].trim())
+  if (end > 0) {
+    state.write(lineEnd)
+    for (let i = 1; i < end; i++) {
+      state.write(indent + lines[i].trim() + lineEnd)
+    }
+    state.write(indent + lines[end].trim())
   }
 }
 
@@ -182,9 +183,9 @@ function formatComments(state, comments, indent, lineEnd) {
       state.write('// ' + comment.value.trim() + '\n')
     } else {
       // Block comment
-      state.write('/*' + lineEnd)
+      state.write('/*')
       reindent(state, comment.value, indent, lineEnd)
-      state.write(indent + '*/' + lineEnd)
+      state.write('*/' + lineEnd)
     }
   }
 }
