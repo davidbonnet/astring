@@ -97,7 +97,7 @@ function formatSequence(state, nodes) {
     generator[nodes[0].type](nodes[0], state)
     const { length } = nodes
     for (let i = 1; i < length; i++) {
-      let param = nodes[i]
+      const param = nodes[i]
       state.write(', ')
       generator[param.type](param, state)
     }
@@ -175,7 +175,7 @@ function formatComments(state, comments, indent, lineEnd) {
   */
   const { length } = comments
   for (let i = 0; i < length; i++) {
-    let comment = comments[i]
+    const comment = comments[i]
     state.write(indent)
     if (comment.type[0] === 'L') {
       // Line comment
@@ -195,7 +195,7 @@ function hasCallExpression(node) {
   */
   let currentNode = node
   while (currentNode != null) {
-    let { type } = currentNode
+    const { type } = currentNode
     if (type[0] === 'C' && type[1] === 'a') {
       // Is CallExpression
       return true
@@ -239,10 +239,10 @@ export const baseGenerator = {
     if (writeComments && node.comments != null) {
       formatComments(state, node.comments, indent, lineEnd)
     }
-    let statements = node.body
+    const statements = node.body
     const { length } = statements
     for (let i = 0; i < length; i++) {
-      let statement = statements[i]
+      const statement = statements[i]
       if (writeComments && statement.comments != null) {
         formatComments(state, statement.comments, indent, lineEnd)
       }
@@ -259,7 +259,7 @@ export const baseGenerator = {
     const { lineEnd, writeComments } = state
     const statementIndent = indent + state.indent
     state.write('{')
-    let statements = node.body
+    const statements = node.body
     if (statements != null && statements.length > 0) {
       state.write(lineEnd)
       if (writeComments && node.comments != null) {
@@ -267,7 +267,7 @@ export const baseGenerator = {
       }
       const { length } = statements
       for (let i = 0; i < length; i++) {
-        let statement = statements[i]
+        const statement = statements[i]
         if (writeComments && statement.comments != null) {
           formatComments(state, statement.comments, statementIndent, lineEnd)
         }
@@ -357,7 +357,7 @@ export const baseGenerator = {
     const { cases: occurences } = node
     const { length: occurencesCount } = occurences
     for (let i = 0; i < occurencesCount; i++) {
-      let occurence = occurences[i]
+      const occurence = occurences[i]
       if (writeComments && occurence.comments != null) {
         formatComments(state, occurence.comments, caseIndent, lineEnd)
       }
@@ -368,10 +368,10 @@ export const baseGenerator = {
       } else {
         state.write(caseIndent + 'default:' + lineEnd)
       }
-      let { consequent } = occurence
+      const { consequent } = occurence
       const { length: consequentCount } = consequent
       for (let i = 0; i < consequentCount; i++) {
-        let statement = consequent[i]
+        const statement = consequent[i]
         if (writeComments && statement.comments != null) {
           formatComments(state, statement.comments, statementIndent, lineEnd)
         }
@@ -400,7 +400,7 @@ export const baseGenerator = {
     state.write('try ')
     this[node.block.type](node.block, state)
     if (node.handler) {
-      let { handler } = node
+      const { handler } = node
       state.write(' catch (')
       this[handler.param.type](handler.param, state)
       state.write(') ')
@@ -565,8 +565,8 @@ export const baseGenerator = {
         { length } = specifiers
       if (length > 0) {
         for (let i = 0; ; ) {
-          let specifier = specifiers[i]
-          let { name } = specifier.local
+          const specifier = specifiers[i]
+          const { name } = specifier.local
           state.write(name, specifier)
           if (name !== specifier.exported.name) {
             state.write(' as ' + specifier.exported.name)
@@ -671,7 +671,7 @@ export const baseGenerator = {
     state.write('`')
     const { length } = expressions
     for (let i = 0; i < length; i++) {
-      let expression = expressions[i]
+      const expression = expressions[i]
       state.write(quasis[i].value.raw)
       state.write('${')
       this[expression.type](expression, state)
@@ -690,7 +690,7 @@ export const baseGenerator = {
       const { elements } = node,
         { length } = elements
       for (let i = 0; ; ) {
-        let element = elements[i]
+        const element = elements[i]
         if (element != null) {
           this[element.type](element, state)
         }
@@ -721,7 +721,7 @@ export const baseGenerator = {
       const { properties } = node,
         { length } = properties
       for (let i = 0; ; ) {
-        let property = properties[i]
+        const property = properties[i]
         if (writeComments && property.comments != null) {
           formatComments(state, property.comments, propertyIndent, lineEnd)
         }
