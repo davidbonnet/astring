@@ -25,7 +25,7 @@
 				"prettier_cli_path": "node_modules/.bin/prettier",
 				"node_path": "",
 				"auto_format_on_save": true,
-				"auto_format_on_save_excludes": ["*/node_modules/*", "*/.git/*", "*/test/*/*.js"],
+				"auto_format_on_save_excludes": ["*/node_modules/*", "*/.git/*", "*/test/*/*.js", "*/docs/*/*.js"],
 				"allow_inline_formatting": false,
 				"custom_file_extensions": [""],
 				"additional_cli_args": {},
