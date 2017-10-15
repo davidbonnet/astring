@@ -18,7 +18,7 @@ A tiny and fast JavaScript code generator from an [ESTree](https://github.com/es
 - Supports comment generation with [Astravel](https://github.com/davidbonnet/astravel).
 - No dependencies and small footprint (≈ 16 KB minified, ≈ 4 KB gziped).
 
-Checkout the [live demo](http://bonnet.cc/astring/demo.html) showing Astring in action.
+Checkout the [live demo](http://david.bonnet.cc/astring/demo/) showing Astring in action.
 
 
 
