@@ -121,10 +121,7 @@ var code = "let answer = 4 + 7 * 5 + 3;\n"
 // Parse it into an AST
 var ast = acorn.parse(code, { ecmaVersion: 6 })
 // Format it into a code string
-var formattedCode = astring.generate(ast, {
-  indent: '   ',
-  lineEnd: '\n',
-})
+var formattedCode = astring.generate(ast)
 // Check it
 console.log((code === formattedCode) ? 'It works !' : 'Something went wrong…')
 ```
@@ -201,8 +198,6 @@ var ast = acorn.parse(code, {
 astravel.attachComments(ast, comments)
 // Format it into a code string
 var formattedCode = astring.generate(ast, {
-  indent: '   ',
-  lineEnd: '\n',
   comments: true,
 })
 // Check it
@@ -269,20 +264,20 @@ The utility reads the AST from a provided list of files or from `stdin` if none 
 As in the previous example, these examples use [Acorn](https://github.com/marijnh/acorn) to get the JSON-formatted AST. This command pipes the AST output by Acorn from a `script.js` file to Astring and writes the formatted JavaScript code into a `result.js` file:
 
 ```bash
-cat script.js | acorn --ecma6 | astring --indent "  " > result.js
+cat script.js | acorn --ecma6 | astring > result.js
 ```
 
 This command does the same, but reads the AST from an intermediary file:
 
 ```bash
 acorn --ecma6 script.js > ast.json
-astring --indent "  " ast.json > result.js
+astring ast.json > result.js
 ```
 
 This command reads JavaScript 6 code from `stdin` and outputs a prettified version:
 
 ```bash
-cat | acorn --ecma6 | astring --indent "  "
+cat | acorn --ecma6 | astring
 ```
 
 
