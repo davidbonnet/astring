@@ -26,21 +26,30 @@ module.exports = {
     ecmaVersion: 8,
     sourceType: 'module',
   },
+  overrides: {
+    files: [
+      'test/comment/*.js',
+      'test/deprecated/*.js',
+      'test/syntax/*.js',
+      'test/tree/*.js',
+    ],
+    rules: {
+      'no-unused-vars': false,
+      'no-undef': false,
+      'no-var': false,
+      'no-empty': false,
+      'no-unused-labels': false,
+      'no-cond-assign': false,
+      'no-constant-condition': false,
+      'constructor-super': false,
+      'no-unreachable': false,
+      'no-unsafe-negation': false,
+    },
+  },
   rules: {
     'eol-last': 'error',
     'linebreak-style': ['error', 'unix'],
-    'max-len': [
-      'error',
-      80,
-      2,
-      {
-        ignoreUrls: true,
-        ignoreComments: true,
-        ignoreStrings: true,
-        ignoreTemplateLiterals: true,
-        ignoreRegExpLiterals: true,
-      },
-    ],
+    'max-len': false,
     'max-statements-per-line': [
       'error',
       {

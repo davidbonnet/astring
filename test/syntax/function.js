@@ -1,26 +1,26 @@
 function f(a, b, c) {
-	return null;
+  return null;
 }
 var g = function (a, b, c) {
-	return null;
+  return null;
 };
 function h(a, b = 1, c = 2) {
-	return null;
+  return null;
 }
 function i(a = 1, b, c) {
-	return null;
+  return null;
 }
 function j(...a) {}
 function k() {}
 var l = function () {};
 var m = function (a = 1, b, c) {};
 function* o() {
-	yield 42;
+  yield 42;
 }
 function* p() {
-	yield 42;
-	yield 7;
-	return "answer";
+  yield 42;
+  yield 7;
+  return "answer";
 }
 let q = function* () {};
 let r = a => a;
@@ -30,10 +30,10 @@ let u = (a, b) => {};
 let v = () => {};
 let w = () => ({});
 let x = () => {
-	let a = 42;
-	return a;
+  let a = 42;
+  return a;
 };
 let y = () => ({
-	a: 1,
-	b: 2
+  a: 1,
+  b: 2
 });

@@ -150,7 +150,7 @@ test('Comment generation', assert => {
 })
 
 test('Source map generation', assert => {
-  const code = 'function f(x) {\n\treturn x;\n}\n'
+  const code = 'function f(x) {\n  return x;\n}\n'
   const sourceMap = {
     mappings: [],
     _file: 'script.js',

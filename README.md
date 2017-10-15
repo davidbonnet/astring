@@ -21,6 +21,7 @@ A tiny and fast JavaScript code generator from an [ESTree](https://github.com/es
 Checkout the [live demo](http://bonnet.cc/astring/demo.html) showing Astring in action.
 
 
+
 ## Contents
 
 - [Installation](#installation)
@@ -30,6 +31,7 @@ Checkout the [live demo](http://bonnet.cc/astring/demo.html) showing Astring in 
 - [Command line interface](#command-line-interface)
 - [Building](#building)
 - [Roadmap](#roadmap)
+
 
 
 ## Installation
@@ -50,8 +52,6 @@ cd astring
 npm install
 ```
 
-A browser-ready minified version of Astring is available at `dist/astring.min.js`.
-
 
 
 ## Import
@@ -68,7 +68,7 @@ With CommonJS:
 const { generate } = require('astring')
 ```
 
-When used in a browser environment, the module exposes a global variable `astring`:
+A browser-ready minified bundle containing Astring is available at `dist/astring.min.js`. The module exposes a global variable `astring`:
 
 ```html
 <script src="astring.min.js" type="text/javascript"></script>
@@ -90,7 +90,7 @@ Returns a string representing the rendered code of the provided AST `node`. Howe
 
 The `options` are:
 
-- `indent`: string to use for indentation (defaults to `"\t"`)
+- `indent`: string to use for indentation (defaults to `"␣␣"`)
 - `lineEnd`: string to use for line endings (defaults to `"\n"`)
 - `startingIndentLevel`: indent level to start from (defaults to `0`)
 - `comments`: generate comments if `true` (defaults to `false`)
@@ -117,16 +117,16 @@ This example uses [Acorn](https://github.com/marijnh/acorn), a blazingly fast Ja
 ```javascript
 // Make sure acorn and astring modules are imported
 // Set example code
-var code = "let answer = 4 + 7 * 5 + 3;\n";
+var code = "let answer = 4 + 7 * 5 + 3;\n"
 // Parse it into an AST
-var ast = acorn.parse(code, { ecmaVersion: 6 });
+var ast = acorn.parse(code, { ecmaVersion: 6 })
 // Format it into a code string
 var formattedCode = astring.generate(ast, {
   indent: '   ',
   lineEnd: '\n',
-});
+})
 // Check it
-console.log((code === formattedCode) ? 'It works !' : 'Something went wrong…');
+console.log((code === formattedCode) ? 'It works !' : 'Something went wrong…')
 ```
 
 
@@ -256,7 +256,7 @@ console.log(
 
 The `bin/astring` utility can be used to convert a JSON-formatted ESTree compliant AST of a JavaScript code. It accepts the following arguments:
 
-- `-i`, `--indent`: string to use as indentation (defaults to `"\t"`)
+- `-i`, `--indent`: string to use as indentation (defaults to `"␣␣"`)
 - `-l`, `--line-end`: string to use for line endings (defaults to `"\n"`)
 - `-s`, `--starting-indent-level`: indent level to start from (defaults to `0`)
 - `-h`, `--help`: print a usage message and exit

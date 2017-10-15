@@ -953,7 +953,7 @@ class State {
     }
     this.generator = setup.generator != null ? setup.generator : baseGenerator
     // Formating setup
-    this.indent = setup.indent != null ? setup.indent : '\t'
+    this.indent = setup.indent != null ? setup.indent : '  '
     this.lineEnd = setup.lineEnd != null ? setup.lineEnd : '\n'
     this.indentLevel =
       setup.startingIndentLevel != null ? setup.startingIndentLevel : 0
@@ -1034,9 +1034,9 @@ export function generate(node, options) {
   Returns a string representing the rendered code of the provided AST `node`.
   The `options` are:
 
-  - `indent`: string to use for indentation (defaults to `\t`)
+  - `indent`: string to use for indentation (defaults to `␣␣`)
   - `lineEnd`: string to use for line endings (defaults to `\n`)
-  - `startingIndentLevel`: indent level to start from (default to `0`)
+  - `startingIndentLevel`: indent level to start from (defaults to `0`)
   - `comments`: generate comments if `true` (defaults to `false`)
   - `output`: output stream to write the rendered code to (defaults to `null`)
   - `generator`: custom code generator (defaults to `baseGenerator`)

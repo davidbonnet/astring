@@ -1,39 +1,39 @@
 class A {
-	constructor() {}
+  constructor() {}
 }
 class B extends A {}
 class C extends A {
-	method() {}
-	get property() {
-		return this._property;
-	}
-	set property(value) {
-		this._property = value;
-	}
+  method() {}
+  get property() {
+    return this._property;
+  }
+  set property(value) {
+    this._property = value;
+  }
 }
 class D extends class A {} {}
 class E extends class {
-	constructor() {}
+  constructor() {}
 } {}
 class F extends class {
-	constructor() {}
+  constructor() {}
 } {
-	constructor() {}
+  constructor() {}
 }
 class G {
-	[Symbol.iterator]() {}
-	["method"]() {}
+  [Symbol.iterator]() {}
+  ["method"]() {}
 }
 class H {
-	static classMethod() {}
-	method() {}
+  static classMethod() {}
+  method() {}
 }
 class I {
-	static get property() {}
-	static set property(value) {}
+  static get property() {}
+  static set property(value) {}
 }
 class J extends A {
-	constructor() {
-		super();
-	}
+  constructor() {
+    super();
+  }
 }
