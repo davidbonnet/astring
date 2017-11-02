@@ -13,6 +13,9 @@ const stripLocation = astravel.makeTraveler({
     delete node.start
     delete node.end
     delete node.raw
+    if (node.directive) {
+      delete node.directive
+    }
     this[node.type](node, state)
   },
   Property(node, state) {
