@@ -116,6 +116,7 @@ This example uses [Acorn](https://github.com/marijnh/acorn), a blazingly fast Ja
 
 ```javascript
 // Make sure acorn and astring modules are imported
+
 // Set example code
 var code = "let answer = 4 + 7 * 5 + 3;\n"
 // Parse it into an AST
@@ -123,7 +124,7 @@ var ast = acorn.parse(code, { ecmaVersion: 6 })
 // Format it into a code string
 var formattedCode = astring.generate(ast)
 // Check it
-console.log((code === formattedCode) ? 'It works !' : 'Something went wrong…')
+console.log((code === formattedCode) ? 'It works!' : 'Something went wrong…')
 ```
 
 
@@ -133,6 +134,7 @@ This example uses the source map generator from the [Source Map](https://github.
 
 ```javascript
 // Make sure acorn, sourceMap and astring modules are imported
+
 var code = 'function add(a, b) { return a + b; }\n'
 var ast = acorn.parse(code, {
   ecmaVersion: 6,
@@ -160,6 +162,7 @@ This example for [Node](http://nodejs.org) shows how to use writable streams to 
 
 ```javascript
 // Make sure acorn and astring modules are imported
+
 // Set example code
 var code = 'let answer = 4 + 7 * 5 + 3;\n'
 // Parse it into an AST
@@ -169,7 +172,7 @@ var stream = astring.generate(ast, {
   output: process.stdout,
 })
 // The returned value is the output stream
-console.log('stream is process.stdout?', stream === process.stdout)
+console.log('Does stream equal process.stdout?', stream === process.stdout)
 ```
 
 
@@ -179,6 +182,7 @@ Astring supports comment generation, provided they are stored on the AST nodes. 
 
 ```javascript
 // Make sure acorn, astravel and astring modules are imported
+
 // Set example code
 var code =
   [
@@ -201,7 +205,7 @@ var formattedCode = astring.generate(ast, {
   comments: true,
 })
 // Check it
-console.log(code === formattedCode ? 'It works !' : 'Something went wrong…')
+console.log(code === formattedCode ? 'It works!' : 'Something went wrong…')
 ```
 
 
@@ -213,6 +217,7 @@ This example shows how to support the `await` keyword which is part of the [asyn
 
 ```javascript
 // Make sure the astring module is imported and that `Object.assign` is defined
+
 // Create a custom generator that inherits from Astring's base generator
 var customGenerator = Object.assign({}, astring.baseGenerator, {
   AwaitExpression: function(node, state) {
@@ -264,7 +269,7 @@ The utility reads the AST from a provided list of files or from `stdin` if none 
 As in the previous example, these examples use [Acorn](https://github.com/marijnh/acorn) to get the JSON-formatted AST. This command pipes the AST output by Acorn from a `script.js` file to Astring and writes the formatted JavaScript code into a `result.js` file:
 
 ```bash
-cat script.js | acorn --ecma6 | astring > result.js
+acorn --ecma6 script.js | astring > result.js
 ```
 
 This command does the same, but reads the AST from an intermediary file:
