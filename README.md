@@ -6,7 +6,7 @@
 [![devDependency Status](https://david-dm.org/davidbonnet/astring/dev-status.svg)](https://david-dm.org/davidbonnet/astring?type=dev)
 [![Greenkeeper](https://badges.greenkeeper.io/davidbonnet/astring.svg)](https://greenkeeper.io/)
 
-🌳 A tiny and fast JavaScript code generator from an [ESTree](https://github.com/estree/estree)-compliant AST.
+🌳 Tiny and fast JavaScript code generator from an [ESTree](https://github.com/estree/estree)-compliant AST.
 
 ### Key features
 
