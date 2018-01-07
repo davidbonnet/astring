@@ -6,33 +6,27 @@
 [![devDependency Status](https://david-dm.org/davidbonnet/astring/dev-status.svg)](https://david-dm.org/davidbonnet/astring?type=dev)
 [![Greenkeeper](https://badges.greenkeeper.io/davidbonnet/astring.svg)](https://greenkeeper.io/)
 
-A tiny and fast JavaScript code generator from an [ESTree](https://github.com/estree/estree)-compliant AST.
+🌳 A tiny and fast JavaScript code generator from an [ESTree](https://github.com/estree/estree)-compliant AST.
 
 ### Key features
 
-- Generates JavaScript code up to [version 7](https://tc39.github.io/ecma262/) and [finished proposals](https://github.com/tc39/proposals/blob/master/finished-proposals.md).
-- Works on [ESTree](https://github.com/estree/estree)-compliant ASTs such as the ones produced by [Acorn](https://github.com/marijnh/acorn).
-- Extendable with custom AST node handlers.
-- Considerably faster than [Bublé](https://gitlab.com/Rich-Harris/buble) (up to 5×), [Escodegen](https://github.com/estools/escodegen) (up to 10×), [Babel](https://github.com/babel/babel) (up to 50×), [UglifyJS](https://github.com/mishoo/UglifyJS2) (up to 125×), and [Prettier](https://github.com/prettier/prettier) (up to 380×).
-- Supports source map generation with [Source Map](https://github.com/mozilla/source-map#sourcemapgenerator).
-- Supports comment generation with [Astravel](https://github.com/davidbonnet/astravel).
-- No dependencies and small footprint (≈ 16 KB minified, ≈ 4 KB gziped).
+* Generates JavaScript code up to [version 7](https://tc39.github.io/ecma262/) and [finished proposals](https://github.com/tc39/proposals/blob/master/finished-proposals.md).
+* Works on [ESTree](https://github.com/estree/estree)-compliant ASTs such as the ones produced by [Acorn](https://github.com/marijnh/acorn).
+* Extendable with custom AST node handlers.
+* Considerably faster than [Bublé](https://gitlab.com/Rich-Harris/buble) (up to 5×), [Escodegen](https://github.com/estools/escodegen) (up to 10×), [Babel](https://github.com/babel/babel) (up to 50×), [UglifyJS](https://github.com/mishoo/UglifyJS2) (up to 125×), and [Prettier](https://github.com/prettier/prettier) (up to 380×).
+* Supports source map generation with [Source Map](https://github.com/mozilla/source-map#sourcemapgenerator).
+* Supports comment generation with [Astravel](https://github.com/davidbonnet/astravel).
+* No dependencies and small footprint (≈ 16 KB minified, ≈ 4 KB gziped).
 
 Checkout the [live demo](http://david.bonnet.cc/astring/demo/) showing Astring in action.
 
-
-
 ## Contents
 
-- [Installation](#installation)
-- [Import](#import)
-- [API](#api)
-- [Examples](#examples)
-- [Command line interface](#command-line-interface)
-- [Building](#building)
-- [Roadmap](#roadmap)
-
-
+* [Installation](#installation)
+* [Import](#import)
+* [API](#api)
+* [Examples](#examples)
+* [Command line interface](#command-line-interface)
 
 ## Installation
 
@@ -51,8 +45,6 @@ git clone https://github.com/davidbonnet/astring.git
 cd astring
 npm install
 ```
-
-
 
 ## Import
 
@@ -77,12 +69,9 @@ A browser-ready minified bundle containing Astring is available at `dist/astring
 </script>
 ```
 
-
-
 ## API
 
 The `astring` module exposes the following properties:
-
 
 ### `generate(node: object, options: object): string | object`
 
@@ -90,25 +79,21 @@ Returns a string representing the rendered code of the provided AST `node`. Howe
 
 The `options` are:
 
-- `indent`: string to use for indentation (defaults to `"␣␣"`)
-- `lineEnd`: string to use for line endings (defaults to `"\n"`)
-- `startingIndentLevel`: indent level to start from (defaults to `0`)
-- `comments`: generate comments if `true` (defaults to `false`)
-- `output`: output stream to write the rendered code to (defaults to `null`)
-- `generator`: custom code generator (defaults to `astring.baseGenerator`)
-- `sourceMap`: [source map generator](https://github.com/mozilla/source-map#sourcemapgenerator) (defaults to `null`)
-
+* `indent`: string to use for indentation (defaults to `"␣␣"`)
+* `lineEnd`: string to use for line endings (defaults to `"\n"`)
+* `startingIndentLevel`: indent level to start from (defaults to `0`)
+* `comments`: generate comments if `true` (defaults to `false`)
+* `output`: output stream to write the rendered code to (defaults to `null`)
+* `generator`: custom code generator (defaults to `astring.baseGenerator`)
+* `sourceMap`: [source map generator](https://github.com/mozilla/source-map#sourcemapgenerator) (defaults to `null`)
 
 ### `baseGenerator: object`
 
 Base generator that can be used to [extend Astring](#extending).
 
-
-
 ## Examples
 
 The following examples are written in JavaScript 5 with Astring imported _à la CommonJS_.
-
 
 ### Generating code
 
@@ -118,15 +103,14 @@ This example uses [Acorn](https://github.com/marijnh/acorn), a blazingly fast Ja
 // Make sure acorn and astring modules are imported
 
 // Set example code
-var code = "let answer = 4 + 7 * 5 + 3;\n"
+var code = 'let answer = 4 + 7 * 5 + 3;\n'
 // Parse it into an AST
 var ast = acorn.parse(code, { ecmaVersion: 6 })
 // Format it into a code string
 var formattedCode = astring.generate(ast)
 // Check it
-console.log((code === formattedCode) ? 'It works!' : 'Something went wrong…')
+console.log(code === formattedCode ? 'It works!' : 'Something went wrong…')
 ```
-
 
 ### Generating source maps
 
@@ -155,7 +139,6 @@ var formattedCode = generate(ast, {
 console.log(map.toString())
 ```
 
-
 ### Using writable streams
 
 This example for [Node](http://nodejs.org) shows how to use writable streams to get the rendered code.
@@ -174,7 +157,6 @@ var stream = astring.generate(ast, {
 // The returned value is the output stream
 console.log('Does stream equal process.stdout?', stream === process.stdout)
 ```
-
 
 ### Generating comments
 
@@ -207,7 +189,6 @@ var formattedCode = astring.generate(ast, {
 // Check it
 console.log(code === formattedCode ? 'It works!' : 'Something went wrong…')
 ```
-
 
 ### Extending
 
@@ -250,17 +231,15 @@ console.log(
 )
 ```
 
-
-
 ## Command line interface
 
 The `bin/astring` utility can be used to convert a JSON-formatted ESTree compliant AST of a JavaScript code. It accepts the following arguments:
 
-- `-i`, `--indent`: string to use as indentation (defaults to `"␣␣"`)
-- `-l`, `--line-end`: string to use for line endings (defaults to `"\n"`)
-- `-s`, `--starting-indent-level`: indent level to start from (defaults to `0`)
-- `-h`, `--help`: print a usage message and exit
-- `-v`, `--version`: print package version and exit
+* `-i`, `--indent`: string to use as indentation (defaults to `"␣␣"`)
+* `-l`, `--line-end`: string to use for line endings (defaults to `"\n"`)
+* `-s`, `--starting-indent-level`: indent level to start from (defaults to `0`)
+* `-h`, `--help`: print a usage message and exit
+* `-v`, `--version`: print package version and exit
 
 The utility reads the AST from a provided list of files or from `stdin` if none is supplied and prints the generated code.
 
@@ -285,76 +264,3 @@ This command reads JavaScript 6 code from `stdin` and outputs a prettified versi
 cat | acorn --ecma6 | astring
 ```
 
-
-
-## Building
-
-All building scripts are defined in the `package.json` file. All commands must be run from within the root repository folder.
-
-
-### Production
-
-The source code of Astring is written in JavaScript 6 and located at `src/astring.js`. It is compiled down to a JavaScript 5 file located at `dist/astring.js`, with its source map at `dist/astring.js.map` using [Babel](http://babeljs.io/). This is achieved by running:
-
-```bash
-npm run build
-```
-
-If you are already using a JavaScript 6 to 5 compiler for your project, or a JavaScript 6 compliant interpreter, you can include the `src/astring.js` file directly.
-
-A minified version of Astring located at `dist/astring.min.js` along with its source map at `dist/astring.min.js.map` can be generated by running:
-
-```bash
-npm run build:minified
-```
-
-
-### Development
-
-If you are working on Astring, you can enable Babel's watch mode to automatically generate `dist/astring.js` and `dist/astring.js.map` at each update by running:
-
-```bash
-npm start
-```
-
-
-#### Tests
-
-While making changes to Astring, make sure it passes the tests (it checks code formatting and unit tests):
-
-```bash
-npm test
-```
-
-You can also get an HTML report of the coverage:
-
-```bash
-npm run coverage
-```
-
-You can also run tests on a large array of files:
-
-```bash
-npm run test:scripts
-```
-
-
-#### Benchmark
-
-The benchmark compares Astring against other code generators. These are not included in the dependencies and should be installed first:
-
-```bash
-npm install escodegen@1.8 uglify-js@2 babel-generator@6 buble@0.15
-```
-
-Benchmarks can be run using Node in version 8 with:
-
-```bash
-npm run benchmark
-```
-
-
-
-## Roadmap
-
-Planned features and releases are outlined on the [milestones page](https://github.com/davidbonnet/astring/milestones).

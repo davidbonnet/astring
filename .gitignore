@@ -1,3 +1,4 @@
+*.DS_Store
 *.sublime-workspace
 test/_*.js
 .nyc_output
