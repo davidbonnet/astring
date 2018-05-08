@@ -1,6 +1,6 @@
 {
   "name": "astring",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "JavaScript code generator from an ESTree-compliant AST.",
   "main": "./dist/astring.js",
   "module": "./src/astring.js",
@@ -8,31 +8,28 @@
     "astring": "./bin/astring"
   },
   "scripts": {
-    "test:build":
-      "cross-env BABEL_ENV=test babel test/index.js --out-file test/_index.js",
-    "test":
-      "npm run prettier && npm run test:build && npm run build:minified && tap test/_index.js --coverage",
+    "test:build": "cross-env BABEL_ENV=test babel test/index.js --out-file test/_index.js",
+    "test": "npm run prettier && npm run test:build && npm run build:minified && tap test/_index.js --coverage",
     "codecov": "tap --coverage-report=lcov && codecov",
     "coverage": "tap --coverage-report=html",
-    "test:scripts:build":
-      "cross-env BABEL_ENV=test babel test/scripts.js --out-file test/_scripts.js",
+    "test:scripts:build": "cross-env BABEL_ENV=test babel test/scripts.js --out-file test/_scripts.js",
     "test:scripts": "npm run test:scripts:build && tap test/_scripts.js",
     "prepublish": "npm run build && npm run build:minified",
-    "build":
-      "cross-env BABEL_ENV=production babel src/astring.js --out-file dist/astring.js --source-maps=true",
-    "build:minified":
-      "cross-env BABEL_ENV=minified babel src/astring.js --out-file dist/astring.min.js --source-maps=true",
-    "start":
-      "cross-env BABEL_ENV=development babel src/astring.js --watch --out-file dist/astring.js --source-maps=true",
-    "benchmark:build":
-      "cross-env BABEL_ENV=test babel test/benchmark.js --out-file test/_benchmark.js",
+    "build": "cross-env BABEL_ENV=production babel src/astring.js --out-file dist/astring.js --source-maps=true",
+    "build:minified": "cross-env BABEL_ENV=minified babel src/astring.js --out-file dist/astring.min.js --source-maps=true",
+    "start": "cross-env BABEL_ENV=development babel src/astring.js --watch --out-file dist/astring.js --source-maps=true",
+    "benchmark:build": "cross-env BABEL_ENV=test babel test/benchmark.js --out-file test/_benchmark.js",
     "benchmark": "npm run benchmark:build && node ./test/_benchmark.js",
-    "prettier":
-      "prettier --print-width 80 --tab-width 2 --no-semi --single-quote --trailing-comma es5 --list-different \"src/**/*.js\" \"test/{index,scripts,benchmark}.js\" \"bin/astring\"",
-    "prettify":
-      "prettier --print-width 80 --tab-width 2 --no-semi --single-quote --trailing-comma es5 --write \"src/**/*.js\" \"test/{index,scripts,benchmark}.js\" \"bin/astring\""
+    "prettier": "prettier --print-width 80 --tab-width 2 --no-semi --single-quote --trailing-comma es5 --list-different \"src/**/*.js\" \"test/{index,scripts,benchmark}.js\" \"bin/astring\"",
+    "prettify": "prettier --print-width 80 --tab-width 2 --no-semi --single-quote --trailing-comma es5 --write \"src/**/*.js\" \"test/{index,scripts,benchmark}.js\" \"bin/astring\""
   },
-  "keywords": ["ast", "codegen", "code generator", "estree", "astravel"],
+  "keywords": [
+    "ast",
+    "codegen",
+    "code generator",
+    "estree",
+    "astravel"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/davidbonnet/astring.git"
