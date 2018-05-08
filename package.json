@@ -44,7 +44,7 @@
     "astravel": "^0.4.0",
     "babel-cli": "^6.24.0",
     "babel-preset-env": "^1.5.2",
-    "babel-preset-minify": "^0.2.0",
+    "babel-preset-minify": "^0.4.0",
     "benchmark": "^2.0.0",
     "codecov": "^3.0.0",
     "cross-env": "^5.1.3",
