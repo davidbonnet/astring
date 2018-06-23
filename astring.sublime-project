@@ -1,44 +1,27 @@
 {
-	"folders":
-	[
-		{
-			"path": ".",
-			"folder_exclude_patterns":
-			[
-				"node_modules",
-				"coverage",
-				".nyc_output"
-			],
-		}
-	],
-	"settings":
-	{
-		"folder_exclude_patterns":
-		[
-			".git",
-			"node_modules",
-			"dist"
-		],
-		"tab_size": 2,
-		"js_prettier": {
-				"debug": false,
-				"prettier_cli_path": "node_modules/.bin/prettier",
-				"node_path": "",
-				"auto_format_on_save": true,
-				"auto_format_on_save_excludes": ["*/node_modules/*", "*/.git/*", "*/test/*/*.js", "*/docs/*/*.js"],
-				"allow_inline_formatting": false,
-				"custom_file_extensions": [""],
-				"additional_cli_args": {},
-				"max_file_size_limit": -1,
-				"prettier_options": {
-						"useTabs": false,
-						"tabWidth": 2,
-						"printWidth": 80,
-						"singleQuote": true,
-						"trailingComma": "es5",
-						"bracketSpacing": true,
-						"semi": false
-				}
-		},
-	}
+  "folders": [
+    {
+      "path": ".",
+      "folder_exclude_patterns": ["node_modules", "coverage", ".nyc_output"]
+    }
+  ],
+  "settings": {
+    "folder_exclude_patterns": [".git", "node_modules", "dist"],
+    "tab_size": 2,
+    "js_prettier": {
+      "auto_format_on_save": true,
+      "auto_format_on_save_excludes": [
+        "*/package.json",
+        "*/dist/*",
+        "*/node_modules/*",
+        "*/.git/*"
+      ],
+      "allow_inline_formatting": true,
+      "custom_file_extensions": ["sublime-project"],
+      "additional_cli_args": {
+        "--config": "package.json",
+        "--config-precedence": "prefer-file"
+      }
+    }
+  }
 }
