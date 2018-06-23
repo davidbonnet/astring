@@ -1,38 +1,39 @@
-* {
-  font-size: 12px;
+body {
   font-family: Helvetica, sans-serif;
 }
 
-#console, #output {
-  font-family: Menlo, 'Bitstream Vera Sans Mono', Courier, monospace;
+#console,
+#output {
+  font-family: Menlo, "Bitstream Vera Sans Mono", Courier, monospace;
   font-size: 12px;
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
   -o-border-radius: 5px;
   border-radius: 5px;
-  border: 2px solid  #C6C6C6;
+  border: 2px solid #c6c6c6;
   width: 90%;
   margin: 10px auto 10px auto;
   padding: 10px;
 }
 
 #console {
-  background-color: #FFFFE8;
+  background-color: #ffffe8;
   resize: vertical;
   outline: none;
   display: block;
 }
 
 .invalid {
-  border-color: #F60016 !important;
+  border-color: #f60016 !important;
 }
 
 #output {
-  background-color: #EEE;
+  background-color: #eee;
   overflow: auto;
 }
 
-h1, p {
+h1,
+p {
   text-align: center;
 }
 
@@ -59,7 +60,7 @@ p.settings {
 
 a {
   text-decoration: none;
-  color: #155FCE;
+  color: #155fce;
 }
 
 a:hover {
