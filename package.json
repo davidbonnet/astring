@@ -21,7 +21,9 @@
     "benchmark:build": "cross-env BABEL_ENV=test babel test/benchmark.js --out-file test/_benchmark.js",
     "benchmark": "npm run benchmark:build && node ./test/_benchmark.js",
     "prettier": "prettier --print-width 80 --tab-width 2 --no-semi --single-quote --trailing-comma es5 --parser babylon --list-different \"src/**/*.js\" \"test/{index,scripts,benchmark}.js\" \"bin/astring\"",
-    "prettify": "prettier --print-width 80 --tab-width 2 --no-semi --single-quote --trailing-comma es5 --parser babylon --write \"src/**/*.js\" \"test/{index,scripts,benchmark}.js\" \"bin/astring\""
+    "prettify": "prettier --print-width 80 --tab-width 2 --no-semi --single-quote --trailing-comma es5 --parser babylon --write \"src/**/*.js\" \"test/{index,scripts,benchmark}.js\" \"bin/astring\"",
+    "prepush": "npm test",
+    "release": "standard-version"
   },
   "keywords": [
     "ast",
@@ -37,19 +39,21 @@
   "author": "David Bonnet <david@bonnet.cc>",
   "license": "MIT",
   "devDependencies": {
-    "acorn": "^5.0.2",
+    "acorn": "^5.7.1",
     "astravel": "^0.4.0",
     "babel-cli": "^6.24.0",
     "babel-preset-env": "^1.5.2",
     "babel-preset-minify": "^0.4.3",
     "benchmark": "^2.0.0",
     "codecov": "^3.0.0",
-    "cross-env": "^5.1.3",
-    "eslint": "^4.1.0",
+    "cross-env": "^5.2.0",
+    "eslint": "^5.0.0",
     "eslint-plugin-import": "^2.6.0",
     "glob": "^7.1.1",
+    "husky": "^0.14.3",
     "normalize-newline": "^3.0.0",
-    "prettier": "^1.7.2",
+    "prettier": "^1.13.5",
+    "standard-version": "^4.4.0",
     "tap": "^12.0.1"
   }
 }
