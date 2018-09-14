@@ -39,7 +39,7 @@
   "author": "David Bonnet <david@bonnet.cc>",
   "license": "MIT",
   "devDependencies": {
-    "acorn": "^5.7.1",
+    "acorn": "^6.0.1",
     "astravel": "^0.4.0",
     "babel-cli": "^6.24.0",
     "babel-preset-env": "^1.5.2",
