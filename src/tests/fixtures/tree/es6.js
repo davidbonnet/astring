@@ -207,8 +207,8 @@ for(;0;)continue; x:for(;0;)continue x;
 for(;;)break; x:for(;;)break x;
 switch(0){case 0:break;}
 
-function f(){ return; }
-function f(){ return 0; }
+function f1(){ return; }
+function f2(){ return 0; }
 
 switch(0){} switch(0){case 0:} switch(0){case 0:case 0:}
 switch(0){default:} switch(0){case 0:default:case 0:}
@@ -225,22 +225,22 @@ try{}catch(x){}finally{}
 
 debugger;
 
-function f(){}
-function f(x){}
-function f(x,y){}
-function f(){ function f(){} }
+function f3(){}
+function f4(x){}
+function f5(x,y){}
+function f6(){ function f(){} }
 { function f(){} };
 //for (;0;) label: function f(){} 0
 //do label: function f(){} while(0)
 
-function f(a, b = 0, [c,, d = 0, ...e], {f, g: h, i = 0, i: j = 0}, ...k){}
-function f(){ "use strict" }
-function f(){ 'use strict' }
-function f(){ "other directive" }
-function f(){ 'other directive' }
-function f(){ ("string") }
-function f(){ ('string') }
-function f(){
+function f7(a, b = 0, [c,, d = 0, ...e], {f, g: h, i = 0, i: j = 0}, ...k){}
+function f8(){ "use strict" }
+function f9(){ 'use strict' }
+function fA(){ "other directive" }
+function fB(){ 'other directive' }
+function fC(){ ("string") }
+function fD(){ ('string') }
+function fE(){
   'string'
   +0
 }

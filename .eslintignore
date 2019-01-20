@@ -2,3 +2,4 @@ node_modules/*
 local/*
 vendor/*
 dist/*
+src/tests/fixtures/deprecated/es5.js

@@ -107,12 +107,12 @@ function benchmarkWithCode(code, name) {
 
 benchmarkWithCode(
   fs.readFileSync(path.join(__dirname, '_benchmark.js'), 'utf8'),
-  'benchmark file'
+  'benchmark file',
 )
 
 benchmarkWithCode(
   fs.readFileSync(path.join(__dirname, 'tree', 'es6.js'), 'utf8'),
-  'everything'
+  'everything',
 )
 
 benchmarkWithCode('var a = 2;', 'tiny instruction')

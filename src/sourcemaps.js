@@ -2,6 +2,8 @@ const VLQ_SHIFT = 5
 const VLQ_CONTINUATION_BIT = 1 << VLQ_SHIFT
 const VLQ_VALUE_MASK = VLQ_CONTINUATION_BIT - 1
 
+const integerToChar = {}
+
 export function encodeInteger(value) {
   let num = value
   let result = ''

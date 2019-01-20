@@ -21,7 +21,7 @@ function printHelp(status) {
   print(
     '       ' +
       binName +
-      ' [-i, --indent INDENT] [-l, --line-end LINE_END] [-s, --starting-indent-level LEVEL] files...'
+      ' [-i, --indent INDENT] [-l, --line-end LINE_END] [-s, --starting-indent-level LEVEL] files...',
   )
   process.exit(status)
 }

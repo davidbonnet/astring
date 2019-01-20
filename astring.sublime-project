@@ -20,7 +20,15 @@
       "custom_file_extensions": ["sublime-project"],
       "additional_cli_args": {
         "--config": "package.json",
-        "--config-precedence": "prefer-file"
+        "--config-precedence": "prefer-file",
+        "--parser": "babel"
+      }
+    }
+  },
+  "SublimeLinter": {
+    "linters": {
+      "eslint": {
+        "disable": false
       }
     }
   }

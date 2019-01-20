@@ -14,7 +14,7 @@ const { stringify } = JSON
 if (!String.prototype.repeat) {
   /* istanbul ignore next */
   throw new Error(
-    'String.prototype.repeat is undefined, see https://github.com/davidbonnet/astring#installation'
+    'String.prototype.repeat is undefined, see https://github.com/davidbonnet/astring#installation',
   )
 }
 
@@ -22,7 +22,7 @@ if (!String.prototype.repeat) {
 if (!String.prototype.endsWith) {
   /* istanbul ignore next */
   throw new Error(
-    'String.prototype.endsWith is undefined, see https://github.com/davidbonnet/astring#installation'
+    'String.prototype.endsWith is undefined, see https://github.com/davidbonnet/astring#installation',
   )
 }
 
@@ -469,7 +469,7 @@ export const baseGenerator = {
       (node.async ? 'async ' : '') +
         (node.generator ? 'function* ' : 'function ') +
         (node.id ? node.id.name : ''),
-      node
+      node,
     )
     formatSequence(state, node.params)
     state.write(' ')
