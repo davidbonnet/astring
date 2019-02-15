@@ -53,7 +53,7 @@
     "normalize-newline": "^3.0.0",
     "nyc": "^13.1.0",
     "prettier": "^1.14.3",
-    "standard-version": "^4.4.0"
+    "standard-version": "^5.0.0"
   },
   "prettier": {
     "printWidth": 80,
