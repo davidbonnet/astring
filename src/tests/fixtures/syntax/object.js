@@ -23,3 +23,7 @@ let g = {
   }
 };
 let h = ({}).toString();
+let i = {
+  ...d,
+  a
+};

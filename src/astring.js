@@ -402,9 +402,13 @@ export const baseGenerator = {
     this[node.block.type](node.block, state)
     if (node.handler) {
       const { handler } = node
-      state.write(' catch (')
-      this[handler.param.type](handler.param, state)
-      state.write(') ')
+      if (handler.param == null) {
+        state.write(' catch ')
+      } else {
+        state.write(' catch (')
+        this[handler.param.type](handler.param, state)
+        state.write(') ')
+      }
       this[handler.body.type](handler.body, state)
     }
     if (node.finalizer) {
@@ -447,7 +451,7 @@ export const baseGenerator = {
     this[node.body.type](node.body, state)
   },
   ForInStatement: (ForInStatement = function(node, state) {
-    state.write('for (')
+    state.write(`for ${node.await ? 'await ' : ''}(`)
     const { left } = node
     if (left.type[0] === 'V') {
       formatVariableDeclaration(state, left)
@@ -727,7 +731,7 @@ export const baseGenerator = {
           formatComments(state, property.comments, propertyIndent, lineEnd)
         }
         state.write(propertyIndent)
-        this.Property(property, state)
+        this[property.type](property, state)
         if (++i < length) {
           state.write(comma)
         } else {

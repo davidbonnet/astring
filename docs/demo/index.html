@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <title>JavaScript Prettifier</title>
   <link rel="stylesheet" type="text/css" href="style.css">
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/acorn/5.2.1/acorn.min.js"></script>
+  <script type="text/javascript" src="https://unpkg.com/acorn@6/dist/acorn.js"></script>
+  <script type="text/javascript" src="https://unpkg.com/astravel@0.5/dist/astravel.min.js"></script>
   <script type="text/javascript" src="astring.min.js"></script>
-  <script type="text/javascript" src="astravel.min.js"></script>
 </head>
 <body>
   <h1>JavaScript Prettifier</h1>
@@ -24,12 +24,15 @@
   <script type="text/javascript">
 
     (function() {
+      var document = window.document
       var textarea = document.getElementById('console');
       var pre = document.getElementById('output');
       var commentsCheckbox = document.getElementById('comments');
       var indentationTextbox = document.getElementById('indentation');
       var astCheckbox = document.getElementById('ast');
       var linkButton = document.getElementById('setlink');
+
+      var ecmaVersion = 10;
 
       function makeSpaces(amount) {
         var result = '';
@@ -45,7 +48,7 @@
           if (commentsCheckbox.checked) {
             var comments = [];
             var ast = acorn.parse(textarea.value, {
-              ecmaVersion: 8,
+              ecmaVersion: ecmaVersion,
               sourceType: 'module',
               locations: true,
               onComment: comments
@@ -62,7 +65,7 @@
             });
           } else {
             var ast = acorn.parse(textarea.value, {
-              ecmaVersion: 8,
+              ecmaVersion: ecmaVersion,
               sourceType: 'module'
             });
             if (astCheckbox.checked) {

@@ -14,3 +14,8 @@ for (function () {
 for (() => {
   const i = 0;
 }; ; ) {}
+async function test() {
+  for await (const x of xs) {
+    x();
+  }
+}

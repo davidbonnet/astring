@@ -9,6 +9,8 @@ import { generate } from '../astring'
 
 const FIXTURES_FOLDER = path.join(__dirname, 'fixtures')
 
+const ecmaVersion = 10
+
 const stripLocation = astravel.makeTraveler({
   go(node, state) {
     delete node.start
@@ -30,7 +32,7 @@ test('Syntax check', assert => {
   const dirname = path.join(FIXTURES_FOLDER, 'syntax')
   const files = fs.readdirSync(dirname).sort()
   const options = {
-    ecmaVersion: 8,
+    ecmaVersion,
     sourceType: 'module',
   }
   files.forEach(filename => {
@@ -46,7 +48,7 @@ test('Tree comparison', assert => {
   const dirname = path.join(FIXTURES_FOLDER, 'tree')
   const files = fs.readdirSync(dirname).sort()
   const options = {
-    ecmaVersion: 8,
+    ecmaVersion,
     sourceType: 'module',
   }
   files.forEach(filename => {
@@ -87,7 +89,7 @@ test('Output stream', assert => {
     },
   }
   const ast = parse(code, {
-    ecmaVersion: 8,
+    ecmaVersion,
   })
   const result = generate(ast, {
     output,
@@ -108,7 +110,7 @@ test('Comment generation', assert => {
     )
     const comments = []
     const ast = parse(code, {
-      ecmaVersion: 8,
+      ecmaVersion,
       locations: true,
       onComment: comments,
     })
@@ -139,7 +141,7 @@ test('Source map generation', assert => {
     },
   }
   const ast = parse(code, {
-    ecmaVersion: 8,
+    ecmaVersion,
     locations: true,
   })
   const formattedCode = generate(ast, {

@@ -1,6 +1,7 @@
 export * from "module";
 export {name} from "module";
 export {a as b, c as d} from "module";
+let e, g;
 export {e as f, g as h};
 export {};
 export default i = 42;

@@ -10,7 +10,7 @@
 
 ### Key features
 
-- Generates JavaScript code up to [version 7](https://tc39.github.io/ecma262/) and [finished proposals](https://github.com/tc39/proposals/blob/master/finished-proposals.md).
+- Generates JavaScript code up to [version 10 (2019)](https://tc39.github.io/ecma262/) and [finished proposals](https://github.com/tc39/proposals/blob/master/finished-proposals.md).
 - Works on [ESTree](https://github.com/estree/estree)-compliant ASTs such as the ones produced by [Acorn](https://github.com/marijnh/acorn).
 - Extendable with custom AST node handlers.
 - Considerably faster than [Bublé](https://gitlab.com/Rich-Harris/buble) (up to 5×), [Escodegen](https://github.com/estools/escodegen) (up to 10×), [Babel](https://github.com/babel/babel) (up to 50×), [UglifyJS](https://github.com/mishoo/UglifyJS2) (up to 125×), and [Prettier](https://github.com/prettier/prettier) (up to 380×).
@@ -63,13 +63,13 @@ npm install
 With JavaScript 6 modules:
 
 ```js
-import { generate } from "astring";
+import { generate } from 'astring'
 ```
 
 With CommonJS:
 
 ```js
-const { generate } = require("astring");
+const { generate } = require('astring')
 ```
 
 A browser-ready minified bundle containing Astring is available at `dist/astring.min.js`. The module exposes a global variable `astring`:
@@ -115,13 +115,13 @@ This example uses [Acorn](https://github.com/marijnh/acorn), a blazingly fast Ja
 // Make sure acorn and astring modules are imported
 
 // Set example code
-var code = "let answer = 4 + 7 * 5 + 3;\n";
+var code = 'let answer = 4 + 7 * 5 + 3;\n'
 // Parse it into an AST
-var ast = acorn.parse(code, { ecmaVersion: 6 });
+var ast = acorn.parse(code, { ecmaVersion: 6 })
 // Format it into a code string
-var formattedCode = astring.generate(ast);
+var formattedCode = astring.generate(ast)
 // Check it
-console.log(code === formattedCode ? "It works!" : "Something went wrong…");
+console.log(code === formattedCode ? 'It works!' : 'Something went wrong…')
 ```
 
 ### Generating source maps
@@ -131,24 +131,24 @@ This example uses the source map generator from the [Source Map](https://github.
 ```javascript
 // Make sure acorn, sourceMap and astring modules are imported
 
-var code = "function add(a, b) { return a + b; }\n";
+var code = 'function add(a, b) { return a + b; }\n'
 var ast = acorn.parse(code, {
   ecmaVersion: 6,
-  sourceType: "module",
+  sourceType: 'module',
   // Locations are needed in order for the source map generator to work
-  locations: true
-});
+  locations: true,
+})
 // Create empty source map generator
 var map = new sourceMap.SourceMapGenerator({
   // Source file name must be set and will be used for mappings
-  file: "script.js"
-});
+  file: 'script.js',
+})
 var formattedCode = generate(ast, {
   // Enable source maps
-  sourceMap: map
-});
+  sourceMap: map,
+})
 // Display generated source map
-console.log(map.toString());
+console.log(map.toString())
 ```
 
 ### Using writable streams
@@ -159,15 +159,15 @@ This example for [Node](http://nodejs.org) shows how to use writable streams to 
 // Make sure acorn and astring modules are imported
 
 // Set example code
-var code = "let answer = 4 + 7 * 5 + 3;\n";
+var code = 'let answer = 4 + 7 * 5 + 3;\n'
 // Parse it into an AST
-var ast = acorn.parse(code, { ecmaVersion: 6 });
+var ast = acorn.parse(code, { ecmaVersion: 6 })
 // Format it and write the result to stdout
 var stream = astring.generate(ast, {
-  output: process.stdout
-});
+  output: process.stdout,
+})
 // The returned value is the output stream
-console.log("Does stream equal process.stdout?", stream === process.stdout);
+console.log('Does stream equal process.stdout?', stream === process.stdout)
 ```
 
 ### Generating comments
@@ -180,26 +180,26 @@ Astring supports comment generation, provided they are stored on the AST nodes. 
 // Set example code
 var code =
   [
-    "// Compute the answer to everything",
-    "let answer = 4 + 7 * 5 + 3;",
-    "// Display it",
-    "console.log(answer);"
-  ].join("\n") + "\n";
+    '// Compute the answer to everything',
+    'let answer = 4 + 7 * 5 + 3;',
+    '// Display it',
+    'console.log(answer);',
+  ].join('\n') + '\n'
 // Parse it into an AST and retrieve the list of comments
-var comments = [];
+var comments = []
 var ast = acorn.parse(code, {
   ecmaVersion: 6,
   locations: true,
-  onComment: comments
-});
+  onComment: comments,
+})
 // Attach comments to AST nodes
-astravel.attachComments(ast, comments);
+astravel.attachComments(ast, comments)
 // Format it into a code string
 var formattedCode = astring.generate(ast, {
-  comments: true
-});
+  comments: true,
+})
 // Check it
-console.log(code === formattedCode ? "It works!" : "Something went wrong…");
+console.log(code === formattedCode ? 'It works!' : 'Something went wrong…')
 ```
 
 ### Extending
@@ -214,33 +214,33 @@ This example shows how to support the `await` keyword which is part of the [asyn
 // Create a custom generator that inherits from Astring's base generator
 var customGenerator = Object.assign({}, astring.baseGenerator, {
   AwaitExpression: function(node, state) {
-    state.write("await ");
-    var argument = node.argument;
+    state.write('await ')
+    var argument = node.argument
     if (argument != null) {
-      this[argument.type](argument, state);
+      this[argument.type](argument, state)
     }
-  }
-});
+  },
+})
 // Obtain a custom AST somehow (note that this AST is not obtained from a valid code)
 var ast = {
-  type: "AwaitExpression",
+  type: 'AwaitExpression',
   argument: {
-    type: "CallExpression",
+    type: 'CallExpression',
     callee: {
-      type: "Identifier",
-      name: "callable"
+      type: 'Identifier',
+      name: 'callable',
     },
-    arguments: []
-  }
-};
+    arguments: [],
+  },
+}
 // Format it
 var code = astring.generate(ast, {
-  generator: customGenerator
-});
+  generator: customGenerator,
+})
 // Check it
 console.log(
-  code === "await callable();\n" ? "It works!" : "Something went wrong…"
-);
+  code === 'await callable();\n' ? 'It works!' : 'Something went wrong…',
+)
 ```
 
 ## Command line interface
