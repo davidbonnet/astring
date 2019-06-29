@@ -35,7 +35,7 @@ const files = glob.sync(pattern, {
 })
 
 test('Script tests', assert => {
-  files.forEach(function(fileName) {
+  files.forEach(fileName => {
     try {
       const code = normalizeNewline(fs.readFileSync(fileName, 'utf8'))
       let ast

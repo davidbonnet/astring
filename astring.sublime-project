@@ -11,7 +11,6 @@
     "js_prettier": {
       "auto_format_on_save": true,
       "auto_format_on_save_excludes": [
-        "*/package.json",
         "*/dist/*",
         "*/node_modules/*",
         "*/.git/*"

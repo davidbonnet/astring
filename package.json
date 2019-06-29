@@ -36,25 +36,25 @@
   "author": "David Bonnet <david@bonnet.cc>",
   "license": "MIT",
   "devDependencies": {
-    "@babel/cli": "^7.2.3",
-    "@babel/core": "^7.4.0",
-    "@babel/preset-env": "^7.4.2",
+    "@babel/cli": "^7.4.4",
+    "@babel/core": "^7.4.5",
+    "@babel/preset-env": "^7.4.5",
     "acorn": "^6.1.1",
     "astravel": "^0.5.0",
-    "ava": "^1.4.1",
+    "ava": "^2.1.0",
     "babel-preset-minify": "^0.5.0",
     "benchmark": "^2.0.0",
     "cross-env": "^5.2.0",
-    "eslint": "^5.16.0",
-    "eslint-config-prettier": "^4.0.0",
-    "eslint-plugin-import": "^2.16.0",
-    "esm": "^3.2.22",
-    "glob": "^7.1.1",
-    "husky": "^1.3.1",
+    "eslint": "^6.0.1",
+    "eslint-config-prettier": "^6.0.0",
+    "eslint-plugin-import": "^2.18.0",
+    "esm": "^3.2.25",
+    "glob": "^7.1.4",
+    "husky": "^2.7.0",
     "normalize-newline": "^3.0.0",
-    "nyc": "^13.3.0",
-    "prettier": "^1.16.4",
-    "standard-version": "^4.4.0"
+    "nyc": "^14.1.1",
+    "prettier": "^1.18.2",
+    "standard-version": "^6.0.1"
   },
   "prettier": {
     "printWidth": 80,
@@ -90,32 +90,34 @@
       "window": true,
       "__dirname": true
     },
-    "overrides": {
-      "files": [
-        "src/tests/fixtures/**/*.js"
-      ],
-      "rules": {
-        "no-unused-vars": 0,
-        "no-undef": 0,
-        "no-var": 0,
-        "no-empty": 0,
-        "no-unused-labels": 0,
-        "no-cond-assign": 0,
-        "no-constant-condition": 0,
-        "constructor-super": 0,
-        "no-unreachable": 0,
-        "no-unsafe-negation": 0,
-        "getter-return": 0,
-        "no-irregular-whitespace": 0,
-        "no-redeclare": 0,
-        "no-dupe-keys": 0,
-        "no-duplicate-case": 0,
-        "no-useless-escape": 0,
-        "no-control-regex": 0,
-        "no-sparse-arrays": 0,
-        "no-debugger": 0
+    "overrides": [
+      {
+        "files": [
+          "src/tests/fixtures/**/*.js"
+        ],
+        "rules": {
+          "no-unused-vars": 0,
+          "no-undef": 0,
+          "no-var": 0,
+          "no-empty": 0,
+          "no-unused-labels": 0,
+          "no-cond-assign": 0,
+          "no-constant-condition": 0,
+          "constructor-super": 0,
+          "no-unreachable": 0,
+          "no-unsafe-negation": 0,
+          "getter-return": 0,
+          "no-irregular-whitespace": 0,
+          "no-redeclare": 0,
+          "no-dupe-keys": 0,
+          "no-duplicate-case": 0,
+          "no-useless-escape": 0,
+          "no-control-regex": 0,
+          "no-sparse-arrays": 0,
+          "no-debugger": 0
+        }
       }
-    }
+    ]
   },
   "ava": {
     "babel": false,
