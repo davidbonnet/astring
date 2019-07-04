@@ -44,6 +44,29 @@ test('Syntax check', assert => {
   })
 })
 
+test('Syntax check without semicolon', assert => {
+  const dirname = path.join(FIXTURES_FOLDER, 'syntax')
+  const files = fs.readdirSync(dirname).sort()
+  const options = {
+    ecmaVersion,
+    sourceType: 'module',
+  }
+  files.forEach(filename => {
+    const code = normalizeNewline(
+      fs.readFileSync(path.join(dirname, filename), 'utf8'),
+    )
+    const ast = parse(code, options)
+    const backToCode = generate(ast, {
+      semicolon: false,
+    })
+    assert.is(
+      backToCode,
+      code.replace(/;$/gm, ''),
+      filename.substring(0, filename.length - 3),
+    )
+  })
+})
+
 test('Tree comparison', assert => {
   const dirname = path.join(FIXTURES_FOLDER, 'tree')
   const files = fs.readdirSync(dirname).sort()

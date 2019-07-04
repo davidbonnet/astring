@@ -292,7 +292,7 @@ export const baseGenerator = {
   }),
   ClassBody: BlockStatement,
   EmptyStatement(node, state) {
-    state.write(';')
+    state.terminate()
   },
   ExpressionStatement(node, state) {
     const precedence = EXPRESSIONS_PRECEDENCE[node.expression.type]
@@ -307,7 +307,7 @@ export const baseGenerator = {
     } else {
       this[node.expression.type](node.expression, state)
     }
-    state.write(';')
+    state.terminate()
   },
   IfStatement(node, state) {
     state.write('if (')
@@ -330,7 +330,7 @@ export const baseGenerator = {
       state.write(' ')
       this[node.label.type](node.label, state)
     }
-    state.write(';')
+    state.terminate()
   },
   ContinueStatement(node, state) {
     state.write('continue')
@@ -338,7 +338,7 @@ export const baseGenerator = {
       state.write(' ')
       this[node.label.type](node.label, state)
     }
-    state.write(';')
+    state.terminate()
   },
   WithStatement(node, state) {
     state.write('with (')
@@ -390,12 +390,12 @@ export const baseGenerator = {
       state.write(' ')
       this[node.argument.type](node.argument, state)
     }
-    state.write(';')
+    state.terminate()
   },
   ThrowStatement(node, state) {
     state.write('throw ')
     this[node.argument.type](node.argument, state)
-    state.write(';')
+    state.terminate()
   },
   TryStatement(node, state) {
     state.write('try ')
@@ -427,7 +427,8 @@ export const baseGenerator = {
     this[node.body.type](node.body, state)
     state.write(' while (')
     this[node.test.type](node.test, state)
-    state.write(');')
+    state.write(')')
+    state.terminate()
   },
   ForStatement(node, state) {
     state.write('for (')
@@ -466,7 +467,9 @@ export const baseGenerator = {
   }),
   ForOfStatement: ForInStatement,
   DebuggerStatement(node, state) {
-    state.write('debugger;' + state.lineEnd)
+    state.write('debugger')
+    state.terminate()
+    state.write(state.lineEnd)
   },
   FunctionDeclaration: (FunctionDeclaration = function(node, state) {
     state.write(
@@ -482,7 +485,7 @@ export const baseGenerator = {
   FunctionExpression: FunctionDeclaration,
   VariableDeclaration(node, state) {
     formatVariableDeclaration(state, node)
-    state.write(';')
+    state.terminate()
   },
   VariableDeclarator(node, state) {
     this[node.id.type](node.id, state)
@@ -547,7 +550,7 @@ export const baseGenerator = {
       state.write(' from ')
     }
     this.Literal(node.source, state)
-    state.write(';')
+    state.terminate()
   },
   ExportDefaultDeclaration(node, state) {
     state.write('export default ')
@@ -557,7 +560,7 @@ export const baseGenerator = {
       node.declaration.type[0] !== 'F'
     ) {
       // All expression nodes except `FunctionExpression`
-      state.write(';')
+      state.terminate()
     }
   },
   ExportNamedDeclaration(node, state) {
@@ -588,13 +591,13 @@ export const baseGenerator = {
         state.write(' from ')
         this.Literal(node.source, state)
       }
-      state.write(';')
+      state.terminate()
     }
   },
   ExportAllDeclaration(node, state) {
     state.write('export * from ')
     this.Literal(node.source, state)
-    state.write(';')
+    state.terminate()
   },
   MethodDefinition(node, state) {
     if (node.static) {
@@ -977,9 +980,16 @@ class State {
         source: setup.sourceMap.file || setup.sourceMap._file,
       }
     }
+    // Semi-colon behaviour
+    this.semicolon = setup.semicolon != null ? setup.semicolon : true
   }
 
   write(code) {
+    const sensitiveChars = '[(-'
+    if (sensitiveChars.indexOf(code.charAt(0)) !== -1 && this.careful) {
+      this.output += ';'
+    }
+    this.careful = false
     this.output += code
   }
 
@@ -1031,6 +1041,14 @@ class State {
   toString() {
     return this.output
   }
+
+  terminate() {
+    if (this.semicolon) {
+      this.write(';')
+    } else {
+      this.careful = true
+    }
+  }
 }
 
 export function generate(node, options) {
@@ -1044,6 +1062,8 @@ export function generate(node, options) {
   - `comments`: generate comments if `true` (defaults to `false`)
   - `output`: output stream to write the rendered code to (defaults to `null`)
   - `generator`: custom code generator (defaults to `baseGenerator`)
+  - `sourceMap`: [source map generator](https://github.com/mozilla/source-map#sourcemapgenerator) (defaults to `null`)
+  - `semicolon`: boolean indicating wether the generator should add semicolons after each statement or not (defaults to `true`) 
   */
   const state = new State(options)
   // Travel through the AST node and generate the code
