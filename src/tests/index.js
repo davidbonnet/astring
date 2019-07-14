@@ -1,11 +1,12 @@
-import test from 'ava'
 import fs from 'fs'
+import test from 'ava'
 import path from 'path'
-import normalizeNewline from 'normalize-newline'
 import { parse } from 'acorn'
 import * as astravel from 'astravel'
 
 import { generate } from '../astring'
+import { readFile } from './tools'
+import benchmarkWithCode from './benchmark'
 
 const FIXTURES_FOLDER = path.join(__dirname, 'fixtures')
 
@@ -36,9 +37,7 @@ test('Syntax check', assert => {
     sourceType: 'module',
   }
   files.forEach(filename => {
-    const code = normalizeNewline(
-      fs.readFileSync(path.join(dirname, filename), 'utf8'),
-    )
+    const code = readFile(path.join(dirname, filename))
     const ast = parse(code, options)
     assert.is(generate(ast), code, filename.substring(0, filename.length - 3))
   })
@@ -52,9 +51,7 @@ test('Tree comparison', assert => {
     sourceType: 'module',
   }
   files.forEach(filename => {
-    const code = normalizeNewline(
-      fs.readFileSync(path.join(dirname, filename), 'utf8'),
-    )
+    const code = readFile(path.join(dirname, filename))
     const ast = parse(code, options)
     stripLocation.go(ast)
     const formattedAst = parse(generate(ast), options)
@@ -71,9 +68,7 @@ test('Deprecated syntax check', assert => {
   const dirname = path.join(FIXTURES_FOLDER, 'deprecated')
   const files = fs.readdirSync(dirname).sort()
   files.forEach(filename => {
-    const code = normalizeNewline(
-      fs.readFileSync(path.join(dirname, filename), 'utf8'),
-    )
+    const code = readFile(path.join(dirname, filename))
     const version = parseInt(filename.substring(2, filename.length - 3))
     const ast = parse(code, { ecmaVersion: version })
     assert.is(generate(ast), code, 'es' + version)
@@ -105,9 +100,7 @@ test('Comment generation', assert => {
     comments: true,
   }
   files.forEach(filename => {
-    const code = normalizeNewline(
-      fs.readFileSync(path.join(dirname, filename), 'utf8'),
-    )
+    const code = readFile(path.join(dirname, filename))
     const comments = []
     const ast = parse(code, {
       ecmaVersion,
@@ -149,4 +142,47 @@ test('Source map generation', assert => {
   })
   assert.is(sourceMap.mappings.length, 3)
   assert.is(formattedCode, code)
+})
+
+test('Performance tiny code', assert => {
+  const result = benchmarkWithCode('var a = 2;', 'tiny code')
+  assert.true(
+    result['astring'].speed > result['escodegen'].speed,
+    'astring is faster than escodegen',
+  )
+  assert.true(
+    result['astring'].speed > 10 * result['babel'].speed,
+    'astring is at least 10x faster than babel',
+  )
+  assert.true(
+    result['astring'].speed > 10 * result['prettier'].speed,
+    'astring is at least 10x faster than prettier',
+  )
+  assert.true(
+    result['acorn + astring'].speed > result['buble'].speed,
+    'astring is faster than buble',
+  )
+})
+
+test('Performance with everything', assert => {
+  const result = benchmarkWithCode(
+    readFile(path.join(FIXTURES_FOLDER, 'tree', 'es6.js')),
+    'everything',
+  )
+  assert.true(
+    result['astring'].speed > result['escodegen'].speed,
+    'astring is faster than escodegen',
+  )
+  assert.true(
+    result['astring'].speed > 10 * result['babel'].speed,
+    'astring is at least 10x faster than babel',
+  )
+  assert.true(
+    result['astring'].speed > 10 * result['prettier'].speed,
+    'astring is at least 10x faster than prettier',
+  )
+  assert.true(
+    result['acorn + astring'].speed > result['buble'].speed,
+    'astring is faster than buble',
+  )
 })

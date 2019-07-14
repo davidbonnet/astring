@@ -29,6 +29,7 @@ Checkout the [live demo](http://david.bonnet.cc/astring/demo/) showing Astring i
 - [API](#api)
   - [`generate(node: object, options: object): string | object`](#generatenode-object-options-object-string-%7C-object)
   - [`baseGenerator: object`](#basegenerator-object)
+- [Benchmark](#benchmark)
 - [Examples](#examples)
   - [Generating code](#generating-code)
   - [Generating source maps](#generating-source-maps)
@@ -102,6 +103,15 @@ The `options` are:
 ### `baseGenerator: object`
 
 Base generator that can be used to [extend Astring](#extending).
+
+## Benchmark
+
+Operations per second for each sample code (since `buble` and `sucrase` handle their own code parsing, they can be compared to `acorn + astring`):
+
+| code sample (length) | escodegen |   astring |  uglify |   babel | prettier | acorn + astring |  buble | sucrase |
+| :------------------- | --------: | --------: | ------: | ------: | -------: | --------------: | -----: | ------: |
+| tiny code (11)       | 1,282,350 | 7,482,709 | 125,099 | 126,943 |      373 |          99,632 | 27,188 | 559,376 |
+| everything (8532)    |     1,420 |     8,296 |       0 |     324 |       56 |             661 |    126 |   1,498 |
 
 ## Examples
 
