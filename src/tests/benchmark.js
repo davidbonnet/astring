@@ -4,6 +4,7 @@ import Benchmark from 'benchmark'
 import { join, keys, fill, map } from 'lodash'
 
 import { parse as acorn } from 'acorn'
+import { parseScript as meriyah } from 'meriyah'
 import uglify from 'uglify-js'
 import { generate as escodegen } from 'escodegen'
 import { generate as astring } from '../astring'
@@ -15,9 +16,11 @@ import { transform as sucrase } from 'sucrase'
 
 import { readFile } from './tools'
 
+const SCRIPT = process.argv[1].indexOf('benchmark.js') !== -1
+
 export default function benchmarkWithCode(code) {
   const acornOptions = {
-    ecmaVersion: 8,
+    ecmaVersion: 10,
     sourceType: 'module',
   }
   const ast = acorn(code, acornOptions)
@@ -61,6 +64,9 @@ export default function benchmarkWithCode(code) {
     },
   }
   const babelOptions = {}
+  const meriyahOptions = {
+    module: true,
+  }
   const prettierOptions = { parser: () => babelAst }
   const sucraseOptions = { transforms: [] }
   let results = {}
@@ -83,6 +89,9 @@ export default function benchmarkWithCode(code) {
     .add('acorn + astring', () => {
       astring(acorn(code, acornOptions))
     })
+    .add('meriyah + astring', () => {
+      astring(meriyah(code, meriyahOptions))
+    })
     .add('buble', () => {
       buble(code, bubleOptions).code
     })
@@ -90,6 +99,9 @@ export default function benchmarkWithCode(code) {
       sucrase(code, sucraseOptions).code
     })
     .on('cycle', event => {
+      if (SCRIPT) {
+        console.log(`${event.target}`)
+      }
       const { target: bench } = event
       results[bench.name] = {
         speed: bench.hz || 0,
@@ -119,7 +131,7 @@ function resultsToMarkdown(results) {
   return output
 }
 
-if (process.argv[1].indexOf('benchmark.js') !== -1) {
+if (SCRIPT) {
   const results = []
   results.push({
     name: 'tiny code',

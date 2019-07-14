@@ -30,8 +30,10 @@ Checkout the [live demo](http://david.bonnet.cc/astring/demo/) showing Astring i
   - [`generate(node: object, options: object): string | object`](#generatenode-object-options-object-string-%7C-object)
   - [`baseGenerator: object`](#basegenerator-object)
 - [Benchmark](#benchmark)
-- [Examples](#examples)
   - [Generating code](#generating-code)
+  - [Parsing and generating code](#parsing-and-generating-code)
+- [Examples](#examples)
+  - [Generating code](#generating-code-1)
   - [Generating source maps](#generating-source-maps)
   - [Using writable streams](#using-writable-streams)
   - [Generating comments](#generating-comments)
@@ -106,12 +108,23 @@ Base generator that can be used to [extend Astring](#extending).
 
 ## Benchmark
 
-Operations per second for each sample code (since `buble` and `sucrase` handle their own code parsing, they can be compared to `acorn + astring`):
+### Generating code
 
-| code sample (length) | escodegen |   astring |  uglify |   babel | prettier | acorn + astring |  buble | sucrase |
-| :------------------- | --------: | --------: | ------: | ------: | -------: | --------------: | -----: | ------: |
-| tiny code (11)       | 1,282,350 | 7,482,709 | 125,099 | 126,943 |      373 |          99,632 | 27,188 | 559,376 |
-| everything (8532)    |     1,420 |     8,296 |       0 |     324 |       56 |             661 |    126 |   1,498 |
+Operations per second for generating each sample code from a pre-parsed AST:
+
+| code sample (length) | escodegen |   astring |  uglify |   babel | prettier |
+| :------------------- | --------: | --------: | ------: | ------: | -------: |
+| tiny code (11)       | 1,080,269 | 6,259,030 | 104,059 | 120,674 |      284 |
+| everything (8532)    |     1,128 |     6,247 |       0 |     263 |       42 |
+
+### Parsing and generating code
+
+Operations per second for parsing and generating each sample code:
+
+| code sample (length) | acorn + astring | meriyah + astring |  buble | sucrase |
+| :------------------- | --------------: | ----------------: | -----: | ------: |
+| tiny code (11)       |          71,504 |           555,398 | 19,970 | 446,721 |
+| everything (8532)    |             425 |                 0 |     86 |   1,037 |
 
 ## Examples
 
