@@ -12,6 +12,7 @@
       "auto_format_on_save": true,
       "auto_format_on_save_excludes": [
         "*/dist/*",
+        "*/fixtures/*",
         "*/node_modules/*",
         "*/.git/*"
       ],
