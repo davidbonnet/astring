@@ -66,6 +66,7 @@ export default function benchmarkWithCode(code) {
   const babelOptions = {}
   const meriyahOptions = {
     module: true,
+    specDeviation: true,
   }
   const prettierOptions = { parser: () => babelAst }
   const sucraseOptions = { transforms: [] }

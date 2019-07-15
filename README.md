@@ -114,8 +114,8 @@ Operations per second for generating each sample code from a pre-parsed AST:
 
 | code sample (length) | escodegen |   astring |  uglify |   babel | prettier |
 | :------------------- | --------: | --------: | ------: | ------: | -------: |
-| tiny code (11)       | 1,080,269 | 6,259,030 | 104,059 | 120,674 |      284 |
-| everything (8532)    |     1,128 |     6,247 |       0 |     263 |       42 |
+| tiny code (11)       | 1,257,527 | 7,185,642 | 129,467 | 156,184 |      333 |
+| everything (8532)    |     1,366 |     8,008 |       0 |     346 |       64 |
 
 ### Parsing and generating code
 
@@ -123,8 +123,8 @@ Operations per second for parsing and generating each sample code:
 
 | code sample (length) | acorn + astring | meriyah + astring |  buble | sucrase |
 | :------------------- | --------------: | ----------------: | -----: | ------: |
-| tiny code (11)       |          71,504 |           555,398 | 19,970 | 446,721 |
-| everything (8532)    |             425 |                 0 |     86 |   1,037 |
+| tiny code (11)       |          92,578 |           864,665 | 25,911 | 575,370 |
+| everything (8532)    |             706 |             1,425 |    132 |   1,403 |
 
 ## Examples
 
