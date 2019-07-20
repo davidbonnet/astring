@@ -54,7 +54,7 @@
     "eslint-plugin-import": "^2.18.0",
     "esm": "^3.2.25",
     "glob": "^7.1.4",
-    "husky": "^2.7.0",
+    "husky": "^3.0.1",
     "lodash": "^4.17.14",
     "meriyah": "^1.3.4",
     "normalize-newline": "^3.0.0",
