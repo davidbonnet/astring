@@ -5,6 +5,8 @@
 .npmignore
 .nyc_output
 .travis.yml
+.prettierignore
+.nvmrc
 CHANGELOG.md
 coverage/
 dist/.keep
