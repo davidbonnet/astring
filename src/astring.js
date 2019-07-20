@@ -113,7 +113,13 @@ function expressionNeedsParenthesis(node, parentNode, isRightHand) {
   const parentNodePrecedence = EXPRESSIONS_PRECEDENCE[parentNode.type]
   if (nodePrecedence !== parentNodePrecedence) {
     // Different node types
-    return nodePrecedence < parentNodePrecedence
+    return (
+      (!isRightHand &&
+        nodePrecedence === 15 &&
+        parentNodePrecedence === 14 &&
+        parentNode.operator === '**') ||
+      nodePrecedence < parentNodePrecedence
+    )
   }
   if (nodePrecedence !== 13 && nodePrecedence !== 14) {
     // Not a `LogicalExpression` or `BinaryExpression`
@@ -843,17 +849,16 @@ export const baseGenerator = {
     this[node.right.type](node.right, state)
   },
   BinaryExpression: (BinaryExpression = function(node, state) {
-    if (node.operator === 'in') {
+    const isIn = node.operator === 'in'
+    if (isIn) {
       // Avoids confusion in `for` loops initializers
       state.write('(')
-      formatBinaryExpressionPart(state, node.left, node, false)
-      state.write(' ' + node.operator + ' ')
-      formatBinaryExpressionPart(state, node.right, node, true)
+    }
+    formatBinaryExpressionPart(state, node.left, node, false)
+    state.write(' ' + node.operator + ' ')
+    formatBinaryExpressionPart(state, node.right, node, true)
+    if (isIn) {
       state.write(')')
-    } else {
-      formatBinaryExpressionPart(state, node.left, node, false)
-      state.write(' ' + node.operator + ' ')
-      formatBinaryExpressionPart(state, node.right, node, true)
     }
   }),
   LogicalExpression: BinaryExpression,

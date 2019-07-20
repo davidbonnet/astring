@@ -39,7 +39,12 @@ test('Syntax check', assert => {
   files.forEach(filename => {
     const code = readFile(path.join(dirname, filename))
     const ast = parse(code, options)
-    assert.is(generate(ast), code, filename.substring(0, filename.length - 3))
+    assert.is(
+      generate(ast),
+      code,
+      filename.substring(0, filename.length - 3),
+      'Generates code with the expected format',
+    )
   })
 })
 
@@ -60,6 +65,7 @@ test('Tree comparison', assert => {
       formattedAst,
       ast,
       filename.substring(0, filename.length - 3),
+      'Generates code with the same meaning',
     )
   })
 })
