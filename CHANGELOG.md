@@ -1,6 +1,15 @@
-# Change Log
+# Changelog
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+### [1.4.1](https://github.com/davidbonnet/astring/compare/v1.4.0...v1.4.1) (2019-07-20)
+
+
+### Bug Fixes
+
+* **#74:** correct exponentiation precedence ([b267927](https://github.com/davidbonnet/astring/commit/b267927)), closes [#74](https://github.com/davidbonnet/astring/issues/74) [#74](https://github.com/davidbonnet/astring/issues/74)
+
+
 
 <a name="1.4.0"></a>
 # [1.4.0](https://github.com/davidbonnet/astring/compare/v1.3.1...v1.4.0) (2019-03-30)
