@@ -49,7 +49,7 @@
     "buble": "^0.19.8",
     "cross-env": "^5.2.0",
     "escodegen": "^1.12.0",
-    "eslint": "^6.2.0",
+    "eslint": "^6.2.1",
     "eslint-config-prettier": "^6.1.0",
     "eslint-plugin-import": "^2.18.0",
     "esm": "^3.2.25",
