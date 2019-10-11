@@ -39,7 +39,7 @@
     "@babel/cli": "^7.6.4",
     "@babel/core": "^7.6.3",
     "@babel/generator": "^7.6.3",
-    "@babel/parser": "^7.6.3",
+    "@babel/parser": "^7.6.4",
     "@babel/preset-env": "^7.6.3",
     "acorn": "^6.3.0",
     "astravel": "^0.5.0",
