@@ -683,13 +683,16 @@ export const baseGenerator = {
     const { length } = expressions
     for (let i = 0; i < length; i++) {
       const expression = expressions[i]
-      state.write(quasis[i].value.raw)
+      this.TemplateElement(quasis[i], state)
       state.write('${')
       this[expression.type](expression, state)
       state.write('}')
     }
     state.write(quasis[quasis.length - 1].value.raw)
     state.write('`')
+  },
+  TemplateElement(node, state) {
+    state.write(node.value.raw)
   },
   TaggedTemplateExpression(node, state) {
     this[node.tag.type](node.tag, state)
