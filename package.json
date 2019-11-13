@@ -53,7 +53,7 @@
     "eslint-config-prettier": "^6.5.0",
     "eslint-plugin-import": "^2.18.0",
     "esm": "^3.2.25",
-    "glob": "^7.1.5",
+    "glob": "^7.1.6",
     "husky": "^3.0.9",
     "lodash": "^4.17.14",
     "meriyah": "^1.8.7",
