@@ -62,7 +62,7 @@
     "prettier": "^1.19.1",
     "standard-version": "^7.0.1",
     "sucrase": "^3.10.1",
-    "uglify-js": "^3.7.0"
+    "uglify-js": "^3.7.1"
   },
   "prettier": {
     "printWidth": 80,
