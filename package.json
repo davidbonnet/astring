@@ -58,7 +58,7 @@
     "lodash": "^4.17.14",
     "meriyah": "^1.9.4",
     "normalize-newline": "^3.0.0",
-    "nyc": "^14.1.1",
+    "nyc": "^15.0.0",
     "prettier": "^1.19.1",
     "standard-version": "^7.0.1",
     "sucrase": "^3.10.1",
