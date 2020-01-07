@@ -773,7 +773,7 @@ export const baseGenerator = {
     state.indentLevel--
   },
   Property(node, state) {
-    if (node.method || node.kind[0] !== 'i') {
+    if (node.method || (node.kind && node.kind[0] !== 'i')) {
       // Either a method or of kind `set` or `get` (not `init`)
       this.MethodDefinition(node, state)
     } else {
