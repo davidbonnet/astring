@@ -48,7 +48,7 @@
     "benchmark": "^2.1.4",
     "buble": "^0.19.8",
     "cross-env": "^6.0.3",
-    "escodegen": "^1.12.1",
+    "escodegen": "^1.13.0",
     "eslint": "^6.8.0",
     "eslint-config-prettier": "^6.9.0",
     "eslint-plugin-import": "^2.20.0",
