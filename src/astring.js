@@ -672,9 +672,15 @@ export const baseGenerator = {
     }
   },
   AwaitExpression(node, state) {
-    state.write('await ')
+    state.write('await ', node)
     if (node.argument) {
-      this[node.argument.type](node.argument, state)
+      if (node.argument.type === 'ArrowFunctionExpression') {
+        state.write('(', node)
+        this[node.argument.type](node.argument, state)
+        state.write(')', node)
+      } else {
+        this[node.argument.type](node.argument, state)
+      }
     }
   },
   TemplateLiteral(node, state) {
