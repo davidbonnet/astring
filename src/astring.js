@@ -688,6 +688,11 @@ export const baseGenerator = {
       this[expression.type](expression, state)
       state.write('}')
     }
+    const cooked = quasis[quasis.length - 1].value.raw;
+    const cookedLength = cooked.split('\n').length;
+    const shift = cookedLength - 1;
+    if (shift > 0) state.line = state.line + shift;
+
     state.write(quasis[quasis.length - 1].value.raw)
     state.write('`')
   },
