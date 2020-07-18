@@ -150,7 +150,7 @@ test('Source map generation', assert => {
   assert.is(formattedCode, code)
 })
 
-test('Performance tiny code', assert => {
+test.skip('Performance tiny code', assert => {
   const result = benchmarkWithCode('var a = 2;', 'tiny code')
   assert.true(
     result['astring'].speed > result['escodegen'].speed,
@@ -170,7 +170,7 @@ test('Performance tiny code', assert => {
   )
 })
 
-test('Performance with everything', assert => {
+test.skip('Performance with everything', assert => {
   const result = benchmarkWithCode(
     readFile(path.join(FIXTURES_FOLDER, 'tree', 'es6.js')),
     'everything',
