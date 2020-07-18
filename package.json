@@ -36,32 +36,32 @@
   "author": "David Bonnet <david@bonnet.cc>",
   "license": "MIT",
   "devDependencies": {
-    "@babel/cli": "^7.8.4",
-    "@babel/core": "^7.8.7",
-    "@babel/generator": "^7.8.8",
-    "@babel/parser": "^7.8.8",
-    "@babel/preset-env": "^7.8.7",
-    "acorn": "^6.4.1",
+    "@babel/cli": "^7.10.5",
+    "@babel/core": "^7.10.5",
+    "@babel/generator": "^7.10.5",
+    "@babel/parser": "^7.10.5",
+    "@babel/preset-env": "^7.10.4",
+    "acorn": "^7.3.1",
     "astravel": "^0.5.0",
-    "ava": "^2.4.0",
+    "ava": "^3.10.1",
     "babel-preset-minify": "^0.5.1",
     "benchmark": "^2.1.4",
     "buble": "^0.19.8",
     "cross-env": "^7.0.2",
     "escodegen": "^1.14.1",
-    "eslint": "^6.8.0",
-    "eslint-config-prettier": "^6.10.0",
-    "eslint-plugin-import": "^2.20.1",
+    "eslint": "^7.4.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-import": "^2.22.0",
     "esm": "^3.2.25",
     "glob": "^7.1.6",
-    "husky": "^4.2.3",
-    "lodash": "^4.17.14",
+    "husky": "^4.2.5",
+    "lodash": "^4.17.19",
     "meriyah": "^1.9.9",
     "normalize-newline": "^3.0.0",
-    "nyc": "^15.0.0",
-    "prettier": "^1.19.1",
+    "nyc": "^15.1.0",
+    "prettier": "^2.0.5",
     "standard-version": "^7.1.0",
-    "sucrase": "^3.12.1",
+    "sucrase": "^3.15.0",
     "uglify-js": "^3.8.0"
   },
   "prettier": {
@@ -122,14 +122,14 @@
           "no-useless-escape": 0,
           "no-control-regex": 0,
           "no-sparse-arrays": 0,
-          "no-debugger": 0
+          "no-debugger": 0,
+          "no-inner-declarations": 0,
+          "no-dupe-class-members": 0
         }
       }
     ]
   },
   "ava": {
-    "babel": false,
-    "compileEnhancements": false,
     "files": [
       "src/**/tests/index.js"
     ],
