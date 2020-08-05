@@ -46,7 +46,7 @@
     "ava": "^2.4.0",
     "babel-preset-minify": "^0.5.1",
     "benchmark": "^2.1.4",
-    "buble": "^0.19.8",
+    "buble": "^0.20.0",
     "cross-env": "^7.0.2",
     "escodegen": "^1.14.1",
     "eslint": "^6.8.0",
