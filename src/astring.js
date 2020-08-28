@@ -555,6 +555,11 @@ export const baseGenerator = {
     this.Literal(node.source, state)
     state.write(';')
   },
+  ImportExpression(node, state) {
+    state.write('import(');
+    this[node.source.type](node.source, state);
+    state.write(')');
+  },
   ExportDefaultDeclaration(node, state) {
     state.write('export default ')
     this[node.declaration.type](node.declaration, state)
