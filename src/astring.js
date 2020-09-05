@@ -675,9 +675,9 @@ export const baseGenerator = {
     state.write('await ', node)
     if (node.argument) {
       if (node.argument.type === 'ArrowFunctionExpression') {
-        state.write('(', node)
+        state.write('(', null)
         this[node.argument.type](node.argument, state)
-        state.write(')', node)
+        state.write(')', null)
       } else {
         this[node.argument.type](node.argument, state)
       }
@@ -1018,26 +1018,13 @@ class State {
       mapping.name = node.name
       this.sourceMap.addMapping(mapping)
     }
-    if (code.length > 0) {
-      if (this.lineEndSize > 0) {
-        if (code.endsWith(this.lineEnd)) {
-          this.line += this.lineEndSize
-          this.column = 0
-        } else if (code[code.length - 1] === '\n') {
-          // Case of inline comment
-          this.line++
-          this.column = 0
-        } else {
-          this.column += code.length
-        }
+
+    for (let char = 0; char < code.length; char++) {
+      if (code[char] === '\n') {
+        this.column = 0
+        this.line++
       } else {
-        if (code[code.length - 1] === '\n') {
-          // Case of inline comment
-          this.line++
-          this.column = 0
-        } else {
-          this.column += code.length
-        }
+        this.column++
       }
     }
   }
