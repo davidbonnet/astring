@@ -36,7 +36,7 @@
   "author": "David Bonnet <david@bonnet.cc>",
   "license": "MIT",
   "devDependencies": {
-    "@babel/cli": "^7.10.5",
+    "@babel/cli": "^7.11.6",
     "@babel/core": "^7.11.1",
     "@babel/generator": "^7.11.6",
     "@babel/parser": "^7.11.5",
