@@ -61,7 +61,7 @@
     "nyc": "^15.1.0",
     "prettier": "^1.19.1",
     "standard-version": "^7.1.0",
-    "sucrase": "^3.15.0",
+    "sucrase": "^3.16.0",
     "uglify-js": "^3.11.2"
   },
   "prettier": {
