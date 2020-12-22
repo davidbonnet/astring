@@ -631,6 +631,11 @@ export const baseGenerator = {
   ClassExpression(node, state) {
     this.ClassDeclaration(node, state)
   },
+  ImportExpression(node, state) {
+    state.write('import(');
+    this[node.source.type](node.source, state);
+    state.write(')');
+  },
   ArrowFunctionExpression(node, state) {
     state.write(node.async ? 'async ' : '', node)
     const { params } = node
