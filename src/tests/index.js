@@ -48,6 +48,26 @@ test('Syntax check', assert => {
   })
 })
 
+test('Syntax check without semicolon', assert => {
+  const dirname = path.join(FIXTURES_FOLDER, 'semicolon')
+  const files = fs.readdirSync(dirname).sort()
+  const options = {
+    ecmaVersion,
+    sourceType: 'module',
+  }
+  files.forEach(filename => {
+    const code = readFile(path.join(dirname, filename))
+    const ast = parse(code, options)
+    assert.is(
+      generate(ast, {
+        semicolon: false,
+      }),
+      code,
+      filename.substring(0, filename.length - 3),
+    )
+  })
+})
+
 test('Tree comparison', assert => {
   const dirname = path.join(FIXTURES_FOLDER, 'tree')
   const files = fs.readdirSync(dirname).sort()
@@ -150,7 +170,7 @@ test('Source map generation', assert => {
   assert.is(formattedCode, code)
 })
 
-test('Performance tiny code', assert => {
+test.skip('Performance tiny code', assert => {
   const result = benchmarkWithCode('var a = 2;', 'tiny code')
   assert.true(
     result['astring'].speed > result['escodegen'].speed,
@@ -170,7 +190,7 @@ test('Performance tiny code', assert => {
   )
 })
 
-test('Performance with everything', assert => {
+test.skip('Performance with everything', assert => {
   const result = benchmarkWithCode(
     readFile(path.join(FIXTURES_FOLDER, 'tree', 'es6.js')),
     'everything',

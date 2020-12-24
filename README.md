@@ -100,6 +100,7 @@ The `options` are:
 - `output`: output stream to write the rendered code to (defaults to `null`)
 - `generator`: custom code generator (defaults to `astring.baseGenerator`)
 - `sourceMap`: [source map generator](https://github.com/mozilla/source-map#sourcemapgenerator) (defaults to `null`)
+- `semicolon`: boolean indicating wether the generator should add semicolons after each statement or not (defaults to `true`)
 
 ### `baseGenerator: object`
 
