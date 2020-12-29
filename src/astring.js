@@ -914,7 +914,7 @@ export const baseGenerator = {
       this[node.callee.type](node.callee, state)
     }
     if (node.optional) {
-      state.write('.?')
+      state.write('?.')
     }
     formatSequence(state, node['arguments'])
   },
