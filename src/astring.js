@@ -913,6 +913,9 @@ export const baseGenerator = {
     } else {
       this[node.callee.type](node.callee, state)
     }
+    if (node.optional) {
+      state.write('.?')
+    }
     formatSequence(state, node['arguments'])
   },
   MemberExpression(node, state) {
@@ -925,6 +928,9 @@ export const baseGenerator = {
       state.write(')')
     } else {
       this[node.object.type](node.object, state)
+    }
+    if (node.optional) {
+      state.write('?')
     }
     if (node.computed) {
       state.write('[')
