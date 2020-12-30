@@ -10,7 +10,7 @@ import benchmarkWithCode from './benchmark'
 
 const FIXTURES_FOLDER = path.join(__dirname, 'fixtures')
 
-const ecmaVersion = 10
+const ecmaVersion = 12
 
 const stripLocation = astravel.makeTraveler({
   go(node, state) {
@@ -83,6 +83,24 @@ test('Deprecated syntax check', assert => {
 
 test('Output stream', assert => {
   const code = 'const a = 42;\n'
+  const output = {
+    buffer: '',
+    write(code) {
+      this.buffer += code
+    },
+  }
+  const ast = parse(code, {
+    ecmaVersion,
+  })
+  const result = generate(ast, {
+    output,
+  })
+  assert.is(result, output)
+  assert.is(result.buffer, code)
+})
+
+test('Optional chaining check', assert => {
+  const code = 'a?.b?.[0]?.c?.(42);\n'
   const output = {
     buffer: '',
     write(code) {

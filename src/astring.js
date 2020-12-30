@@ -68,6 +68,7 @@ const EXPRESSIONS_PRECEDENCE = {
   SequenceExpression: 20,
   // Operations
   MemberExpression: 19,
+  ChainExpression: 19,
   CallExpression: 19,
   NewExpression: 19,
   // Other definitions
@@ -918,6 +919,9 @@ export const baseGenerator = {
     }
     formatSequence(state, node['arguments'])
   },
+  ChainExpression(node, state) {
+    this[node.expression.type](node.expression, state)
+  },
   MemberExpression(node, state) {
     if (
       EXPRESSIONS_PRECEDENCE[node.object.type] <
@@ -929,14 +933,17 @@ export const baseGenerator = {
     } else {
       this[node.object.type](node.object, state)
     }
-    if (node.optional) {
-      state.write('?')
-    }
     if (node.computed) {
+      if (node.optional) {
+        state.write('?.')
+      }
       state.write('[')
       this[node.property.type](node.property, state)
       state.write(']')
     } else {
+      if (node.optional) {
+        state.write('?')
+      }
       state.write('.')
       this[node.property.type](node.property, state)
     }
