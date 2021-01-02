@@ -36,33 +36,33 @@
   "author": "David Bonnet <david@bonnet.cc>",
   "license": "MIT",
   "devDependencies": {
-    "@babel/cli": "^7.10.5",
-    "@babel/core": "^7.10.5",
-    "@babel/generator": "^7.10.5",
-    "@babel/parser": "^7.10.5",
-    "@babel/preset-env": "^7.10.4",
-    "acorn": "^7.3.1",
+    "@babel/cli": "^7.12.10",
+    "@babel/core": "^7.12.10",
+    "@babel/generator": "^7.12.11",
+    "@babel/parser": "^7.12.11",
+    "@babel/preset-env": "^7.12.11",
+    "acorn": "^6.4.2",
     "astravel": "^0.5.0",
     "ava": "^3.10.1",
     "babel-preset-minify": "^0.5.1",
     "benchmark": "^2.1.4",
-    "buble": "^0.19.8",
-    "cross-env": "^7.0.2",
-    "escodegen": "^1.14.1",
-    "eslint": "^7.4.0",
-    "eslint-config-prettier": "^6.11.0",
-    "eslint-plugin-import": "^2.22.0",
+    "buble": "^0.20.0",
+    "cross-env": "^7.0.3",
+    "escodegen": "^2.0.0",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.15.0",
+    "eslint-plugin-import": "^2.22.1",
     "esm": "^3.2.25",
     "glob": "^7.1.6",
-    "husky": "^4.2.5",
-    "lodash": "^4.17.19",
-    "meriyah": "^1.9.9",
+    "husky": "^4.3.6",
+    "lodash": "^4.17.20",
+    "meriyah": "^3.1.6",
     "normalize-newline": "^3.0.0",
     "nyc": "^15.1.0",
     "prettier": "^2.0.5",
     "standard-version": "^7.1.0",
-    "sucrase": "^3.15.0",
-    "uglify-js": "^3.8.0"
+    "sucrase": "^3.16.0",
+    "uglify-js": "^3.12.3"
   },
   "prettier": {
     "printWidth": 80,
@@ -122,14 +122,14 @@
           "no-useless-escape": 0,
           "no-control-regex": 0,
           "no-sparse-arrays": 0,
-          "no-debugger": 0,
-          "no-inner-declarations": 0,
-          "no-dupe-class-members": 0
+          "no-debugger": 0
         }
       }
     ]
   },
   "ava": {
+    "babel": false,
+    "compileEnhancements": false,
     "files": [
       "src/**/tests/index.js"
     ],
