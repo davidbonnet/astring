@@ -13,11 +13,14 @@
     "build:minified": "cross-env BABEL_MODE=minified babel src/astring.js --out-file dist/astring.min.js --source-maps --no-comments",
     "build:demo": "npm run build:minified && cp dist/astring.min.* docs/demo/",
     "prepare": "npm run build",
-    "test": "eslint src && prettier --list-different \"{src,scripts}/**/*.js\" \"bin/astring\" && npm run build:minified && nyc ava",
+    "test": "npm run eslint && npm run prettier:check && npm run build:minified && npm run test:coverage",
     "test:watch": "ava --watch",
+    "test:coverage": "c8 --reporter=html --reporter=text --reporter=lcov --include='src/*.js' --exclude='src/tests/**/*.js' ava",
     "test:scripts": "npm run test:scripts:build && tap test/_scripts.js",
     "benchmark": "node --require esm ./src/tests/benchmark.js",
+    "eslint": "eslint src",
     "prettier": "prettier --write \"{src,scripts}/**/*.js\" \"bin/astring\"",
+    "prettier:check": "prettier --list-different \"{src,scripts}/**/*.js\" \"bin/astring\"",
     "prepush": "npm test",
     "release": "standard-version",
     "deploy": "git push --follow-tags origin master && npm publish"
@@ -43,14 +46,15 @@
     "@babel/preset-env": "^7.12.11",
     "acorn": "^6.4.2",
     "astravel": "^0.5.0",
-    "ava": "^3.10.1",
+    "ava": "^3.15.0",
     "babel-preset-minify": "^0.5.1",
     "benchmark": "^2.1.4",
     "buble": "^0.20.0",
+    "c8": "^7.4.0",
     "cross-env": "^7.0.3",
     "escodegen": "^2.0.0",
-    "eslint": "^6.8.0",
-    "eslint-config-prettier": "^6.15.0",
+    "eslint": "^7.17.0",
+    "eslint-config-prettier": "^7.1.0",
     "eslint-plugin-import": "^2.22.1",
     "esm": "^3.2.25",
     "glob": "^7.1.6",
@@ -58,11 +62,10 @@
     "lodash": "^4.17.20",
     "meriyah": "^3.1.6",
     "normalize-newline": "^3.0.0",
-    "nyc": "^15.1.0",
-    "prettier": "^2.0.5",
-    "standard-version": "^7.1.0",
-    "sucrase": "^3.16.0",
-    "uglify-js": "^3.12.3"
+    "prettier": "^2.2.1",
+    "standard-version": "^9.1.0",
+    "sucrase": "^3.17.0",
+    "uglify-js": "^3.12.4"
   },
   "prettier": {
     "printWidth": 80,
@@ -122,29 +125,19 @@
           "no-useless-escape": 0,
           "no-control-regex": 0,
           "no-sparse-arrays": 0,
-          "no-debugger": 0
+          "no-debugger": 0,
+          "no-dupe-class-members": 0,
+          "no-inner-declarations": 0
         }
       }
     ]
   },
   "ava": {
-    "babel": false,
-    "compileEnhancements": false,
     "files": [
       "src/**/tests/index.js"
     ],
     "require": [
       "esm"
-    ]
-  },
-  "nyc": {
-    "exclude": [
-      "src/**/tests/*.js"
-    ],
-    "reporter": [
-      "html",
-      "lcov",
-      "text"
     ]
   },
   "esm": "auto"

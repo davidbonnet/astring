@@ -29,14 +29,14 @@ const stripLocation = astravel.makeTraveler({
   },
 })
 
-test('Syntax check', assert => {
+test('Syntax check', (assert) => {
   const dirname = path.join(FIXTURES_FOLDER, 'syntax')
   const files = fs.readdirSync(dirname).sort()
   const options = {
     ecmaVersion,
     sourceType: 'module',
   }
-  files.forEach(filename => {
+  files.forEach((filename) => {
     const code = readFile(path.join(dirname, filename))
     const ast = parse(code, options)
     assert.is(
@@ -48,14 +48,14 @@ test('Syntax check', assert => {
   })
 })
 
-test('Tree comparison', assert => {
+test('Tree comparison', (assert) => {
   const dirname = path.join(FIXTURES_FOLDER, 'tree')
   const files = fs.readdirSync(dirname).sort()
   const options = {
     ecmaVersion,
     sourceType: 'module',
   }
-  files.forEach(filename => {
+  files.forEach((filename) => {
     const code = readFile(path.join(dirname, filename))
     const ast = parse(code, options)
     stripLocation.go(ast)
@@ -70,10 +70,10 @@ test('Tree comparison', assert => {
   })
 })
 
-test('Deprecated syntax check', assert => {
+test('Deprecated syntax check', (assert) => {
   const dirname = path.join(FIXTURES_FOLDER, 'deprecated')
   const files = fs.readdirSync(dirname).sort()
-  files.forEach(filename => {
+  files.forEach((filename) => {
     const code = readFile(path.join(dirname, filename))
     const version = parseInt(filename.substring(2, filename.length - 3))
     const ast = parse(code, { ecmaVersion: version })
@@ -81,7 +81,7 @@ test('Deprecated syntax check', assert => {
   })
 })
 
-test('Output stream', assert => {
+test('Output stream', (assert) => {
   const code = 'const a = 42;\n'
   const output = {
     buffer: '',
@@ -99,13 +99,13 @@ test('Output stream', assert => {
   assert.is(result.buffer, code)
 })
 
-test('Comment generation', assert => {
+test('Comment generation', (assert) => {
   const dirname = path.join(FIXTURES_FOLDER, 'comment')
   const files = fs.readdirSync(dirname).sort()
   const options = {
     comments: true,
   }
-  files.forEach(filename => {
+  files.forEach((filename) => {
     const code = readFile(path.join(dirname, filename))
     const comments = []
     const ast = parse(code, {
@@ -122,7 +122,7 @@ test('Comment generation', assert => {
   })
 })
 
-test('Source map generation', assert => {
+test('Source map generation', (assert) => {
   const code = 'function f(x) {\n  return x;\n}\n'
   const sourceMap = {
     mappings: [],
@@ -150,7 +150,7 @@ test('Source map generation', assert => {
   assert.is(formattedCode, code)
 })
 
-test.skip('Performance tiny code', assert => {
+test.skip('Performance tiny code', (assert) => {
   const result = benchmarkWithCode('var a = 2;', 'tiny code')
   assert.true(
     result['astring'].speed > result['escodegen'].speed,
@@ -170,7 +170,7 @@ test.skip('Performance tiny code', assert => {
   )
 })
 
-test.skip('Performance with everything', assert => {
+test.skip('Performance with everything', (assert) => {
   const result = benchmarkWithCode(
     readFile(path.join(FIXTURES_FOLDER, 'tree', 'es6.js')),
     'everything',

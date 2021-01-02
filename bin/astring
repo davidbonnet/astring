@@ -73,10 +73,10 @@ if (files.length === 0) {
   process.stdin.setEncoding('utf8')
   process.stdin.resume()
   process.stdin
-    .on('data', function(chunk) {
+    .on('data', function (chunk) {
       data += chunk
     })
-    .on('end', function() {
+    .on('end', function () {
       try {
         generate(JSON.parse(data), options)
       } catch (error) {

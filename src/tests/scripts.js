@@ -16,7 +16,7 @@ const options = {
 }
 
 const stripLocation = astravel.makeTraveler({
-  go: function(node, state) {
+  go: function (node, state) {
     delete node.start
     delete node.end
     this[node.type](node, state)
@@ -34,8 +34,8 @@ const files = glob.sync(pattern, {
   nodir: true,
 })
 
-test('Script tests', assert => {
-  files.forEach(fileName => {
+test('Script tests', (assert) => {
+  files.forEach((fileName) => {
     try {
       const code = normalizeNewline(fs.readFileSync(fileName, 'utf8'))
       let ast

@@ -261,7 +261,7 @@ export const baseGenerator = {
       formatComments(state, node.trailingComments, indent, lineEnd)
     }
   },
-  BlockStatement: (BlockStatement = function(node, state) {
+  BlockStatement: (BlockStatement = function (node, state) {
     const indent = state.indent.repeat(state.indentLevel++)
     const { lineEnd, writeComments } = state
     const statementIndent = indent + state.indent
@@ -456,7 +456,7 @@ export const baseGenerator = {
     state.write(') ')
     this[node.body.type](node.body, state)
   },
-  ForInStatement: (ForInStatement = function(node, state) {
+  ForInStatement: (ForInStatement = function (node, state) {
     state.write(`for ${node.await ? 'await ' : ''}(`)
     const { left } = node
     if (left.type[0] === 'V') {
@@ -474,7 +474,7 @@ export const baseGenerator = {
   DebuggerStatement(node, state) {
     state.write('debugger;' + state.lineEnd)
   },
-  FunctionDeclaration: (FunctionDeclaration = function(node, state) {
+  FunctionDeclaration: (FunctionDeclaration = function (node, state) {
     state.write(
       (node.async ? 'async ' : '') +
         (node.generator ? 'function* ' : 'function ') +
@@ -659,7 +659,7 @@ export const baseGenerator = {
   Super(node, state) {
     state.write('super', node)
   },
-  RestElement: (RestElement = function(node, state) {
+  RestElement: (RestElement = function (node, state) {
     state.write('...')
     this[node.argument.type](node.argument, state)
   }),
@@ -704,7 +704,7 @@ export const baseGenerator = {
     this[node.tag.type](node.tag, state)
     this[node.quasi.type](node.quasi, state)
   },
-  ArrayExpression: (ArrayExpression = function(node, state) {
+  ArrayExpression: (ArrayExpression = function (node, state) {
     state.write('[')
     if (node.elements.length > 0) {
       const { elements } = node,
@@ -857,7 +857,7 @@ export const baseGenerator = {
     state.write(' = ')
     this[node.right.type](node.right, state)
   },
-  BinaryExpression: (BinaryExpression = function(node, state) {
+  BinaryExpression: (BinaryExpression = function (node, state) {
     const isIn = node.operator === 'in'
     if (isIn) {
       // Avoids confusion in `for` loops initializers
