@@ -818,7 +818,7 @@ export const baseGenerator = {
   UnaryExpression(node, state) {
     if (node.prefix) {
       state.write(node.operator)
-      if (node.operator.length > 1) {
+      if (node.operator.length > 1 || node.argument.type === 'UnaryExpression') {
         state.write(' ')
       }
       if (
