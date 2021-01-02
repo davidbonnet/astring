@@ -89,7 +89,7 @@
       "es6": true
     },
     "parserOptions": {
-      "ecmaVersion": 10,
+      "ecmaVersion": 12,
       "sourceType": "module"
     },
     "globals": {
