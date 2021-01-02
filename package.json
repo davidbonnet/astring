@@ -44,7 +44,7 @@
     "@babel/generator": "^7.12.11",
     "@babel/parser": "^7.12.11",
     "@babel/preset-env": "^7.12.11",
-    "acorn": "^6.4.2",
+    "acorn": "^8.0.4",
     "astravel": "^0.5.0",
     "ava": "^3.15.0",
     "babel-preset-minify": "^0.5.1",

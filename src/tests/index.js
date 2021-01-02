@@ -10,7 +10,7 @@ import benchmarkWithCode from './benchmark'
 
 const FIXTURES_FOLDER = path.join(__dirname, 'fixtures')
 
-const ecmaVersion = 10
+const ecmaVersion = 12
 
 const stripLocation = astravel.makeTraveler({
   go(node, state) {
