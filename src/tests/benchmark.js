@@ -99,7 +99,7 @@ export default function benchmarkWithCode(code) {
     .add('sucrase', () => {
       sucrase(code, sucraseOptions).code
     })
-    .on('cycle', event => {
+    .on('cycle', (event) => {
       if (SCRIPT) {
         console.log(`${event.target}`)
       }
@@ -125,7 +125,7 @@ function resultsToMarkdown(results) {
   for (let i = 0; i < length; i++) {
     const result = results[i]
     output += `| ${result.name} (${result.length}) | ${join(
-      map(categories, key => format(result.results[key].speed)),
+      map(categories, (key) => format(result.results[key].speed)),
       ' | ',
     )} |\n`
   }
