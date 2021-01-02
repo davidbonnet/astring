@@ -1,11 +1,11 @@
 {
   "name": "astring",
-  "version": "1.4.3",
+  "version": "1.4.4",
   "description": "JavaScript code generator from an ESTree-compliant AST.",
   "main": "./dist/astring.js",
   "module": "./src/astring.js",
   "bin": {
-    "astring": "./bin/astring"
+    "astring": "bin/astring"
   },
   "scripts": {
     "build": "babel src/astring.js --out-file dist/astring.js --source-maps --no-comments",
