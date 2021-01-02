@@ -68,6 +68,7 @@ const EXPRESSIONS_PRECEDENCE = {
   SequenceExpression: 20,
   // Operations
   MemberExpression: 19,
+  ChainExpression: 19,
   CallExpression: 19,
   NewExpression: 19,
   // Other definitions
@@ -261,7 +262,7 @@ export const baseGenerator = {
       formatComments(state, node.trailingComments, indent, lineEnd)
     }
   },
-  BlockStatement: (BlockStatement = function(node, state) {
+  BlockStatement: (BlockStatement = function (node, state) {
     const indent = state.indent.repeat(state.indentLevel++)
     const { lineEnd, writeComments } = state
     const statementIndent = indent + state.indent
@@ -456,7 +457,7 @@ export const baseGenerator = {
     state.write(') ')
     this[node.body.type](node.body, state)
   },
-  ForInStatement: (ForInStatement = function(node, state) {
+  ForInStatement: (ForInStatement = function (node, state) {
     state.write(`for ${node.await ? 'await ' : ''}(`)
     const { left } = node
     if (left.type[0] === 'V') {
@@ -474,7 +475,7 @@ export const baseGenerator = {
   DebuggerStatement(node, state) {
     state.write('debugger;' + state.lineEnd)
   },
-  FunctionDeclaration: (FunctionDeclaration = function(node, state) {
+  FunctionDeclaration: (FunctionDeclaration = function (node, state) {
     state.write(
       (node.async ? 'async ' : '') +
         (node.generator ? 'function* ' : 'function ') +
@@ -554,6 +555,11 @@ export const baseGenerator = {
     }
     this.Literal(node.source, state)
     state.write(';')
+  },
+  ImportExpression(node, state) {
+    state.write('import(');
+    this[node.source.type](node.source, state);
+    state.write(')');
   },
   ExportDefaultDeclaration(node, state) {
     state.write('export default ')
@@ -659,7 +665,7 @@ export const baseGenerator = {
   Super(node, state) {
     state.write('super', node)
   },
-  RestElement: (RestElement = function(node, state) {
+  RestElement: (RestElement = function (node, state) {
     state.write('...')
     this[node.argument.type](node.argument, state)
   }),
@@ -704,7 +710,7 @@ export const baseGenerator = {
     this[node.tag.type](node.tag, state)
     this[node.quasi.type](node.quasi, state)
   },
-  ArrayExpression: (ArrayExpression = function(node, state) {
+  ArrayExpression: (ArrayExpression = function (node, state) {
     state.write('[')
     if (node.elements.length > 0) {
       const { elements } = node,
@@ -818,7 +824,7 @@ export const baseGenerator = {
   UnaryExpression(node, state) {
     if (node.prefix) {
       state.write(node.operator)
-      if (node.operator.length > 1) {
+      if (node.operator.length > 1 || node.argument.type === 'UnaryExpression') {
         state.write(' ')
       }
       if (
@@ -857,7 +863,7 @@ export const baseGenerator = {
     state.write(' = ')
     this[node.right.type](node.right, state)
   },
-  BinaryExpression: (BinaryExpression = function(node, state) {
+  BinaryExpression: (BinaryExpression = function (node, state) {
     const isIn = node.operator === 'in'
     if (isIn) {
       // Avoids confusion in `for` loops initializers
@@ -913,7 +919,13 @@ export const baseGenerator = {
     } else {
       this[node.callee.type](node.callee, state)
     }
+    if (node.optional) {
+      state.write('?.')
+    }
     formatSequence(state, node['arguments'])
+  },
+  ChainExpression(node, state) {
+    this[node.expression.type](node.expression, state)
   },
   MemberExpression(node, state) {
     if (
@@ -927,11 +939,18 @@ export const baseGenerator = {
       this[node.object.type](node.object, state)
     }
     if (node.computed) {
+      if (node.optional) {
+        state.write('?.')
+      }
       state.write('[')
       this[node.property.type](node.property, state)
       state.write(']')
     } else {
-      state.write('.')
+      if (node.optional) {
+        state.write('?.')
+      } else {
+        state.write('.')
+      }
       this[node.property.type](node.property, state)
     }
   },
