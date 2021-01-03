@@ -1052,16 +1052,18 @@ class State {
         this.line++
         return
       }
+      if (node.loc != null) {
+        const { mapping } = this
+        mapping.original = node.loc.start
+        mapping.name = node.name
+        this.sourceMap.addMapping(mapping)
+      }
       if (
         (type[0] === 'T' && type[8] === 'E') ||
         (type[0] === 'L' && type[1] === 'i' && typeof node.value === 'string')
       ) {
         // TemplateElement or Literal string node
         const { length } = code
-        if (length === 0 || (length === 2 && type[0] === 'L')) {
-          // Empty TemplateElement or Literal string with begin and end quotes
-          return
-        }
         let { column, line } = this
         for (let i = 0; i < length; i++) {
           if (code[i] === '\n') {
@@ -1074,12 +1076,6 @@ class State {
         this.column = column
         this.line = line
         return
-      }
-      if (node.name != null) {
-        const { mapping } = this
-        mapping.original = node.loc.start
-        mapping.name = node.name
-        this.sourceMap.addMapping(mapping)
       }
     }
     const { length } = code

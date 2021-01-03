@@ -134,12 +134,12 @@ test('Source map generation', (assert) => {
     const code = readFile(path.join(dirname, filename))
     const sourceMap = {
       mappings: [],
-      _file: 'script.js',
+      _file: filename,
       addMapping({ original, generated, name, source }) {
         assert.deepEqual(
           pick(generated, ['line', 'column']),
           pick(original, ['line', 'column']),
-          `${filename}:${name}`,
+          `${source}:${name}`,
         )
         assert.is(source, this._file)
         this.mappings.push({
@@ -153,6 +153,44 @@ test('Source map generation', (assert) => {
     const ast = parse(code, options)
     generate(ast, {
       sourceMap,
+    })
+  })
+})
+
+test('Source map generation with comments', (assert) => {
+  const dirname = path.join(FIXTURES_FOLDER, 'comment')
+  const files = fs.readdirSync(dirname).sort()
+  files.forEach((filename) => {
+    const code = readFile(path.join(dirname, filename))
+    const sourceMap = {
+      mappings: [],
+      _file: filename,
+      addMapping({ original, generated, name, source }) {
+        assert.deepEqual(
+          pick(generated, ['line', 'column']),
+          pick(original, ['line', 'column']),
+          `${source}:${name}`,
+        )
+        assert.is(source, this._file)
+        this.mappings.push({
+          original,
+          generated,
+          name,
+          source,
+        })
+      },
+    }
+    const comments = []
+    const ast = parse(code, {
+      ecmaVersion,
+      comments: true,
+      locations: true,
+      onComment: comments,
+    })
+    astravel.attachComments(ast, comments)
+    generate(ast, {
+      sourceMap,
+      comments: true,
     })
   })
 })
