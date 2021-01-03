@@ -604,7 +604,11 @@ export const baseGenerator = {
     }
   },
   ExportAllDeclaration(node, state) {
-    state.write('export * from ')
+    if (node.exported != null) {
+      state.write('export * as ' + node.exported.name + ' from ')
+    } else {
+      state.write('export * from ')
+    }
     this.Literal(node.source, state)
     state.write(';')
   },
