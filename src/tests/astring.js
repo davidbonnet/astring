@@ -3,10 +3,10 @@ import test from 'ava'
 import path from 'path'
 import { parse } from 'acorn'
 import * as astravel from 'astravel'
+import { pick } from 'lodash'
 
 import { generate } from '../astring'
 import { readFile } from './tools'
-import benchmarkWithCode from './benchmark'
 
 const FIXTURES_FOLDER = path.join(__dirname, 'fixtures')
 
@@ -122,115 +122,37 @@ test('Comment generation', (assert) => {
   })
 })
 
-test.skip('Source map generation (NEW)', assert => {
-  const files = ['comment', 'syntax', 'sourcemap-cases']
-    .map(fixture =>
-      fs
-        .readdirSync(path.join(FIXTURES_FOLDER, fixture))
-        .map(file => path.join(FIXTURES_FOLDER, fixture, file)),
-    )
-    .reduce((acc, files) => [...acc, ...files], [])
-    .map(file => ({ file, contents: readFile(file) }))
-
-  const mangle = code =>
-    code
-      .split(/\r?\n/g)
-      .map(l => '  ' + l + (l.endsWith('\\') ? '' : '\n'))
-      .join('\n')
-
-  for (const { file, contents } of files) {
-    const mangled = mangle(contents)
-    const mangledLines = mangled.split('\n')
+test('Source map generation', (assert) => {
+  const dirname = path.join(FIXTURES_FOLDER, 'syntax')
+  const files = fs.readdirSync(dirname).sort()
+  const options = {
+    ecmaVersion,
+    sourceType: 'module',
+    locations: true,
+  }
+  files.forEach((filename) => {
+    const code = readFile(path.join(dirname, filename))
     const sourceMap = {
       mappings: [],
-      _file: path.basename(file),
-      addMapping({ original, generated }) {
+      _file: 'script.js',
+      addMapping({ original, generated, name, source }) {
+        assert.deepEqual(
+          pick(generated, ['line', 'column']),
+          pick(original, ['line', 'column']),
+          `${filename}:${name}`,
+        )
+        assert.is(source, this._file)
         this.mappings.push({
-          original: { ...original },
-          generated: { ...generated },
+          original,
+          generated,
+          name,
+          source,
         })
       },
     }
-    const ast = parse(mangled, {
-      ecmaVersion,
-      sourceType: 'module',
-      locations: true,
-    })
-    const generatedLines = generate(ast, {
+    const ast = parse(code, options)
+    generate(ast, {
       sourceMap,
-    }).split('\n')
-    assert.true(
-      sourceMap.mappings.length > 0,
-      `expected to have generated positions in ${file}`,
-    )
-    for (const { original, generated } of sourceMap.mappings) {
-      assert.is(
-        mangledLines[original.line - 1].slice(original.column),
-        generatedLines[generated.line - 1].slice(generated.column),
-        `expected line ${generated.line} col ${generated.column} of ${file} to match`,
-      )
-    }
-  }
-})
-
-test('Source map generation', (assert) => {
-  const code = 'function f(x) {\n  return x;\n}\n'
-  const sourceMap = {
-    mappings: [],
-    _file: 'script.js',
-    addMapping({ original, generated: { line, column }, name, source }) {
-      const generated = { line, column }
-      assert.deepEqual(generated, { ...original })
-      assert.is(source, this._file)
-      this.mappings.push({
-        original,
-        generated,
-        name,
-        source,
-      })
-    },
-  }
-})
-
-test.skip('Performance tiny code', (assert) => {
-  const result = benchmarkWithCode('var a = 2;', 'tiny code')
-  assert.true(
-    result['astring'].speed > result['escodegen'].speed,
-    'astring is faster than escodegen',
-  )
-  assert.true(
-    result['astring'].speed > 10 * result['babel'].speed,
-    'astring is at least 10x faster than babel',
-  )
-  assert.true(
-    result['astring'].speed > 10 * result['prettier'].speed,
-    'astring is at least 10x faster than prettier',
-  )
-  assert.true(
-    result['acorn + astring'].speed > result['buble'].speed,
-    'astring is faster than buble',
-  )
-})
-
-test.skip('Performance with everything', (assert) => {
-  const result = benchmarkWithCode(
-    readFile(path.join(FIXTURES_FOLDER, 'tree', 'es6.js')),
-    'everything',
-  )
-  assert.true(
-    result['astring'].speed > result['escodegen'].speed,
-    'astring is faster than escodegen',
-  )
-  assert.true(
-    result['astring'].speed > 10 * result['babel'].speed,
-    'astring is at least 10x faster than babel',
-  )
-  assert.true(
-    result['astring'].speed > 10 * result['prettier'].speed,
-    'astring is at least 10x faster than prettier',
-  )
-  assert.true(
-    result['acorn + astring'].speed > result['buble'].speed,
-    'astring is faster than buble',
-  )
+    })
+  })
 })
