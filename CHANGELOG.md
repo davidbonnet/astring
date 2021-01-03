@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.5.1](https://github.com/davidbonnet/astring/compare/v1.5.0...v1.5.1) (2021-01-03)
+
+
+### Bug Fixes
+
+* **source-maps:** map nameless nodes ([102e569](https://github.com/davidbonnet/astring/commit/102e5696482d42f5dcccdb2ce088f7361c7dee94))
+
 ## [1.5.0](https://github.com/davidbonnet/astring/compare/v1.4.3...v1.5.0) (2021-01-03)
 
 
