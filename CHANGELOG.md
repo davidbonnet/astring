@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.5.0](https://github.com/davidbonnet/astring/compare/v1.4.3...v1.5.0) (2021-01-03)
+
+
+### Features
+
+* add bigint support ([d061997](https://github.com/davidbonnet/astring/commit/d061997b03095bbd864889dd04b6442fae6363ce))
+* add identifier support to export all ([a646dfa](https://github.com/davidbonnet/astring/commit/a646dfa9a6d093111f934b306d37ad61cf32fd9b))
+* add optional chaining support ([8c3ef44](https://github.com/davidbonnet/astring/commit/8c3ef44ae6d273562f6e03cb890726d2cc02f9b2)), closes [#424](https://github.com/davidbonnet/astring/issues/424)
+* support import expression ([#345](https://github.com/davidbonnet/astring/issues/345)) ([56a1574](https://github.com/davidbonnet/astring/commit/56a1574774533764644107a61bf0acc0d1c7d209))
+
+
+### Bug Fixes
+
+* **demo:** disable spellcheck on input ([b95ef6a](https://github.com/davidbonnet/astring/commit/b95ef6a4a179b031beba27387dd1bba935b2ce72))
+* incorrect awaited arrow function render ([11ec06c](https://github.com/davidbonnet/astring/commit/11ec06cd092cabc1a82ccd8b74c8219fcf98dcb7))
+* missing space for repeating unary operator ([#315](https://github.com/davidbonnet/astring/issues/315)) ([48e8a2e](https://github.com/davidbonnet/astring/commit/48e8a2e157858df4e1765cc2db9148b5b708216d))
+* sourcemaps for multiline strings are incorrect ([f246aff](https://github.com/davidbonnet/astring/commit/f246affc88b57455bc9eaa7f306fc9d2b6fd645f)), closes [#247](https://github.com/davidbonnet/astring/issues/247)
+
 ### [1.4.3](https://github.com/davidbonnet/astring/compare/v1.4.2...v1.4.3) (2019-10-13)
 
 
