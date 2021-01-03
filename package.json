@@ -14,10 +14,10 @@
     "build:demo": "npm run build:minified && cp dist/astring.min.* docs/demo/",
     "prepare": "npm run build",
     "test": "npm run eslint && npm run prettier:check && npm run build:minified && npm run test:coverage",
-    "dev": "ava --watch",
-    "test:coverage": "c8 --reporter=html --reporter=text --reporter=lcov --include='src/*.js' --exclude='src/tests/**/*.js' ava",
+    "dev": "ava --watch src/tests/astring.js",
+    "test:coverage": "c8 --reporter=html --reporter=text --reporter=lcov --include='src/*.js' --exclude='src/tests/**/*.js' ava src/tests/astring.js",
     "test:scripts": "npm run test:scripts:build && ava src/tests/_scripts.js",
-    "test:benchmark": "ava src/tests/benchmark.js",
+    "test:performance": "ava src/tests/performance.js",
     "benchmark": "node --require esm ./src/tests/benchmark.js",
     "eslint": "eslint src",
     "prettier": "prettier --write \"{src,scripts}/**/*.js\" \"bin/astring\"",
@@ -135,7 +135,8 @@
   },
   "ava": {
     "files": [
-      "src/**/tests/astring.js"
+      "src/**/tests/astring.js",
+      "src/**/tests/performance.js"
     ],
     "require": [
       "esm"
