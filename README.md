@@ -9,8 +9,8 @@
 
 ### Key features
 
-- Generates JavaScript code up to [version 10 (2019)](https://tc39.github.io/ecma262/) and [finished proposals](https://github.com/tc39/proposals/blob/master/finished-proposals.md).
-- Works on [ESTree](https://github.com/estree/estree)-compliant ASTs such as the ones produced by [Acorn](https://github.com/marijnh/acorn).
+- Generates JavaScript code up to [version 11 (2020)](https://tc39.github.io/ecma262/) and [finished proposals](https://github.com/tc39/proposals/blob/master/finished-proposals.md).
+- Works on [ESTree](https://github.com/estree/estree)-compliant ASTs such as the ones produced by [Meriyah](https://github.com/meriyah/meriyah) or [Acorn](https://github.com/acornjs/acorn).
 - Extendable with custom AST node handlers.
 - Considerably faster than [Bublé](https://gitlab.com/Rich-Harris/buble) (up to 5×), [Escodegen](https://github.com/estools/escodegen) (up to 10×), [Babel](https://github.com/babel/babel) (up to 50×), [UglifyJS](https://github.com/mishoo/UglifyJS2) (up to 125×), and [Prettier](https://github.com/prettier/prettier) (up to 380×).
 - Supports source map generation with [Source Map](https://github.com/mozilla/source-map#sourcemapgenerator).
@@ -131,7 +131,7 @@ The following examples are written in JavaScript 5 with Astring imported _à la 
 
 ### Generating code
 
-This example uses [Acorn](https://github.com/marijnh/acorn), a blazingly fast JavaScript AST producer and therefore the perfect companion of Astring.
+This example uses [Acorn](https://github.com/acornjs/acorn), a blazingly fast JavaScript AST producer and therefore the perfect companion of Astring.
 
 ```javascript
 // Make sure acorn and astring modules are imported
@@ -235,7 +235,7 @@ This example shows how to support the `await` keyword which is part of the [asyn
 
 // Create a custom generator that inherits from Astring's base generator
 var customGenerator = Object.assign({}, astring.baseGenerator, {
-  AwaitExpression: function(node, state) {
+  AwaitExpression: function (node, state) {
     state.write('await ')
     var argument = node.argument
     if (argument != null) {
@@ -279,7 +279,7 @@ The utility reads the AST from a provided list of files or from `stdin` if none 
 
 ### Example
 
-As in the previous example, these examples use [Acorn](https://github.com/marijnh/acorn) to get the JSON-formatted AST. This command pipes the AST output by Acorn from a `script.js` file to Astring and writes the formatted JavaScript code into a `result.js` file:
+As in the previous example, these examples use [Acorn](https://github.com/acornjs/acorn) to get the JSON-formatted AST. This command pipes the AST output by Acorn from a `script.js` file to Astring and writes the formatted JavaScript code into a `result.js` file:
 
 ```bash
 acorn --ecma6 script.js | astring > result.js
