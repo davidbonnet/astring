@@ -971,6 +971,8 @@ export const baseGenerator = {
       state.write(node.raw, node)
     } else if (node.regex != null) {
       this.RegExpLiteral(node, state)
+    } else if (node.bigint != null) {
+      state.write(node.bigint + 'n', node)
     } else {
       state.write(stringify(node.value), node)
     }
