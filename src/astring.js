@@ -187,7 +187,7 @@ function formatComments(state, comments, indent, lineEnd) {
     state.write(indent)
     if (comment.type[0] === 'L') {
       // Line comment
-      state.write('// ' + comment.value.trim() + '\n')
+      state.write('// ' + comment.value.trim() + '\n', comment)
     } else {
       // Block comment
       state.write('/*')
@@ -557,9 +557,9 @@ export const baseGenerator = {
     state.write(';')
   },
   ImportExpression(node, state) {
-    state.write('import(');
-    this[node.source.type](node.source, state);
-    state.write(')');
+    state.write('import(')
+    this[node.source.type](node.source, state)
+    state.write(')')
   },
   ExportDefaultDeclaration(node, state) {
     state.write('export default ')
@@ -681,9 +681,9 @@ export const baseGenerator = {
     state.write('await ', node)
     if (node.argument) {
       if (node.argument.type === 'ArrowFunctionExpression') {
-        state.write('(', node)
+        state.write('(')
         this[node.argument.type](node.argument, state)
-        state.write(')', node)
+        state.write(')')
       } else {
         this[node.argument.type](node.argument, state)
       }
@@ -695,16 +695,18 @@ export const baseGenerator = {
     const { length } = expressions
     for (let i = 0; i < length; i++) {
       const expression = expressions[i]
-      this.TemplateElement(quasis[i], state)
+      const quasi = quasis[i]
+      state.write(quasi.value.raw, quasi)
       state.write('${')
       this[expression.type](expression, state)
       state.write('}')
     }
-    state.write(quasis[quasis.length - 1].value.raw)
+    const quasi = quasis[quasis.length - 1]
+    state.write(quasi.value.raw, quasi)
     state.write('`')
   },
   TemplateElement(node, state) {
-    state.write(node.value.raw)
+    state.write(node.value.raw, node)
   },
   TaggedTemplateExpression(node, state) {
     this[node.tag.type](node.tag, state)
@@ -824,7 +826,10 @@ export const baseGenerator = {
   UnaryExpression(node, state) {
     if (node.prefix) {
       state.write(node.operator)
-      if (node.operator.length > 1 || node.argument.type === 'UnaryExpression') {
+      if (
+        node.operator.length > 1 ||
+        node.argument.type === 'UnaryExpression'
+      ) {
         state.write(' ')
       }
       if (
@@ -962,6 +967,7 @@ export const baseGenerator = {
   },
   Literal(node, state) {
     if (node.raw != null) {
+      // Non-standard property
       state.write(node.raw, node)
     } else if (node.regex != null) {
       this.RegExpLiteral(node, state)
@@ -1005,6 +1011,7 @@ class State {
       this.lineEndSize = this.lineEnd.split('\n').length - 1
       this.mapping = {
         original: null,
+        // Uses the entire state to avoid generating ephemeral objects
         generated: this,
         name: undefined,
         source: setup.sourceMap.file || setup.sourceMap._file,
@@ -1031,32 +1038,57 @@ class State {
   }
 
   map(code, node) {
-    if (node != null && node.loc != null) {
-      const { mapping } = this
-      mapping.original = node.loc.start
-      mapping.name = node.name
-      this.sourceMap.addMapping(mapping)
+    if (node != null) {
+      const { type } = node
+      if (type[0] === 'L' && type[2] === 'n') {
+        // LineComment
+        this.column = 0
+        this.line++
+        return
+      }
+      if (
+        (type[0] === 'T' && type[8] === 'E') ||
+        (type[0] === 'L' && type[1] === 'i' && typeof node.value === 'string')
+      ) {
+        // TemplateElement or Literal string node
+        const { length } = code
+        if (length === 0 || (length === 2 && type[0] === 'L')) {
+          // Empty TemplateElement or Literal string with begin and end quotes
+          return
+        }
+        let { column, line } = this
+        for (let i = 0; i < length; i++) {
+          if (code[i] === '\n') {
+            column = 0
+            line++
+          } else {
+            column++
+          }
+        }
+        this.column = column
+        this.line = line
+        return
+      }
+      if (node.name != null) {
+        const { mapping } = this
+        mapping.original = node.loc.start
+        mapping.name = node.name
+        this.sourceMap.addMapping(mapping)
+      }
     }
-    if (code.length > 0) {
-      if (this.lineEndSize > 0) {
-        if (code.endsWith(this.lineEnd)) {
-          this.line += this.lineEndSize
-          this.column = 0
-        } else if (code[code.length - 1] === '\n') {
-          // Case of inline comment
-          this.line++
-          this.column = 0
-        } else {
-          this.column += code.length
-        }
+    const { length } = code
+    const { lineEnd } = this
+    if (length > 0) {
+      if (
+        this.lineEndSize > 0 &&
+        (lineEnd.length === 1
+          ? code[length - 1] === lineEnd
+          : code.endsWith(lineEnd))
+      ) {
+        this.line += this.lineEndSize
+        this.column = 0
       } else {
-        if (code[code.length - 1] === '\n') {
-          // Case of inline comment
-          this.line++
-          this.column = 0
-        } else {
-          this.column += code.length
-        }
+        this.column += length
       }
     }
   }

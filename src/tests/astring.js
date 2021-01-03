@@ -3,10 +3,10 @@ import test from 'ava'
 import path from 'path'
 import { parse } from 'acorn'
 import * as astravel from 'astravel'
+import { pick } from 'lodash'
 
 import { generate } from '../astring'
 import { readFile } from './tools'
-import benchmarkWithCode from './benchmark'
 
 const FIXTURES_FOLDER = path.join(__dirname, 'fixtures')
 
@@ -123,72 +123,36 @@ test('Comment generation', (assert) => {
 })
 
 test('Source map generation', (assert) => {
-  const code = 'function f(x) {\n  return x;\n}\n'
-  const sourceMap = {
-    mappings: [],
-    _file: 'script.js',
-    addMapping({ original, generated: { line, column }, name, source }) {
-      const generated = { line, column }
-      assert.deepEqual(generated, { ...original })
-      assert.is(source, this._file)
-      this.mappings.push({
-        original,
-        generated,
-        name,
-        source,
-      })
-    },
-  }
-  const ast = parse(code, {
+  const dirname = path.join(FIXTURES_FOLDER, 'syntax')
+  const files = fs.readdirSync(dirname).sort()
+  const options = {
     ecmaVersion,
+    sourceType: 'module',
     locations: true,
+  }
+  files.forEach((filename) => {
+    const code = readFile(path.join(dirname, filename))
+    const sourceMap = {
+      mappings: [],
+      _file: 'script.js',
+      addMapping({ original, generated, name, source }) {
+        assert.deepEqual(
+          pick(generated, ['line', 'column']),
+          pick(original, ['line', 'column']),
+          `${filename}:${name}`,
+        )
+        assert.is(source, this._file)
+        this.mappings.push({
+          original,
+          generated,
+          name,
+          source,
+        })
+      },
+    }
+    const ast = parse(code, options)
+    generate(ast, {
+      sourceMap,
+    })
   })
-  const formattedCode = generate(ast, {
-    sourceMap,
-  })
-  assert.is(sourceMap.mappings.length, 3)
-  assert.is(formattedCode, code)
-})
-
-test.skip('Performance tiny code', (assert) => {
-  const result = benchmarkWithCode('var a = 2;', 'tiny code')
-  assert.true(
-    result['astring'].speed > result['escodegen'].speed,
-    'astring is faster than escodegen',
-  )
-  assert.true(
-    result['astring'].speed > 10 * result['babel'].speed,
-    'astring is at least 10x faster than babel',
-  )
-  assert.true(
-    result['astring'].speed > 10 * result['prettier'].speed,
-    'astring is at least 10x faster than prettier',
-  )
-  assert.true(
-    result['acorn + astring'].speed > result['buble'].speed,
-    'astring is faster than buble',
-  )
-})
-
-test.skip('Performance with everything', (assert) => {
-  const result = benchmarkWithCode(
-    readFile(path.join(FIXTURES_FOLDER, 'tree', 'es6.js')),
-    'everything',
-  )
-  assert.true(
-    result['astring'].speed > result['escodegen'].speed,
-    'astring is faster than escodegen',
-  )
-  assert.true(
-    result['astring'].speed > 10 * result['babel'].speed,
-    'astring is at least 10x faster than babel',
-  )
-  assert.true(
-    result['astring'].speed > 10 * result['prettier'].speed,
-    'astring is at least 10x faster than prettier',
-  )
-  assert.true(
-    result['acorn + astring'].speed > result['buble'].speed,
-    'astring is faster than buble',
-  )
 })
