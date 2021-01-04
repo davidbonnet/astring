@@ -832,22 +832,32 @@ export const GENERATOR = {
   },
   UnaryExpression(node, state) {
     if (node.prefix) {
-      state.write(node.operator)
+      const {
+        operator,
+        argument,
+        argument: { type },
+      } = node
+      state.write(operator)
       if (
-        node.operator.length > 1 ||
-        node.argument.type === 'UnaryExpression'
+        operator.length > 1 ||
+        (type[0] === 'U' &&
+          (type[1] === 'n' || type[1] === 'p') &&
+          argument.prefix &&
+          argument.operator[0] === operator &&
+          (operator === '+' || operator === '-'))
       ) {
+        // Large operator or argument is UnaryExpression or UpdateExpression node
         state.write(' ')
       }
       if (
-        state.expressionsPrecedence[node.argument.type] <
+        state.expressionsPrecedence[type] <
         state.expressionsPrecedence.UnaryExpression
       ) {
         state.write('(')
-        this[node.argument.type](node.argument, state)
+        this[type](argument, state)
         state.write(')')
       } else {
-        this[node.argument.type](node.argument, state)
+        this[type](argument, state)
       }
     } else {
       // FIXME: This case never occurs
