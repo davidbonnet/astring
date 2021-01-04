@@ -56,7 +56,7 @@ const OPERATOR_PRECEDENCE = {
 // Enables parenthesis regardless of precedence
 const NEEDS_PARENTHESES = 17
 
-const EXPRESSIONS_PRECEDENCE = {
+export const EXPRESSIONS_PRECEDENCE = {
   // Definitions
   ArrayExpression: 20,
   TaggedTemplateExpression: 20,
@@ -106,12 +106,12 @@ function formatSequence(state, nodes) {
   state.write(')')
 }
 
-function expressionNeedsParenthesis(node, parentNode, isRightHand) {
-  const nodePrecedence = EXPRESSIONS_PRECEDENCE[node.type]
+function expressionNeedsParenthesis(state, node, parentNode, isRightHand) {
+  const nodePrecedence = state.expressionPrecedence[node.type]
   if (nodePrecedence === NEEDS_PARENTHESES) {
     return true
   }
-  const parentNodePrecedence = EXPRESSIONS_PRECEDENCE[parentNode.type]
+  const parentNodePrecedence = state.expressionPrecedence[parentNode.type]
   if (nodePrecedence !== parentNodePrecedence) {
     // Different node types
     return (
@@ -150,7 +150,7 @@ function formatBinaryExpressionPart(state, node, parentNode, isRightHand) {
   The `isRightHand` parameter should be `true` if the `node` is a right-hand argument.
   */
   const { generator } = state
-  if (expressionNeedsParenthesis(node, parentNode, isRightHand)) {
+  if (expressionNeedsParenthesis(state, node, parentNode, isRightHand)) {
     state.write('(')
     generator[node.type](node, state)
     state.write(')')
@@ -302,7 +302,7 @@ export const baseGenerator = {
     state.write(';')
   },
   ExpressionStatement(node, state) {
-    const precedence = EXPRESSIONS_PRECEDENCE[node.expression.type]
+    const precedence = state.expressionPrecedence[node.expression.type]
     if (
       precedence === NEEDS_PARENTHESES ||
       (precedence === 3 && node.expression.left.type[0] === 'O')
@@ -565,7 +565,7 @@ export const baseGenerator = {
     state.write('export default ')
     this[node.declaration.type](node.declaration, state)
     if (
-      EXPRESSIONS_PRECEDENCE[node.declaration.type] &&
+      state.expressionPrecedence[node.declaration.type] &&
       node.declaration.type[0] !== 'F'
     ) {
       // All expression nodes except `FunctionExpression`
@@ -888,7 +888,7 @@ export const baseGenerator = {
   LogicalExpression: BinaryExpression,
   ConditionalExpression(node, state) {
     if (
-      EXPRESSIONS_PRECEDENCE[node.test.type] >
+      state.expressionPrecedence[node.test.type] >
       EXPRESSIONS_PRECEDENCE.ConditionalExpression
     ) {
       this[node.test.type](node.test, state)
@@ -905,7 +905,7 @@ export const baseGenerator = {
   NewExpression(node, state) {
     state.write('new ')
     if (
-      EXPRESSIONS_PRECEDENCE[node.callee.type] <
+      state.expressionPrecedence[node.callee.type] <
         EXPRESSIONS_PRECEDENCE.CallExpression ||
       hasCallExpression(node.callee)
     ) {
@@ -919,7 +919,7 @@ export const baseGenerator = {
   },
   CallExpression(node, state) {
     if (
-      EXPRESSIONS_PRECEDENCE[node.callee.type] <
+      state.expressionPrecedence[node.callee.type] <
       EXPRESSIONS_PRECEDENCE.CallExpression
     ) {
       state.write('(')
@@ -938,7 +938,7 @@ export const baseGenerator = {
   },
   MemberExpression(node, state) {
     if (
-      EXPRESSIONS_PRECEDENCE[node.object.type] <
+      state.expressionPrecedence[node.object.type] <
       EXPRESSIONS_PRECEDENCE.MemberExpression
     ) {
       state.write('(')
@@ -1001,6 +1001,10 @@ class State {
       this.output = ''
     }
     this.generator = setup.generator != null ? setup.generator : baseGenerator
+    this.expressionPrecedence =
+      setup.expressionPrecedence != null
+        ? setup.expressionPrecedence
+        : EXPRESSIONS_PRECEDENCE
     // Formating setup
     this.indent = setup.indent != null ? setup.indent : '  '
     this.lineEnd = setup.lineEnd != null ? setup.lineEnd : '\n'
