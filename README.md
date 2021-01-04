@@ -101,7 +101,7 @@ The `options` are:
 - `startingIndentLevel`: indent level to start from (defaults to `0`)
 - `comments`: generate comments if `true` (defaults to `false`)
 - `output`: output stream to write the rendered code to (defaults to `null`)
-- `generator`: custom code generator (defaults to `astring.baseGenerator`)
+- `generator`: custom code generator (defaults to `GENERATOR`)
 - `sourceMap`: [source map generator](https://github.com/mozilla/source-map#sourcemapgenerator) (defaults to `null`)
 - `expressionsPrecedence`: custom map of node types and their precedence level (defaults to `EXPRESSIONS_PRECEDENCE`)
 
@@ -250,7 +250,7 @@ This example shows how to support the `await` keyword which is part of the [asyn
 // Make sure the astring module is imported and that `Object.assign` is defined
 
 // Create a custom generator that inherits from Astring's base generator
-var customGenerator = Object.assign({}, astring.baseGenerator, {
+var customGenerator = Object.assign({}, astring.GENERATOR, {
   AwaitExpression: function (node, state) {
     state.write('await ')
     var argument = node.argument
