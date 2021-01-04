@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.6.0](https://github.com/davidbonnet/astring/compare/v1.5.1...v1.6.0) (2021-01-04)
+
+
+### Features
+
+* support custom expression precedence ([#427](https://github.com/davidbonnet/astring/issues/427)) ([76ce709](https://github.com/davidbonnet/astring/commit/76ce7099c4ba391ef130ea6010bcce6ae7392cf4))
+
+
+### Bug Fixes
+
+* unary and update expression precedence ([0b273a6](https://github.com/davidbonnet/astring/commit/0b273a6cfe7c7672de4cf1bd00f423358d0729f4)), closes [#426](https://github.com/davidbonnet/astring/issues/426)
+
 ### [1.5.1](https://github.com/davidbonnet/astring/compare/v1.5.0...v1.5.1) (2021-01-03)
 
 
