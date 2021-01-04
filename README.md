@@ -27,6 +27,9 @@ Checkout the [live demo](http://david.bonnet.cc/astring/demo/) showing Astring i
 - [Import](#import)
 - [API](#api)
   - [`generate(node: object, options: object): string | object`](#generatenode-object-options-object-string-%7C-object)
+  - [`GENERATOR: object`](#generator-object)
+  - [`EXPRESSIONS_PRECEDENCE: object`](#expressions_precedence-object)
+  - [`NEEDS_PARENTHESES: number`](#needs_parentheses-number)
   - [`baseGenerator: object`](#basegenerator-object)
 - [Benchmark](#benchmark)
   - [Generating code](#generating-code)
@@ -100,10 +103,23 @@ The `options` are:
 - `output`: output stream to write the rendered code to (defaults to `null`)
 - `generator`: custom code generator (defaults to `astring.baseGenerator`)
 - `sourceMap`: [source map generator](https://github.com/mozilla/source-map#sourcemapgenerator) (defaults to `null`)
+- `expressionsPrecedence`: custom map of node types and their precedence level (defaults to `EXPRESSIONS_PRECEDENCE`)
+
+### `GENERATOR: object`
+
+Base generator that can be used to [extend Astring](#extending).
+
+### `EXPRESSIONS_PRECEDENCE: object`
+
+Mapping of node types and their precedence level to let the generator know when to use parentheses.
+
+### `NEEDS_PARENTHESES: number`
+
+Default precedence level that always triggers the use of parentheses.
 
 ### `baseGenerator: object`
 
-Base generator that can be used to [extend Astring](#extending).
+> :warning: Deprecated, use `GENERATOR` instead.
 
 ## Benchmark
 
