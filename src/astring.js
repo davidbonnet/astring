@@ -10,17 +10,17 @@
 
 const { stringify } = JSON
 
-/* istanbul ignore if */
+/* c8 ignore if */
 if (!String.prototype.repeat) {
-  /* istanbul ignore next */
+  /* c8 ignore next */
   throw new Error(
     'String.prototype.repeat is undefined, see https://github.com/davidbonnet/astring#installation',
   )
 }
 
-/* istanbul ignore if */
+/* c8 ignore if */
 if (!String.prototype.endsWith) {
-  /* istanbul ignore next */
+  /* c8 ignore next */
   throw new Error(
     'String.prototype.endsWith is undefined, see https://github.com/davidbonnet/astring#installation',
   )
