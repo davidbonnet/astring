@@ -54,9 +54,9 @@ const OPERATOR_PRECEDENCE = {
 }
 
 // Enables parenthesis regardless of precedence
-const NEEDS_PARENTHESES = 17
+export const NEEDS_PARENTHESES = 17
 
-const EXPRESSIONS_PRECEDENCE = {
+export const EXPRESSIONS_PRECEDENCE = {
   // Definitions
   ArrayExpression: 20,
   TaggedTemplateExpression: 20,
@@ -106,12 +106,12 @@ function formatSequence(state, nodes) {
   state.write(')')
 }
 
-function expressionNeedsParenthesis(node, parentNode, isRightHand) {
-  const nodePrecedence = EXPRESSIONS_PRECEDENCE[node.type]
+function expressionNeedsParenthesis(state, node, parentNode, isRightHand) {
+  const nodePrecedence = state.expressionsPrecedence[node.type]
   if (nodePrecedence === NEEDS_PARENTHESES) {
     return true
   }
-  const parentNodePrecedence = EXPRESSIONS_PRECEDENCE[parentNode.type]
+  const parentNodePrecedence = state.expressionsPrecedence[parentNode.type]
   if (nodePrecedence !== parentNodePrecedence) {
     // Different node types
     return (
@@ -150,7 +150,7 @@ function formatBinaryExpressionPart(state, node, parentNode, isRightHand) {
   The `isRightHand` parameter should be `true` if the `node` is a right-hand argument.
   */
   const { generator } = state
-  if (expressionNeedsParenthesis(node, parentNode, isRightHand)) {
+  if (expressionNeedsParenthesis(state, node, parentNode, isRightHand)) {
     state.write('(')
     generator[node.type](node, state)
     state.write(')')
@@ -240,7 +240,10 @@ let ForInStatement,
   ArrayExpression,
   BlockStatement
 
-export const baseGenerator = {
+export const GENERATOR = {
+  /*
+  Default generator.
+  */
   Program(node, state) {
     const indent = state.indent.repeat(state.indentLevel)
     const { lineEnd, writeComments } = state
@@ -302,7 +305,7 @@ export const baseGenerator = {
     state.write(';')
   },
   ExpressionStatement(node, state) {
-    const precedence = EXPRESSIONS_PRECEDENCE[node.expression.type]
+    const precedence = state.expressionsPrecedence[node.expression.type]
     if (
       precedence === NEEDS_PARENTHESES ||
       (precedence === 3 && node.expression.left.type[0] === 'O')
@@ -565,7 +568,7 @@ export const baseGenerator = {
     state.write('export default ')
     this[node.declaration.type](node.declaration, state)
     if (
-      EXPRESSIONS_PRECEDENCE[node.declaration.type] &&
+      state.expressionsPrecedence[node.declaration.type] &&
       node.declaration.type[0] !== 'F'
     ) {
       // All expression nodes except `FunctionExpression`
@@ -837,8 +840,8 @@ export const baseGenerator = {
         state.write(' ')
       }
       if (
-        EXPRESSIONS_PRECEDENCE[node.argument.type] <
-        EXPRESSIONS_PRECEDENCE.UnaryExpression
+        state.expressionsPrecedence[node.argument.type] <
+        state.expressionsPrecedence.UnaryExpression
       ) {
         state.write('(')
         this[node.argument.type](node.argument, state)
@@ -888,8 +891,8 @@ export const baseGenerator = {
   LogicalExpression: BinaryExpression,
   ConditionalExpression(node, state) {
     if (
-      EXPRESSIONS_PRECEDENCE[node.test.type] >
-      EXPRESSIONS_PRECEDENCE.ConditionalExpression
+      state.expressionsPrecedence[node.test.type] >
+      state.expressionsPrecedence.ConditionalExpression
     ) {
       this[node.test.type](node.test, state)
     } else {
@@ -905,8 +908,8 @@ export const baseGenerator = {
   NewExpression(node, state) {
     state.write('new ')
     if (
-      EXPRESSIONS_PRECEDENCE[node.callee.type] <
-        EXPRESSIONS_PRECEDENCE.CallExpression ||
+      state.expressionsPrecedence[node.callee.type] <
+        state.expressionsPrecedence.CallExpression ||
       hasCallExpression(node.callee)
     ) {
       state.write('(')
@@ -919,8 +922,8 @@ export const baseGenerator = {
   },
   CallExpression(node, state) {
     if (
-      EXPRESSIONS_PRECEDENCE[node.callee.type] <
-      EXPRESSIONS_PRECEDENCE.CallExpression
+      state.expressionsPrecedence[node.callee.type] <
+      state.expressionsPrecedence.CallExpression
     ) {
       state.write('(')
       this[node.callee.type](node.callee, state)
@@ -938,8 +941,8 @@ export const baseGenerator = {
   },
   MemberExpression(node, state) {
     if (
-      EXPRESSIONS_PRECEDENCE[node.object.type] <
-      EXPRESSIONS_PRECEDENCE.MemberExpression
+      state.expressionsPrecedence[node.object.type] <
+      state.expressionsPrecedence.MemberExpression
     ) {
       state.write('(')
       this[node.object.type](node.object, state)
@@ -989,6 +992,11 @@ export const baseGenerator = {
 
 const EMPTY_OBJECT = {}
 
+/*
+DEPRECATED: Alternate export of `GENERATOR`.
+*/
+export const baseGenerator = GENERATOR
+
 class State {
   constructor(options) {
     const setup = options == null ? EMPTY_OBJECT : options
@@ -1000,7 +1008,11 @@ class State {
     } else {
       this.output = ''
     }
-    this.generator = setup.generator != null ? setup.generator : baseGenerator
+    this.generator = setup.generator != null ? setup.generator : GENERATOR
+    this.expressionsPrecedence =
+      setup.expressionsPrecedence != null
+        ? setup.expressionsPrecedence
+        : EXPRESSIONS_PRECEDENCE
     // Formating setup
     this.indent = setup.indent != null ? setup.indent : '  '
     this.lineEnd = setup.lineEnd != null ? setup.lineEnd : '\n'
@@ -1110,7 +1122,8 @@ export function generate(node, options) {
   - `startingIndentLevel`: indent level to start from (defaults to `0`)
   - `comments`: generate comments if `true` (defaults to `false`)
   - `output`: output stream to write the rendered code to (defaults to `null`)
-  - `generator`: custom code generator (defaults to `baseGenerator`)
+  - `generator`: custom code generator (defaults to `GENERATOR`)
+  - `expressionsPrecedence`: custom map of node types and their precedence level (defaults to `EXPRESSIONS_PRECEDENCE`)
   */
   const state = new State(options)
   // Travel through the AST node and generate the code
