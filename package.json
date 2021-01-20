@@ -61,7 +61,7 @@
     "glob": "^7.1.6",
     "husky": "^4.3.7",
     "lodash": "^4.17.20",
-    "meriyah": "^3.1.6",
+    "meriyah": "^4.0.0",
     "normalize-newline": "^3.0.0",
     "prettier": "^2.2.1",
     "standard-version": "^9.1.0",
