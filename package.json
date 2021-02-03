@@ -42,7 +42,7 @@
   "devDependencies": {
     "@babel/cli": "^7.12.10",
     "@babel/core": "^7.12.10",
-    "@babel/generator": "^7.12.11",
+    "@babel/generator": "^7.12.13",
     "@babel/parser": "^7.12.11",
     "@babel/preset-env": "^7.12.11",
     "acorn": "^8.0.5",
