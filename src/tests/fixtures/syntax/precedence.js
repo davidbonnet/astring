@@ -46,5 +46,7 @@ g = b + -+-a++;
   await f().a;
   yield 1;
   yield 1 + 2;
+  (yield 1) + (yield 2);
+  yield a = b;
   const c = yield 3;
 });

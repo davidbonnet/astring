@@ -80,11 +80,11 @@ export const EXPRESSIONS_PRECEDENCE = {
   UpdateExpression: 16,
   UnaryExpression: 15,
   AwaitExpression: 15,
-  YieldExpression: 15,
   BinaryExpression: 14,
   LogicalExpression: 13,
   ConditionalExpression: 4,
   AssignmentExpression: 3,
+  YieldExpression: 2,
   RestElement: 1,
 }
 
