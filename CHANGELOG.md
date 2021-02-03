@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.6.1](https://github.com/davidbonnet/astring/compare/v1.6.0...v1.6.1) (2021-02-03)
+
+
+### Bug Fixes
+
+* adjust await and yield operator precendences ([d6166a2](https://github.com/davidbonnet/astring/commit/d6166a256f8e6f1071440b7469b786c18ddf252f)), closes [#435](https://github.com/davidbonnet/astring/issues/435)
+
 ## [1.6.0](https://github.com/davidbonnet/astring/compare/v1.5.1...v1.6.0) (2021-01-04)
 
 
