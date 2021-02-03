@@ -79,12 +79,12 @@ export const EXPRESSIONS_PRECEDENCE = {
   // Other operations
   UpdateExpression: 16,
   UnaryExpression: 15,
+  AwaitExpression: 15,
+  YieldExpression: 15,
   BinaryExpression: 14,
   LogicalExpression: 13,
   ConditionalExpression: 4,
   AssignmentExpression: 3,
-  AwaitExpression: 2,
-  YieldExpression: 2,
   RestElement: 1,
 }
 
@@ -143,7 +143,7 @@ function expressionNeedsParenthesis(state, node, parentNode, isRightHand) {
   )
 }
 
-function formatBinaryExpressionPart(state, node, parentNode, isRightHand) {
+function formatExpression(state, node, parentNode, isRightHand) {
   /*
   Writes into `state` a left-hand or right-hand expression `node`
   from a binary expression applying the provided `operator`.
@@ -568,7 +568,7 @@ export const GENERATOR = {
     state.write('export default ')
     this[node.declaration.type](node.declaration, state)
     if (
-      state.expressionsPrecedence[node.declaration.type] &&
+      state.expressionsPrecedence[node.declaration.type] != null &&
       node.declaration.type[0] !== 'F'
     ) {
       // All expression nodes except `FunctionExpression`
@@ -686,15 +686,7 @@ export const GENERATOR = {
   },
   AwaitExpression(node, state) {
     state.write('await ', node)
-    if (node.argument) {
-      if (node.argument.type === 'ArrowFunctionExpression') {
-        state.write('(')
-        this[node.argument.type](node.argument, state)
-        state.write(')')
-      } else {
-        this[node.argument.type](node.argument, state)
-      }
-    }
+    formatExpression(state, node.argument, node)
   },
   TemplateLiteral(node, state) {
     const { quasis, expressions } = node
@@ -891,9 +883,9 @@ export const GENERATOR = {
       // Avoids confusion in `for` loops initializers
       state.write('(')
     }
-    formatBinaryExpressionPart(state, node.left, node, false)
+    formatExpression(state, node.left, node, false)
     state.write(' ' + node.operator + ' ')
-    formatBinaryExpressionPart(state, node.right, node, true)
+    formatExpression(state, node.right, node, true)
     if (isIn) {
       state.write(')')
     }

@@ -38,3 +38,13 @@ d = !!a;
 e = !+-+!a;
 f = -+-a++;
 g = b + -+-a++;
+(async function* () {
+  await a + b;
+  await a + await b;
+  await (a = b);
+  (await f()).a;
+  await f().a;
+  yield 1;
+  yield 1 + 2;
+  const c = yield 3;
+});
