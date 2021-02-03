@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.6.2](https://github.com/davidbonnet/astring/compare/v1.6.1...v1.6.2) (2021-02-03)
+
+
+### Bug Fixes
+
+* lower yield operator precedence ([d3af2fc](https://github.com/davidbonnet/astring/commit/d3af2fcd8096401b5618a7e479bfb5b25e129eed))
+
 ### [1.6.1](https://github.com/davidbonnet/astring/compare/v1.6.0...v1.6.1) (2021-02-03)
 
 
