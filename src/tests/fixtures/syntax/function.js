@@ -19,8 +19,18 @@ function* o() {
 }
 function* p() {
   yield 42;
-  yield 7;
+  yield 4 + 2;
   return "answer";
+}
+async function a() {}
+const b = async function () {};
+const c = {
+  async f() {}
+};
+const d = async () => {};
+async function e() {
+  await a + await b;
+  return await f();
 }
 let q = function* () {};
 let r = a => a;

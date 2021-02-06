@@ -2,6 +2,57 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.6.2](https://github.com/davidbonnet/astring/compare/v1.6.1...v1.6.2) (2021-02-03)
+
+
+### Bug Fixes
+
+* lower yield operator precedence ([d3af2fc](https://github.com/davidbonnet/astring/commit/d3af2fcd8096401b5618a7e479bfb5b25e129eed))
+
+### [1.6.1](https://github.com/davidbonnet/astring/compare/v1.6.0...v1.6.1) (2021-02-03)
+
+
+### Bug Fixes
+
+* adjust await and yield operator precendences ([d6166a2](https://github.com/davidbonnet/astring/commit/d6166a256f8e6f1071440b7469b786c18ddf252f)), closes [#435](https://github.com/davidbonnet/astring/issues/435)
+
+## [1.6.0](https://github.com/davidbonnet/astring/compare/v1.5.1...v1.6.0) (2021-01-04)
+
+
+### Features
+
+* support custom expression precedence ([#427](https://github.com/davidbonnet/astring/issues/427)) ([76ce709](https://github.com/davidbonnet/astring/commit/76ce7099c4ba391ef130ea6010bcce6ae7392cf4))
+
+
+### Bug Fixes
+
+* unary and update expression precedence ([0b273a6](https://github.com/davidbonnet/astring/commit/0b273a6cfe7c7672de4cf1bd00f423358d0729f4)), closes [#426](https://github.com/davidbonnet/astring/issues/426)
+
+### [1.5.1](https://github.com/davidbonnet/astring/compare/v1.5.0...v1.5.1) (2021-01-03)
+
+
+### Bug Fixes
+
+* **source-maps:** map nameless nodes ([102e569](https://github.com/davidbonnet/astring/commit/102e5696482d42f5dcccdb2ce088f7361c7dee94))
+
+## [1.5.0](https://github.com/davidbonnet/astring/compare/v1.4.3...v1.5.0) (2021-01-03)
+
+
+### Features
+
+* add bigint support ([d061997](https://github.com/davidbonnet/astring/commit/d061997b03095bbd864889dd04b6442fae6363ce))
+* add identifier support to export all ([a646dfa](https://github.com/davidbonnet/astring/commit/a646dfa9a6d093111f934b306d37ad61cf32fd9b))
+* add optional chaining support ([8c3ef44](https://github.com/davidbonnet/astring/commit/8c3ef44ae6d273562f6e03cb890726d2cc02f9b2)), closes [#424](https://github.com/davidbonnet/astring/issues/424)
+* support import expression ([#345](https://github.com/davidbonnet/astring/issues/345)) ([56a1574](https://github.com/davidbonnet/astring/commit/56a1574774533764644107a61bf0acc0d1c7d209))
+
+
+### Bug Fixes
+
+* **demo:** disable spellcheck on input ([b95ef6a](https://github.com/davidbonnet/astring/commit/b95ef6a4a179b031beba27387dd1bba935b2ce72))
+* incorrect awaited arrow function render ([11ec06c](https://github.com/davidbonnet/astring/commit/11ec06cd092cabc1a82ccd8b74c8219fcf98dcb7))
+* missing space for repeating unary operator ([#315](https://github.com/davidbonnet/astring/issues/315)) ([48e8a2e](https://github.com/davidbonnet/astring/commit/48e8a2e157858df4e1765cc2db9148b5b708216d))
+* sourcemaps for multiline strings are incorrect ([f246aff](https://github.com/davidbonnet/astring/commit/f246affc88b57455bc9eaa7f306fc9d2b6fd645f)), closes [#247](https://github.com/davidbonnet/astring/issues/247)
+
 ### [1.4.3](https://github.com/davidbonnet/astring/compare/v1.4.2...v1.4.3) (2019-10-13)
 
 
