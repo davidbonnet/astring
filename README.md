@@ -92,7 +92,7 @@ The `astring` module exposes the following properties:
 
 ### `generate(node: object, options: object): string | object`
 
-Returns a string representing the rendered code of the provided AST `node`. However, if an `output` stream is provided in the options, it writes to that stream and returns it.
+Returns a string representing the rendered code of the provided AST `node`. However, if an `output` stream is provided in the `options`, it writes to that stream and returns it.
 
 The `options` are:
 

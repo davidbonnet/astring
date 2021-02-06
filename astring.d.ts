@@ -1,70 +1,77 @@
-import { Node } from 'estree';
-import { Mapping, SourceMapGenerator } from 'source-map';
-import { Writable } from 'stream';
+import type { Node as EstreeNode } from 'estree'
+import type { Mapping, SourceMapGenerator } from 'source-map'
+import type { Writable } from 'stream'
 
 /**
- * State shape passed to generator code.
+ * State object passed to generator functions.
  */
 export interface State {
-  output: string;
-  write(code: string): void;
-  writeComments: boolean;
-  indent: string;
-  lineEnd: string;
-  indentLevel: number;
+  output: string
+  write(code: string): void
+  writeComments: boolean
+  indent: string
+  lineEnd: string
+  indentLevel: number
+  line?: number
+  column?: number
+  lineEndSize?: number
+  mapping?: Mapping
 }
 
 /**
- * State shape if a sourceMap is specified.
+ * Code generator for each node type.
  */
-export interface StateWithSourceMap {
-  line: number;
-  column: number;
-  lineEndSize: number;
-  mapping: Mapping;
+export type Generator = {
+  [T in EstreeNode['type']]: (
+    node: EstreeNode & { type: T },
+    state: State,
+  ) => void
 }
 
 /**
- * Options for generating code in astring.
+ * Code generator options.
  */
-export interface Options {
+export interface Options<Output = null> {
   /**
    * If present, source mappings will be written to the generator.
    */
-  sourceMap?: SourceMapGenerator;
+  sourceMap?: SourceMapGenerator
   /**
-   * String to use for indentation, defaults to "  ".
+   * String to use for indentation, defaults to `"␣␣"`.
    */
-  indent?: string;
+  indent?: string
   /**
-   * String to use for line endings, defaults to "\n"
+   * String to use for line endings, defaults to `"\n"`.
    */
-  lineEnd?: string;
+  lineEnd?: string
   /**
-   * Indent level to start from, defaults to "0"
+   * Indent level to start from, defaults to `0`.
    */
-  startingIndentLevel?: number;
+  startingIndentLevel?: number
   /**
-   * Generate comments, defaults to false.
+   * Generate comments if `true`, defaults to `false`.
    */
-  comments?: boolean;
+  comments?: boolean
   /**
-   * Output stream to write the render code to, defaults to null.
+   * Output stream to write the render code to, defaults to `null`.
    */
-  output?: Writable | null;
+  output?: Output
   /**
    * Custom code generator logic.
    */
-  generator?: { [T in Node['type']]: (node: Node & { type: T }, state: State) => void };
+  generator?: Generator
 }
 
 /**
- * Type for an acorn/estree node. estree provides better typing for
- * generators, but its definitions are slightly incompatible with acorn's
- * (acorn generates a valid estree, it's just the typings which mismatch.)
+ * Core Estree Node type to accommodate derived node types from parsers.
  */
-interface EstreeNode {
-  type: string;
+interface Node {
+  type: string
 }
 
-export function generate(node: EstreeNode, options?: Options): string;
+/**
+ * Returns a string representing the rendered code of the provided AST `node`.
+ * However, if an `output` stream is provided in the `options`, it writes to that stream and returns it.
+ */
+export function generate(node: Node, options?: Options<null>): string
+export function generate(node: Node, options?: Options<Writable>): Writable
