@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.7.0](https://github.com/davidbonnet/astring/compare/v1.6.2...v1.7.0) (2021-02-06)
+
+
+### Features
+
+* add typescript definitions ([#346](https://github.com/davidbonnet/astring/issues/346)) ([d2e197a](https://github.com/davidbonnet/astring/commit/d2e197a6b82efeeffc2d7a6fa2f16295c54c8dea))
+
 ### [1.6.2](https://github.com/davidbonnet/astring/compare/v1.6.1...v1.6.2) (2021-02-03)
 
 
