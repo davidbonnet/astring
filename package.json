@@ -4,6 +4,7 @@
   "description": "JavaScript code generator from an ESTree-compliant AST.",
   "main": "./dist/astring.js",
   "module": "./src/astring.js",
+  "types": "./astring.d.ts",
   "bin": {
     "astring": "bin/astring"
   },
