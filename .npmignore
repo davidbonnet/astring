@@ -1,5 +1,6 @@
 *.sublime-project
 *.sublime-workspace
+.nova
 .eslintignore
 .gitignore
 .npmignore
@@ -16,3 +17,4 @@ local/
 node_modules/
 package-lock.json
 src/tests/
+*.DS_Store
