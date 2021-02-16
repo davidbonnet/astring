@@ -3,14 +3,14 @@ import test from 'ava'
 import path from 'path'
 import { parse } from 'acorn'
 import * as astravel from 'astravel'
+import { pick } from 'lodash'
 
 import { generate } from '../astring'
 import { readFile } from './tools'
-import benchmarkWithCode from './benchmark'
 
 const FIXTURES_FOLDER = path.join(__dirname, 'fixtures')
 
-const ecmaVersion = 10
+const ecmaVersion = 12
 
 const stripLocation = astravel.makeTraveler({
   go(node, state) {
@@ -29,14 +29,14 @@ const stripLocation = astravel.makeTraveler({
   },
 })
 
-test('Syntax check', assert => {
+test('Syntax check', (assert) => {
   const dirname = path.join(FIXTURES_FOLDER, 'syntax')
   const files = fs.readdirSync(dirname).sort()
   const options = {
     ecmaVersion,
     sourceType: 'module',
   }
-  files.forEach(filename => {
+  files.forEach((filename) => {
     const code = readFile(path.join(dirname, filename))
     const ast = parse(code, options)
     assert.is(
@@ -48,14 +48,14 @@ test('Syntax check', assert => {
   })
 })
 
-test('Tree comparison', assert => {
+test('Tree comparison', (assert) => {
   const dirname = path.join(FIXTURES_FOLDER, 'tree')
   const files = fs.readdirSync(dirname).sort()
   const options = {
     ecmaVersion,
     sourceType: 'module',
   }
-  files.forEach(filename => {
+  files.forEach((filename) => {
     const code = readFile(path.join(dirname, filename))
     const ast = parse(code, options)
     stripLocation.go(ast)
@@ -70,10 +70,10 @@ test('Tree comparison', assert => {
   })
 })
 
-test('Deprecated syntax check', assert => {
+test('Deprecated syntax check', (assert) => {
   const dirname = path.join(FIXTURES_FOLDER, 'deprecated')
   const files = fs.readdirSync(dirname).sort()
-  files.forEach(filename => {
+  files.forEach((filename) => {
     const code = readFile(path.join(dirname, filename))
     const version = parseInt(filename.substring(2, filename.length - 3))
     const ast = parse(code, { ecmaVersion: version })
@@ -81,7 +81,7 @@ test('Deprecated syntax check', assert => {
   })
 })
 
-test('Output stream', assert => {
+test('Output stream', (assert) => {
   const code = 'const a = 42;\n'
   const output = {
     buffer: '',
@@ -99,13 +99,13 @@ test('Output stream', assert => {
   assert.is(result.buffer, code)
 })
 
-test('Comment generation', assert => {
+test('Comment generation', (assert) => {
   const dirname = path.join(FIXTURES_FOLDER, 'comment')
   const files = fs.readdirSync(dirname).sort()
   const options = {
     comments: true,
   }
-  files.forEach(filename => {
+  files.forEach((filename) => {
     const code = readFile(path.join(dirname, filename))
     const comments = []
     const ast = parse(code, {
@@ -122,73 +122,75 @@ test('Comment generation', assert => {
   })
 })
 
-test('Source map generation', assert => {
-  const code = 'function f(x) {\n  return x;\n}\n'
-  const sourceMap = {
-    mappings: [],
-    _file: 'script.js',
-    addMapping({ original, generated: { line, column }, name, source }) {
-      const generated = { line, column }
-      assert.deepEqual(generated, { ...original })
-      assert.is(source, this._file)
-      this.mappings.push({
-        original,
-        generated,
-        name,
-        source,
-      })
-    },
-  }
-  const ast = parse(code, {
+test('Source map generation', (assert) => {
+  const dirname = path.join(FIXTURES_FOLDER, 'syntax')
+  const files = fs.readdirSync(dirname).sort()
+  const options = {
     ecmaVersion,
+    sourceType: 'module',
     locations: true,
+  }
+  files.forEach((filename) => {
+    const code = readFile(path.join(dirname, filename))
+    const sourceMap = {
+      mappings: [],
+      _file: filename,
+      addMapping({ original, generated, name, source }) {
+        assert.deepEqual(
+          pick(generated, ['line', 'column']),
+          pick(original, ['line', 'column']),
+          `${source}:${name}`,
+        )
+        assert.is(source, this._file)
+        this.mappings.push({
+          original,
+          generated,
+          name,
+          source,
+        })
+      },
+    }
+    const ast = parse(code, options)
+    generate(ast, {
+      sourceMap,
+    })
   })
-  const formattedCode = generate(ast, {
-    sourceMap,
-  })
-  assert.is(sourceMap.mappings.length, 3)
-  assert.is(formattedCode, code)
 })
 
-test('Performance tiny code', assert => {
-  const result = benchmarkWithCode('var a = 2;', 'tiny code')
-  assert.true(
-    result['astring'].speed > result['escodegen'].speed,
-    'astring is faster than escodegen',
-  )
-  assert.true(
-    result['astring'].speed > 10 * result['babel'].speed,
-    'astring is at least 10x faster than babel',
-  )
-  assert.true(
-    result['astring'].speed > 10 * result['prettier'].speed,
-    'astring is at least 10x faster than prettier',
-  )
-  assert.true(
-    result['acorn + astring'].speed > result['buble'].speed,
-    'astring is faster than buble',
-  )
-})
-
-test('Performance with everything', assert => {
-  const result = benchmarkWithCode(
-    readFile(path.join(FIXTURES_FOLDER, 'tree', 'es6.js')),
-    'everything',
-  )
-  assert.true(
-    result['astring'].speed > result['escodegen'].speed,
-    'astring is faster than escodegen',
-  )
-  assert.true(
-    result['astring'].speed > 10 * result['babel'].speed,
-    'astring is at least 10x faster than babel',
-  )
-  assert.true(
-    result['astring'].speed > 10 * result['prettier'].speed,
-    'astring is at least 10x faster than prettier',
-  )
-  assert.true(
-    result['acorn + astring'].speed > result['buble'].speed,
-    'astring is faster than buble',
-  )
+test('Source map generation with comments', (assert) => {
+  const dirname = path.join(FIXTURES_FOLDER, 'comment')
+  const files = fs.readdirSync(dirname).sort()
+  files.forEach((filename) => {
+    const code = readFile(path.join(dirname, filename))
+    const sourceMap = {
+      mappings: [],
+      _file: filename,
+      addMapping({ original, generated, name, source }) {
+        assert.deepEqual(
+          pick(generated, ['line', 'column']),
+          pick(original, ['line', 'column']),
+          `${source}:${name}`,
+        )
+        assert.is(source, this._file)
+        this.mappings.push({
+          original,
+          generated,
+          name,
+          source,
+        })
+      },
+    }
+    const comments = []
+    const ast = parse(code, {
+      ecmaVersion,
+      comments: true,
+      locations: true,
+      onComment: comments,
+    })
+    astravel.attachComments(ast, comments)
+    generate(ast, {
+      sourceMap,
+      comments: true,
+    })
+  })
 })

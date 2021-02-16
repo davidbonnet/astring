@@ -18,9 +18,9 @@ import { readFile } from './tools'
 
 const SCRIPT = process.argv[1].indexOf('benchmark.js') !== -1
 
-export default function benchmarkWithCode(code) {
+export function benchmark(code) {
   const acornOptions = {
-    ecmaVersion: 10,
+    ecmaVersion: 12,
     sourceType: 'module',
   }
   const ast = acorn(code, acornOptions)
@@ -99,7 +99,7 @@ export default function benchmarkWithCode(code) {
     .add('sucrase', () => {
       sucrase(code, sucraseOptions).code
     })
-    .on('cycle', event => {
+    .on('cycle', (event) => {
       if (SCRIPT) {
         console.log(`${event.target}`)
       }
@@ -125,7 +125,7 @@ function resultsToMarkdown(results) {
   for (let i = 0; i < length; i++) {
     const result = results[i]
     output += `| ${result.name} (${result.length}) | ${join(
-      map(categories, key => format(result.results[key].speed)),
+      map(categories, (key) => format(result.results[key].speed)),
       ' | ',
     )} |\n`
   }
@@ -137,13 +137,13 @@ if (SCRIPT) {
   results.push({
     name: 'tiny code',
     length: 'var a = 42;'.length,
-    results: benchmarkWithCode('var a = 42;'),
+    results: benchmark('var a = 42;'),
   })
   const code = readFile(path.join(__dirname, 'fixtures', 'tree', 'es6.js'))
   results.push({
     name: 'everything',
     length: code.length,
-    results: benchmarkWithCode(code),
+    results: benchmark(code),
   })
   console.log(resultsToMarkdown(results))
 }

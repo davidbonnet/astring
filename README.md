@@ -9,8 +9,8 @@
 
 ### Key features
 
-- Generates JavaScript code up to [version 10 (2019)](https://tc39.github.io/ecma262/) and [finished proposals](https://github.com/tc39/proposals/blob/master/finished-proposals.md).
-- Works on [ESTree](https://github.com/estree/estree)-compliant ASTs such as the ones produced by [Acorn](https://github.com/marijnh/acorn).
+- Generates JavaScript code up to [version 11 (2020)](https://tc39.github.io/ecma262/) and [finished proposals](https://github.com/tc39/proposals/blob/master/finished-proposals.md).
+- Works on [ESTree](https://github.com/estree/estree)-compliant ASTs such as the ones produced by [Meriyah](https://github.com/meriyah/meriyah) or [Acorn](https://github.com/acornjs/acorn).
 - Extendable with custom AST node handlers.
 - Considerably faster than [Bublé](https://gitlab.com/Rich-Harris/buble) (up to 5×), [Escodegen](https://github.com/estools/escodegen) (up to 10×), [Babel](https://github.com/babel/babel) (up to 50×), [UglifyJS](https://github.com/mishoo/UglifyJS2) (up to 125×), and [Prettier](https://github.com/prettier/prettier) (up to 380×).
 - Supports source map generation with [Source Map](https://github.com/mozilla/source-map#sourcemapgenerator).
@@ -27,6 +27,9 @@ Checkout the [live demo](http://david.bonnet.cc/astring/demo/) showing Astring i
 - [Import](#import)
 - [API](#api)
   - [`generate(node: object, options: object): string | object`](#generatenode-object-options-object-string-%7C-object)
+  - [`GENERATOR: object`](#generator-object)
+  - [`EXPRESSIONS_PRECEDENCE: object`](#expressions_precedence-object)
+  - [`NEEDS_PARENTHESES: number`](#needs_parentheses-number)
   - [`baseGenerator: object`](#basegenerator-object)
 - [Benchmark](#benchmark)
   - [Generating code](#generating-code)
@@ -89,7 +92,7 @@ The `astring` module exposes the following properties:
 
 ### `generate(node: object, options: object): string | object`
 
-Returns a string representing the rendered code of the provided AST `node`. However, if an `output` stream is provided in the options, it writes to that stream and returns it.
+Returns a string representing the rendered code of the provided AST `node`. However, if an `output` stream is provided in the `options`, it writes to that stream and returns it.
 
 The `options` are:
 
@@ -98,12 +101,25 @@ The `options` are:
 - `startingIndentLevel`: indent level to start from (defaults to `0`)
 - `comments`: generate comments if `true` (defaults to `false`)
 - `output`: output stream to write the rendered code to (defaults to `null`)
-- `generator`: custom code generator (defaults to `astring.baseGenerator`)
+- `generator`: custom code generator (defaults to `GENERATOR`)
 - `sourceMap`: [source map generator](https://github.com/mozilla/source-map#sourcemapgenerator) (defaults to `null`)
+- `expressionsPrecedence`: custom map of node types and their precedence level (defaults to `EXPRESSIONS_PRECEDENCE`)
+
+### `GENERATOR: object`
+
+Base generator that can be used to [extend Astring](#extending).
+
+### `EXPRESSIONS_PRECEDENCE: object`
+
+Mapping of node types and their precedence level to let the generator know when to use parentheses.
+
+### `NEEDS_PARENTHESES: number`
+
+Default precedence level that always triggers the use of parentheses.
 
 ### `baseGenerator: object`
 
-Base generator that can be used to [extend Astring](#extending).
+> :warning: Deprecated, use `GENERATOR` instead.
 
 ## Benchmark
 
@@ -131,7 +147,7 @@ The following examples are written in JavaScript 5 with Astring imported _à la 
 
 ### Generating code
 
-This example uses [Acorn](https://github.com/marijnh/acorn), a blazingly fast JavaScript AST producer and therefore the perfect companion of Astring.
+This example uses [Acorn](https://github.com/acornjs/acorn), a blazingly fast JavaScript AST producer and therefore the perfect companion of Astring.
 
 ```javascript
 // Make sure acorn and astring modules are imported
@@ -234,8 +250,8 @@ This example shows how to support the `await` keyword which is part of the [asyn
 // Make sure the astring module is imported and that `Object.assign` is defined
 
 // Create a custom generator that inherits from Astring's base generator
-var customGenerator = Object.assign({}, astring.baseGenerator, {
-  AwaitExpression: function(node, state) {
+var customGenerator = Object.assign({}, astring.GENERATOR, {
+  AwaitExpression: function (node, state) {
     state.write('await ')
     var argument = node.argument
     if (argument != null) {
@@ -279,7 +295,7 @@ The utility reads the AST from a provided list of files or from `stdin` if none 
 
 ### Example
 
-As in the previous example, these examples use [Acorn](https://github.com/marijnh/acorn) to get the JSON-formatted AST. This command pipes the AST output by Acorn from a `script.js` file to Astring and writes the formatted JavaScript code into a `result.js` file:
+As in the previous example, these examples use [Acorn](https://github.com/acornjs/acorn) to get the JSON-formatted AST. This command pipes the AST output by Acorn from a `script.js` file to Astring and writes the formatted JavaScript code into a `result.js` file:
 
 ```bash
 acorn --ecma6 script.js | astring > result.js

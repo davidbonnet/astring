@@ -1,5 +1,6 @@
 *.sublime-project
 *.sublime-workspace
+.nova
 .eslintignore
 .gitignore
 .npmignore
@@ -7,6 +8,7 @@
 .travis.yml
 .prettierignore
 .nvmrc
+.github
 CHANGELOG.md
 coverage/
 dist/.keep
@@ -15,3 +17,4 @@ local/
 node_modules/
 package-lock.json
 src/tests/
+*.DS_Store
