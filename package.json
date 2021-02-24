@@ -44,7 +44,7 @@
     "@babel/cli": "^7.13.0",
     "@babel/core": "^7.13.1",
     "@babel/generator": "^7.13.0",
-    "@babel/parser": "^7.12.16",
+    "@babel/parser": "^7.13.4",
     "@babel/preset-env": "^7.13.5",
     "acorn": "^8.0.5",
     "astravel": "^0.5.0",
