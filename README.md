@@ -200,7 +200,7 @@ console.log(map.toString())
 ```javascript
 import { Parser } from 'acorn'
 import acornJsx from 'acorn-jsx'
-import {generate, GENERATOR, JSX} from './dist/astring.js'
+import { generate, GENERATOR, JSX } from './dist/astring.js'
 
 // Parse with acorn:
 const acorn = Parser.extend(acornJsx())
@@ -211,9 +211,7 @@ var ast = acorn.parse('console.log(<h1>Hello, world!</h1>)', {
 })
 
 // Serialize with astring:
-var code = generate(ast, {
-  generator: { ...GENERATOR, ...JSX },
-})
+var code = generate(ast, { generator: { ...GENERATOR, ...JSX } })
 
 console.log(code)
 ```
