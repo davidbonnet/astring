@@ -1119,7 +1119,12 @@ export const JSX = {
   },
   // `!`
   JSXText(node, state) {
-    state.write(encodeJsx(node.value), node)
+    state.write(
+      encodeJsx(node.value).replace(/<|\{/g, function ($0) {
+        return $0 === '<' ? '&lt;' : '&#123;'
+      }),
+      node,
+    )
   },
 }
 

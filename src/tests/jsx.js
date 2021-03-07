@@ -436,4 +436,16 @@ test('JSX', (assert) => {
     'a&amp;b',
     'should support a JSX text w/ an ampersand (2)',
   )
+
+  assert.is(
+    generate({ type: 'JSXText', value: 'a < b' }, { generator }),
+    'a &lt; b',
+    'should support a JSX text w/ an opening angle (`<`)',
+  )
+
+  assert.is(
+    generate({ type: 'JSXText', value: 'a { b' }, { generator }),
+    'a &#123; b',
+    'should support a JSX text w/ an opening brace (`{`)',
+  )
 })
