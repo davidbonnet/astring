@@ -8,6 +8,8 @@ import { pick } from 'lodash'
 import { generate } from '../astring'
 import { readFile } from './tools'
 
+import './jsx'
+
 const FIXTURES_FOLDER = path.join(__dirname, 'fixtures')
 
 const ecmaVersion = 12
