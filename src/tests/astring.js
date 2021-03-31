@@ -123,15 +123,17 @@ test('Comment generation', (assert) => {
 })
 
 test('Source map generation', (assert) => {
-  const dirname = path.join(FIXTURES_FOLDER, 'syntax')
-  const files = fs.readdirSync(dirname).sort()
+  const files = ['syntax', 'sourcemap-cases']
+    .map(subdir => path.join(FIXTURES_FOLDER, subdir))
+    .flatMap(dir => fs.readdirSync(dir).sort().map(file => path.join(dir, file)))
+
   const options = {
     ecmaVersion,
     sourceType: 'module',
     locations: true,
   }
   files.forEach((filename) => {
-    const code = readFile(path.join(dirname, filename))
+    const code = readFile(filename)
     const sourceMap = {
       mappings: [],
       _file: filename,
@@ -154,6 +156,8 @@ test('Source map generation', (assert) => {
     generate(ast, {
       sourceMap,
     })
+
+    assert.true(sourceMap.mappings.length > 0, `Expected ${path.basename(filename)} to have mappings`)
   })
 })
 
