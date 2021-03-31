@@ -124,8 +124,13 @@ test('Comment generation', (assert) => {
 
 test('Source map generation', (assert) => {
   const files = ['syntax', 'sourcemap-cases']
-    .map(subdir => path.join(FIXTURES_FOLDER, subdir))
-    .flatMap(dir => fs.readdirSync(dir).sort().map(file => path.join(dir, file)))
+    .map((subdir) => path.join(FIXTURES_FOLDER, subdir))
+    .flatMap((dir) =>
+      fs
+        .readdirSync(dir)
+        .sort()
+        .map((file) => path.join(dir, file)),
+    )
 
   const options = {
     ecmaVersion,
@@ -157,7 +162,10 @@ test('Source map generation', (assert) => {
       sourceMap,
     })
 
-    assert.true(sourceMap.mappings.length > 0, `Expected ${path.basename(filename)} to have mappings`)
+    assert.true(
+      sourceMap.mappings.length > 0,
+      `Expected ${path.basename(filename)} to have mappings`,
+    )
   })
 })
 
