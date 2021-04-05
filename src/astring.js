@@ -145,9 +145,7 @@ function expressionNeedsParenthesis(state, node, parentNode, isRightHand) {
 
 function formatExpression(state, node, parentNode, isRightHand) {
   /*
-  Writes into `state` a left-hand or right-hand expression `node`
-  from a binary expression applying the provided `operator`.
-  The `isRightHand` parameter should be `true` if the `node` is a right-hand argument.
+  Writes into `state` the provided `node`, adding parenthesis around if the provided `parentNode` needs it. If `node` is a right-hand argument, the provided `isRightHand` parameter should be `true`.
   */
   const { generator } = state
   if (expressionNeedsParenthesis(state, node, parentNode, isRightHand)) {
@@ -505,7 +503,21 @@ export const GENERATOR = {
     state.write('class ' + (node.id ? `${node.id.name} ` : ''), node)
     if (node.superClass) {
       state.write('extends ')
-      this[node.superClass.type](node.superClass, state)
+      const { superClass } = node
+      const { type } = superClass
+      const precedence = state.expressionsPrecedence[type]
+      if (
+        (type[0] !== 'C' || type[1] !== 'l' || type[5] !== 'E') &&
+        (precedence === NEEDS_PARENTHESES ||
+          precedence < state.expressionsPrecedence.ClassExpression)
+      ) {
+        // Not a ClassExpression that needs parentheses
+        state.write('(')
+        this[node.superClass.type](superClass, state)
+        state.write(')')
+      } else {
+        this[superClass.type](superClass, state)
+      }
       state.write(' ')
     }
     this.ClassBody(node.body, state)
@@ -514,7 +526,7 @@ export const GENERATOR = {
     state.write('import ')
     const { specifiers } = node
     const { length } = specifiers
-    // NOTE: Once babili is fixed, put this after condition
+    // TODO: Once babili is fixed, put this after condition
     // https://github.com/babel/babili/issues/430
     let i = 0
     if (length > 0) {
@@ -830,22 +842,21 @@ export const GENERATOR = {
         argument: { type },
       } = node
       state.write(operator)
+      const needsParentheses = expressionNeedsParenthesis(state, argument, node)
       if (
-        operator.length > 1 ||
-        (type[0] === 'U' &&
-          (type[1] === 'n' || type[1] === 'p') &&
-          argument.prefix &&
-          argument.operator[0] === operator &&
-          (operator === '+' || operator === '-'))
+        !needsParentheses &&
+        (operator.length > 1 ||
+          (type[0] === 'U' &&
+            (type[1] === 'n' || type[1] === 'p') &&
+            argument.prefix &&
+            argument.operator[0] === operator &&
+            (operator === '+' || operator === '-')))
       ) {
         // Large operator or argument is UnaryExpression or UpdateExpression node
         state.write(' ')
       }
-      if (
-        state.expressionsPrecedence[type] <
-        state.expressionsPrecedence.UnaryExpression
-      ) {
-        state.write('(')
+      if (needsParentheses) {
+        state.write(operator.length > 1 ? ' (' : '(')
         this[type](argument, state)
         state.write(')')
       } else {
@@ -892,15 +903,17 @@ export const GENERATOR = {
   }),
   LogicalExpression: BinaryExpression,
   ConditionalExpression(node, state) {
+    const { test } = node
+    const precedence = state.expressionsPrecedence[test.type]
     if (
-      state.expressionsPrecedence[node.test.type] >
-      state.expressionsPrecedence.ConditionalExpression
+      precedence === NEEDS_PARENTHESES ||
+      precedence <= state.expressionsPrecedence.ConditionalExpression
     ) {
-      this[node.test.type](node.test, state)
-    } else {
       state.write('(')
-      this[node.test.type](node.test, state)
+      this[test.type](test, state)
       state.write(')')
+    } else {
+      this[test.type](test, state)
     }
     state.write(' ? ')
     this[node.consequent.type](node.consequent, state)
@@ -909,9 +922,10 @@ export const GENERATOR = {
   },
   NewExpression(node, state) {
     state.write('new ')
+    const precedence = state.expressionsPrecedence[node.callee.type]
     if (
-      state.expressionsPrecedence[node.callee.type] <
-        state.expressionsPrecedence.CallExpression ||
+      precedence === NEEDS_PARENTHESES ||
+      precedence < state.expressionsPrecedence.CallExpression ||
       hasCallExpression(node.callee)
     ) {
       state.write('(')
@@ -923,9 +937,10 @@ export const GENERATOR = {
     formatSequence(state, node['arguments'])
   },
   CallExpression(node, state) {
+    const precedence = state.expressionsPrecedence[node.callee.type]
     if (
-      state.expressionsPrecedence[node.callee.type] <
-      state.expressionsPrecedence.CallExpression
+      precedence === NEEDS_PARENTHESES ||
+      precedence < state.expressionsPrecedence.CallExpression
     ) {
       state.write('(')
       this[node.callee.type](node.callee, state)
@@ -942,9 +957,10 @@ export const GENERATOR = {
     this[node.expression.type](node.expression, state)
   },
   MemberExpression(node, state) {
+    const precedence = state.expressionsPrecedence[node.object.type]
     if (
-      state.expressionsPrecedence[node.object.type] <
-      state.expressionsPrecedence.MemberExpression
+      precedence === NEEDS_PARENTHESES ||
+      precedence < state.expressionsPrecedence.MemberExpression
     ) {
       state.write('(')
       this[node.object.type](node.object, state)
