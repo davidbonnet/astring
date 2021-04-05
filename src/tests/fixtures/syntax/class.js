@@ -37,3 +37,13 @@ class J extends A {
     super();
   }
 }
+class K extends (() => {}) {}
+class L extends (1 + 1) {}
+class M extends (-1) {}
+class N extends (c++) {}
+function* a() {
+  class A extends (yield) {}
+}
+async function b() {
+  class A extends (await a()) {}
+}
