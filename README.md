@@ -15,6 +15,7 @@
 - Considerably faster than [Bublé](https://gitlab.com/Rich-Harris/buble) (up to 5×), [Escodegen](https://github.com/estools/escodegen) (up to 10×), [Babel](https://github.com/babel/babel) (up to 50×), [UglifyJS](https://github.com/mishoo/UglifyJS2) (up to 125×), and [Prettier](https://github.com/prettier/prettier) (up to 380×).
 - Supports source map generation with [Source Map](https://github.com/mozilla/source-map#sourcemapgenerator).
 - Supports comment generation with [Astravel](https://github.com/davidbonnet/astravel).
+- Optionally supports JSX.
 - No dependencies and small footprint (≈ 16 KB minified, ≈ 4 KB gziped).
 
 Checkout the [live demo](http://david.bonnet.cc/astring/demo/) showing Astring in action.
@@ -109,6 +110,11 @@ The `options` are:
 
 Base generator that can be used to [extend Astring](#extending).
 
+### `JSX: object`
+
+Handlers for JSX nodes. Can be combined with `GENERATOR` and/or your own
+generators to support JSX.
+
 ### `EXPRESSIONS_PRECEDENCE: object`
 
 Mapping of node types and their precedence level to let the generator know when to use parentheses.
@@ -187,6 +193,27 @@ var formattedCode = generate(ast, {
 })
 // Display generated source map
 console.log(map.toString())
+```
+
+### Supporting JSX
+
+```javascript
+import { Parser } from 'acorn'
+import acornJsx from 'acorn-jsx'
+import { generate, GENERATOR, JSX } from './dist/astring.js'
+
+// Parse with acorn:
+const acorn = Parser.extend(acornJsx())
+
+var ast = acorn.parse('console.log(<h1>Hello, world!</h1>)', {
+  ecmaVersion: 6,
+  sourceType: 'module',
+})
+
+// Serialize with astring:
+var code = generate(ast, { generator: { ...GENERATOR, ...JSX } })
+
+console.log(code)
 ```
 
 ### Using writable streams

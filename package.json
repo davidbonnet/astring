@@ -5,6 +5,7 @@
   "main": "./dist/astring.js",
   "module": "./src/astring.js",
   "types": "./astring.d.ts",
+  "sideEffects": false,
   "bin": {
     "astring": "bin/astring"
   },
