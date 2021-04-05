@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.7.1](https://github.com/davidbonnet/astring/compare/v1.7.0...v1.7.1) (2021-04-05)
+
+
+### Bug Fixes
+
+* **sourcemaps:** missing sourcemaps on debugger statement ([#503](https://github.com/davidbonnet/astring/issues/503)) ([9822a2a](https://github.com/davidbonnet/astring/commit/9822a2a4432ff957ef18c5959f3c71d10f0e361d))
+
 ## [1.7.0](https://github.com/davidbonnet/astring/compare/v1.6.2...v1.7.0) (2021-02-06)
 
 

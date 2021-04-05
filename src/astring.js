@@ -487,7 +487,7 @@ export const GENERATOR = {
   }),
   ForOfStatement: ForInStatement,
   DebuggerStatement(node, state) {
-    state.write('debugger;' + state.lineEnd)
+    state.write('debugger;', node)
   },
   FunctionDeclaration: (FunctionDeclaration = function (node, state) {
     state.write(

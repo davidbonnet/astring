@@ -156,6 +156,10 @@ test('Source map generation', (assert) => {
     generate(ast, {
       sourceMap,
     })
+    assert.true(
+      sourceMap.mappings.length > 0,
+      `Expect ${path.basename(filename)} to have mappings`,
+    )
   })
 })
 
