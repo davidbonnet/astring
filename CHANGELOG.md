@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.7.4](https://github.com/davidbonnet/astring/compare/v1.7.3...v1.7.4) (2021-04-07)
+
+
+### Bug Fixes
+
+* **package:** correctly declare module variant ([45203ca](https://github.com/davidbonnet/astring/commit/45203ca5bdd0307cfa3ed9a838d59718de84c6b5)), closes [#505](https://github.com/davidbonnet/astring/issues/505)
+
 ### [1.7.3](https://github.com/davidbonnet/astring/compare/v1.7.2...v1.7.3) (2021-04-05)
 
 
