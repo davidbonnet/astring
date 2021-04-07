@@ -1,4 +1,4 @@
-module.exports = api => {
+module.exports = (api) => {
   api.cache.never()
   switch (process.env.BABEL_MODE) {
     case 'minified':
@@ -8,7 +8,7 @@ module.exports = api => {
             '@babel/preset-env',
             {
               forceAllTransforms: true,
-              modules: "umd",
+              modules: 'umd',
             },
           ],
           [
