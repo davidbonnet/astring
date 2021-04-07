@@ -16,5 +16,6 @@ docs/
 local/
 node_modules/
 package-lock.json
-src/tests/
+src/
+babel.config.js
 *.DS_Store

@@ -3,10 +3,10 @@
   "version": "1.7.3",
   "description": "JavaScript code generator from an ESTree-compliant AST.",
   "main": "./dist/astring.js",
-  "module": "./src/astring.js",
+  "module": "./dist/astring.mjs",
   "types": "./astring.d.ts",
   "exports": {
-    "import": "./src/astring.js",
+    "import": "./dist/astring.mjs",
     "require": "./dist/astring.js",
     "browser": "./dist/astring.min.js"
   },
@@ -14,11 +14,11 @@
     "astring": "bin/astring"
   },
   "scripts": {
-    "build": "babel src/astring.js --out-file dist/astring.js --source-maps --no-comments",
+    "build": "babel src/astring.js --out-file dist/astring.js --source-maps --no-comments && cp src/astring.js dist/astring.mjs",
     "build:watch": "babel src/astring.js --out-file dist/astring.js --source-maps --no-comments --watch",
     "build:minified": "cross-env BABEL_MODE=minified babel src/astring.js --out-file dist/astring.min.js --source-maps --no-comments",
     "build:demo": "npm run build:minified && cp dist/astring.min.* docs/demo/",
-    "prepare": "npm run build",
+    "prepare": "npm run build && npm run build:minified",
     "test": "npm run eslint && npm run prettier:check && npm run build:minified && npm run test:coverage",
     "dev": "ava --watch src/tests/astring.js",
     "test:coverage": "c8 --reporter=html --reporter=text --reporter=lcov --include='src/*.js' --exclude='src/tests/**/*.js' ava src/tests/astring.js",
