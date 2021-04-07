@@ -5,11 +5,6 @@
   "main": "./dist/astring.js",
   "module": "./src/astring.js",
   "types": "./astring.d.ts",
-  "exports": {
-    "import": "./src/astring.js",
-    "require": "./dist/astring.js",
-    "browser": "./dist/astring.min.js"
-  },
   "bin": {
     "astring": "bin/astring"
   },
