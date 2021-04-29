@@ -1,0 +1,17 @@
+version: 2
+updates:
+- package-ecosystem: npm
+  directory: "/"
+  schedule:
+    interval: monthly
+    time: "12:00"
+  open-pull-requests-limit: 10
+  versioning-strategy: increase
+  ignore:
+  - dependency-name: "@babel/parser"
+    versions:
+    - 7.12.13
+    - 7.13.10
+  - dependency-name: "@babel/generator"
+    versions:
+    - 7.12.13
