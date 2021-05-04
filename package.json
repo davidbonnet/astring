@@ -50,7 +50,7 @@
     "@babel/core": "^7.14.0",
     "@babel/generator": "^7.14.0",
     "@babel/parser": "^7.14.0",
-    "@babel/preset-env": "^7.14.0",
+    "@babel/preset-env": "^7.14.1",
     "acorn": "^8.2.2",
     "astravel": "^0.5.0",
     "ava": "^3.15.0",
