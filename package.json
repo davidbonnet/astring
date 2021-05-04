@@ -70,7 +70,7 @@
     "meriyah": "^4.1.5",
     "normalize-newline": "^3.0.0",
     "prettier": "^2.2.1",
-    "standard-version": "^9.1.1",
+    "standard-version": "^9.2.0",
     "sucrase": "^3.18.1",
     "uglify-js": "^3.13.5"
   },
