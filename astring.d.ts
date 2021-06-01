@@ -75,3 +75,8 @@ interface Node {
  */
 export function generate(node: Node, options?: Options<null>): string
 export function generate(node: Node, options?: Options<Writable>): Writable
+
+/**
+ * The Base Generator
+ */
+export const GENERATOR: Generator;
