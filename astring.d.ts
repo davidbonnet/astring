@@ -77,6 +77,6 @@ export function generate(node: Node, options?: Options<null>): string
 export function generate(node: Node, options?: Options<Writable>): Writable
 
 /**
- * The Base Generator
+ * Base code generator.
  */
 export const GENERATOR: Generator;
