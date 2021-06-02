@@ -1,0 +1,20 @@
+name: Dependencies
+
+on:
+  pull_request:
+    branches: [master]
+
+  workflow_dispatch:
+
+jobs:
+  merge:
+    name: Merge
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ahmadnassri/action-dependabot-auto-merge@v2
+        with:
+          target: minor
+          github-token: ${{ secrets.ACCESS_TOKEN }}
+          config: .github/dependencies.yml
