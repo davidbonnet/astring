@@ -7,6 +7,8 @@
 
 🌳 Tiny and fast JavaScript code generator from an [ESTree](https://github.com/estree/estree)-compliant AST.
 
+▶️ Checkout the [live demo](http://david.bonnet.cc/astring/demo/).
+
 ### Key features
 
 - Generates JavaScript code up to [version 11 (2020)](https://tc39.github.io/ecma262/) and [finished proposals](https://github.com/tc39/proposals/blob/master/finished-proposals.md).
@@ -16,8 +18,7 @@
 - Supports source map generation with [Source Map](https://github.com/mozilla/source-map#sourcemapgenerator).
 - Supports comment generation with [Astravel](https://github.com/davidbonnet/astravel).
 - No dependencies and small footprint (≈ 16 KB minified, ≈ 4 KB gziped).
-
-Checkout the [live demo](http://david.bonnet.cc/astring/demo/) showing Astring in action.
+- Runs on [🦕 Deno](https://deno.land).
 
 ## Contents
 
@@ -64,6 +65,12 @@ npm install
 ```
 
 ## Import
+
+Import it from [Deno's third party module repository](https://deno.land/x/astring/src/astring.js):
+
+```js
+const { generate } = await import('https://deno.land/x/astring/src/astring.js')
+```
 
 With JavaScript 6 modules:
 
