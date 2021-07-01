@@ -47,7 +47,7 @@
   "license": "MIT",
   "devDependencies": {
     "@babel/cli": "^7.14.3",
-    "@babel/core": "^7.14.3",
+    "@babel/core": "^7.14.6",
     "@babel/generator": "^7.14.3",
     "@babel/parser": "^7.14.4",
     "@babel/preset-env": "^7.14.4",
