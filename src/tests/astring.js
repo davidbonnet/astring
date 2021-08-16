@@ -198,3 +198,11 @@ test('Source map generation with comments', (assert) => {
     })
   })
 })
+
+test('nonStandardLiterals option', (assert) => {
+  const code = 'const a = \'foobar\';\n'
+  const ast = parse(code, { ecmaVersion })
+  assert.is(generate(ast), 'const a = \'foobar\';\n')
+  assert.is(generate(ast, { nonStandardLiterals: true }), 'const a = \'foobar\';\n')
+  assert.is(generate(ast, { nonStandardLiterals: false }), 'const a = "foobar";\n')
+})

@@ -991,13 +991,17 @@ export const GENERATOR = {
     state.write(node.name, node)
   },
   Literal(node, state) {
-    if (node.raw != null) {
+    if (node.raw != null && state.nonStandardLiterals) {
       // Non-standard property
       state.write(node.raw, node)
-    } else if (node.regex != null) {
+    } else if (node.regex != null && state.nonStandardLiterals) {
       this.RegExpLiteral(node, state)
-    } else if (node.bigint != null) {
+    } else if (node.value instanceof RegExp) {
+      state.write(`/${node.value.source}/${node.value.flags}`, node)
+    } else if (node.bigint != null && state.nonStandardLiterals) {
       state.write(node.bigint + 'n', node)
+    } else if (typeof node.value == 'bigint') {
+      state.write(node.value + 'n', node)
     } else {
       state.write(stringify(node.value), node)
     }
@@ -1037,6 +1041,8 @@ class State {
     this.indentLevel =
       setup.startingIndentLevel != null ? setup.startingIndentLevel : 0
     this.writeComments = setup.comments ? setup.comments : false
+    this.nonStandardLiterals =
+      setup.nonStandardLiterals != null ? setup.nonStandardLiterals : true
     // Source map
     if (setup.sourceMap != null) {
       this.write =
@@ -1142,6 +1148,7 @@ export function generate(node, options) {
   - `output`: output stream to write the rendered code to (defaults to `null`)
   - `generator`: custom code generator (defaults to `GENERATOR`)
   - `expressionsPrecedence`: custom map of node types and their precedence level (defaults to `EXPRESSIONS_PRECEDENCE`)
+  - `nonStandardLiterals`: generate literals from non-standard `raw`/`regex`/`bigint` properties (defaults to `true`)
   */
   const state = new State(options)
   // Travel through the AST node and generate the code

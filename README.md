@@ -111,6 +111,7 @@ The `options` are:
 - `generator`: custom code generator (defaults to `GENERATOR`)
 - `sourceMap`: [source map generator](https://github.com/mozilla/source-map#sourcemapgenerator) (defaults to `null`)
 - `expressionsPrecedence`: custom map of node types and their precedence level (defaults to `EXPRESSIONS_PRECEDENCE`)
+- `nonStandardLiterals`: generate literals from non-standard `raw`/`regex`/`bigint` properties (defaults to `true`)
 
 ### `GENERATOR: object`
 
