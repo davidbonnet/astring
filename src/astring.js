@@ -130,6 +130,10 @@ function expressionNeedsParenthesis(state, node, parentNode, isRightHand) {
     // Exponentiation operator has right-to-left associativity
     return !isRightHand
   }
+  if ((node.operator !== '??' && parentNode.operator === '??') || (node.operator === '??' && parentNode.operator !== '??')) {
+    // Nullish coalescing operator ?? requires parens when mixing with logical operators
+    return true
+  }
   if (isRightHand) {
     // Parenthesis are used if both operators have the same precedence
     return (
