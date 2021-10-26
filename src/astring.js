@@ -30,6 +30,7 @@ const OPERATOR_PRECEDENCE = {
   '||': 3,
   '&&': 4,
   '|': 5,
+  '??': 5,
   '^': 6,
   '&': 7,
   '==': 8,
@@ -129,10 +130,6 @@ function expressionNeedsParenthesis(state, node, parentNode, isRightHand) {
   if (node.operator === '**' && parentNode.operator === '**') {
     // Exponentiation operator has right-to-left associativity
     return !isRightHand
-  }
-  if ((node.operator !== '??' && parentNode.operator === '??') || (node.operator === '??' && parentNode.operator !== '??')) {
-    // Nullish coalescing operator ?? requires parens when mixing with logical operators
-    return true
   }
   if (isRightHand) {
     // Parenthesis are used if both operators have the same precedence
@@ -724,7 +721,7 @@ export const GENERATOR = {
     state.write(node.value.raw, node)
   },
   TaggedTemplateExpression(node, state) {
-    this[node.tag.type](node.tag, state)
+    formatExpression(state, node.tag, node)
     this[node.quasi.type](node.quasi, state)
   },
   ArrayExpression: (ArrayExpression = function (node, state) {
