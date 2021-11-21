@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.8.0](https://github.com/davidbonnet/astring/compare/v1.7.6...v1.8.0) (2021-11-21)
+
+
+### Features
+
+* support ES2022 ([#593](https://github.com/davidbonnet/astring/issues/593)) ([5a327d1](https://github.com/davidbonnet/astring/commit/5a327d1425cdd620377fb52b987880f8af461b62))
+
 ### [1.7.6](https://github.com/davidbonnet/astring/compare/v1.7.5...v1.7.6) (2021-11-21)
 
 
