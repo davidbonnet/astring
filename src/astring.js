@@ -30,6 +30,7 @@ const OPERATOR_PRECEDENCE = {
   '||': 3,
   '&&': 4,
   '|': 5,
+  '??': 5,
   '^': 6,
   '&': 7,
   '==': 8,
@@ -720,7 +721,7 @@ export const GENERATOR = {
     state.write(node.value.raw, node)
   },
   TaggedTemplateExpression(node, state) {
-    this[node.tag.type](node.tag, state)
+    formatExpression(state, node.tag, node)
     this[node.quasi.type](node.quasi, state)
   },
   ArrayExpression: (ArrayExpression = function (node, state) {
