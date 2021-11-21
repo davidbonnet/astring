@@ -30,7 +30,7 @@
     "prettier:check": "prettier --list-different \"{src,scripts}/**/*.js\" \"bin/astring\"",
     "prepush": "npm test",
     "release": "standard-version",
-    "deploy": "git push --follow-tags origin master && npm publish"
+    "deploy": "git push --follow-tags origin main && npm publish"
   },
   "keywords": [
     "ast",
