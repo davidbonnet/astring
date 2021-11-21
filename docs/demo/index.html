@@ -4,14 +4,14 @@
     <meta charset="UTF-8" />
     <title>JavaScript Prettifier</title>
     <link rel="stylesheet" type="text/css" href="style.css" />
-    <script
-      type="text/javascript"
-      src="https://unpkg.com/acorn@8/dist/acorn.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="https://unpkg.com/astravel@0.5/dist/astravel.min.js"
-    ></script>
+    <script type="module">
+      import * as astravel from 'https://cdn.skypack.dev/astravel'
+      window.astravel = astravel
+    </script>
+    <script type="module">
+      import * as acorn from 'https://cdn.skypack.dev/acorn'
+      window.acorn = acorn
+    </script>
     <script type="text/javascript" src="astring.min.js"></script>
   </head>
   <body>
@@ -54,7 +54,7 @@
         var astCheckbox = document.getElementById('ast')
         var linkButton = document.getElementById('setlink')
 
-        var ecmaVersion = 12
+        var ecmaVersion = 13
 
         function makeSpaces(amount) {
           var result = ''

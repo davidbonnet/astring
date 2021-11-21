@@ -10,7 +10,7 @@ import { readFile } from './tools'
 
 const FIXTURES_FOLDER = path.join(__dirname, 'fixtures')
 
-const ecmaVersion = 12
+const ecmaVersion = 13
 
 const stripLocation = astravel.makeTraveler({
   go(node, state) {

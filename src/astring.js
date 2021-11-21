@@ -63,6 +63,7 @@ export const EXPRESSIONS_PRECEDENCE = {
   TaggedTemplateExpression: 20,
   ThisExpression: 20,
   Identifier: 20,
+  PrivateIdentifier: 20,
   Literal: 18,
   TemplateLiteral: 20,
   Super: 20,
@@ -300,6 +301,10 @@ export const GENERATOR = {
     state.indentLevel--
   }),
   ClassBody: BlockStatement,
+  StaticBlock(node, state) {
+    state.write('static ')
+    this.BlockStatement(node, state)
+  },
   EmptyStatement(node, state) {
     state.write(';')
   },
@@ -816,6 +821,14 @@ export const GENERATOR = {
       this[node.value.type](node.value, state)
     }
   },
+  PropertyDefinition(node, state) {
+    if (node.static) {
+      state.write('static ')
+    }
+    this[node.key.type](node.key, state)
+    state.write(' = ')
+    this[node.value.type](node.value, state)
+  },
   ObjectPattern(node, state) {
     state.write('{')
     if (node.properties.length > 0) {
@@ -990,6 +1003,9 @@ export const GENERATOR = {
   },
   Identifier(node, state) {
     state.write(node.name, node)
+  },
+  PrivateIdentifier(node, state) {
+    state.write(`#${node.name}`, node)
   },
   Literal(node, state) {
     if (node.raw != null) {
