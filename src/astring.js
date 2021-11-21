@@ -1005,8 +1005,7 @@ export const GENERATOR = {
     state.write(node.name, node)
   },
   PrivateIdentifier(node, state) {
-    state.write('#')
-    state.write(node.name, node)
+    state.write(`#${node.name}`, node)
   },
   Literal(node, state) {
     if (node.raw != null) {
