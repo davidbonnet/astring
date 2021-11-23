@@ -1,14 +1,18 @@
 import fs from 'fs'
-import test from 'ava'
-import path from 'path'
+import { join as joinPath, dirname, basename } from 'path'
+import { fileURLToPath } from 'url'
+import { test } from 'zora'
 import { parse } from 'acorn'
 import * as astravel from 'astravel'
-import { pick } from 'lodash'
+import { pick } from 'lodash-es'
 
-import { generate } from '../astring'
-import { readFile } from './tools'
+import { generate } from '../astring.js'
+import { readFile } from './tools.js'
 
-const FIXTURES_FOLDER = path.join(__dirname, 'fixtures')
+const FIXTURES_FOLDER = joinPath(
+  dirname(fileURLToPath(import.meta.url)),
+  'fixtures',
+)
 
 const ecmaVersion = 13
 
@@ -30,51 +34,41 @@ const stripLocation = astravel.makeTraveler({
 })
 
 test('Syntax check', (assert) => {
-  const dirname = path.join(FIXTURES_FOLDER, 'syntax')
+  const dirname = joinPath(FIXTURES_FOLDER, 'syntax')
   const files = fs.readdirSync(dirname).sort()
   const options = {
     ecmaVersion,
     sourceType: 'module',
   }
   files.forEach((filename) => {
-    const code = readFile(path.join(dirname, filename))
+    const code = readFile(joinPath(dirname, filename))
     const ast = parse(code, options)
-    assert.is(
-      generate(ast),
-      code,
-      filename.substring(0, filename.length - 3),
-      'Generates code with the expected format',
-    )
+    assert.is(generate(ast), code, filename.substring(0, filename.length - 3))
   })
 })
 
 test('Tree comparison', (assert) => {
-  const dirname = path.join(FIXTURES_FOLDER, 'tree')
+  const dirname = joinPath(FIXTURES_FOLDER, 'tree')
   const files = fs.readdirSync(dirname).sort()
   const options = {
     ecmaVersion,
     sourceType: 'module',
   }
   files.forEach((filename) => {
-    const code = readFile(path.join(dirname, filename))
+    const code = readFile(joinPath(dirname, filename))
     const ast = parse(code, options)
     stripLocation.go(ast)
     const formattedAst = parse(generate(ast), options)
     stripLocation.go(formattedAst)
-    assert.deepEqual(
-      formattedAst,
-      ast,
-      filename.substring(0, filename.length - 3),
-      'Generates code with the same meaning',
-    )
+    assert.equal(formattedAst, ast, filename.substring(0, filename.length - 3))
   })
 })
 
 test('Deprecated syntax check', (assert) => {
-  const dirname = path.join(FIXTURES_FOLDER, 'deprecated')
+  const dirname = joinPath(FIXTURES_FOLDER, 'deprecated')
   const files = fs.readdirSync(dirname).sort()
   files.forEach((filename) => {
-    const code = readFile(path.join(dirname, filename))
+    const code = readFile(joinPath(dirname, filename))
     const version = parseInt(filename.substring(2, filename.length - 3))
     const ast = parse(code, { ecmaVersion: version })
     assert.is(generate(ast), code, 'es' + version)
@@ -100,13 +94,13 @@ test('Output stream', (assert) => {
 })
 
 test('Comment generation', (assert) => {
-  const dirname = path.join(FIXTURES_FOLDER, 'comment')
+  const dirname = joinPath(FIXTURES_FOLDER, 'comment')
   const files = fs.readdirSync(dirname).sort()
   const options = {
     comments: true,
   }
   files.forEach((filename) => {
-    const code = readFile(path.join(dirname, filename))
+    const code = readFile(joinPath(dirname, filename))
     const comments = []
     const ast = parse(code, {
       ecmaVersion,
@@ -123,7 +117,7 @@ test('Comment generation', (assert) => {
 })
 
 test('Source map generation', (assert) => {
-  const dirname = path.join(FIXTURES_FOLDER, 'syntax')
+  const dirname = joinPath(FIXTURES_FOLDER, 'syntax')
   const files = fs.readdirSync(dirname).sort()
   const options = {
     ecmaVersion,
@@ -131,12 +125,12 @@ test('Source map generation', (assert) => {
     locations: true,
   }
   files.forEach((filename) => {
-    const code = readFile(path.join(dirname, filename))
+    const code = readFile(joinPath(dirname, filename))
     const sourceMap = {
       mappings: [],
       _file: filename,
       addMapping({ original, generated, name, source }) {
-        assert.deepEqual(
+        assert.equal(
           pick(generated, ['line', 'column']),
           pick(original, ['line', 'column']),
           `${source}:${name}`,
@@ -154,23 +148,23 @@ test('Source map generation', (assert) => {
     generate(ast, {
       sourceMap,
     })
-    assert.true(
+    assert.ok(
       sourceMap.mappings.length > 0,
-      `Expect ${path.basename(filename)} to have mappings`,
+      `Expect ${basename(filename)} to have mappings`,
     )
   })
 })
 
 test('Source map generation with comments', (assert) => {
-  const dirname = path.join(FIXTURES_FOLDER, 'comment')
+  const dirname = joinPath(FIXTURES_FOLDER, 'comment')
   const files = fs.readdirSync(dirname).sort()
   files.forEach((filename) => {
-    const code = readFile(path.join(dirname, filename))
+    const code = readFile(joinPath(dirname, filename))
     const sourceMap = {
       mappings: [],
       _file: filename,
       addMapping({ original, generated, name, source }) {
-        assert.deepEqual(
+        assert.equal(
           pick(generated, ['line', 'column']),
           pick(original, ['line', 'column']),
           `${source}:${name}`,

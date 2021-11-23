@@ -8,7 +8,10 @@ import glob from 'glob'
 
 import { generate } from '../astring'
 
-const pattern = path.join(__dirname, '../../node_modules/@babel/**/*.js')
+const pattern = path.join(
+  path.dirname(new URL(import.meta.url).pathname),
+  '../../node_modules/@babel/**/*.js',
+)
 const options = {
   ecmaVersion: 8,
   sourceType: 'module',
@@ -47,7 +50,7 @@ test('Script tests', (assert) => {
       stripLocation.go(ast)
       const formattedAst = parse(generate(ast), options)
       stripLocation.go(formattedAst)
-      assert.deepEqual(formattedAst, ast, fileName)
+      assert.equal(formattedAst, ast, fileName)
     } catch (error) {
       assert.fail(error)
     }
