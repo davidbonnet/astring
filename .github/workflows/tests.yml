@@ -21,3 +21,4 @@ jobs:
           cache: 'npm'
       - run: npm ci
       - run: npm test
+      - run: npx codecov --file=./coverage/lcov.info
