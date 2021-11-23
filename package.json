@@ -1,6 +1,6 @@
 {
   "name": "astring",
-  "version": "1.7.5",
+  "version": "1.8.1",
   "description": "JavaScript code generator from an ESTree-compliant AST.",
   "main": "./dist/astring.js",
   "module": "./dist/astring.mjs",
@@ -31,7 +31,7 @@
     "prettier:check": "prettier --list-different \"{src,scripts}/**/*.js\" \"bin/astring\"",
     "prepush": "npm test",
     "release": "standard-version",
-    "deploy": "git push --follow-tags origin master && npm publish"
+    "deploy": "git push --follow-tags origin main && npm publish"
   },
   "keywords": [
     "ast",
@@ -52,17 +52,17 @@
     "@babel/generator": "^7.14.3",
     "@babel/parser": "^7.14.4",
     "@babel/preset-env": "^7.14.4",
-    "acorn": "^8.3.0",
+    "acorn": "^8.6.0",
     "astravel": "^0.5.0",
     "babel-preset-minify": "^0.5.1",
     "benchmark": "^2.1.4",
     "buble": "^0.20.0",
-    "c8": "^7.7.2",
+    "c8": "^7.10.0",
     "cross-env": "^7.0.3",
     "escodegen": "^2.0.0",
-    "eslint": "^7.27.0",
+    "eslint": "^8.3.0",
     "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-import": "^2.23.4",
+    "eslint-plugin-import": "^2.25.3",
     "esm": "^3.2.25",
     "glob": "^7.1.7",
     "husky": "^6.0.0",
@@ -86,60 +86,14 @@
     "trailingComma": "all",
     "bracketSpacing": true
   },
-  "eslintConfig": {
-    "plugins": [
-      "import"
+  "ava": {
+    "files": [
+      "src/**/tests/astring.js",
+      "src/**/tests/performance.js"
     ],
-    "extends": [
-      "eslint:recommended",
-      "plugin:import/errors",
-      "prettier"
-    ],
-    "env": {
-      "es6": true
-    },
-    "parserOptions": {
-      "ecmaVersion": 12,
-      "sourceType": "module"
-    },
-    "globals": {
-      "console": true,
-      "global": true,
-      "module": true,
-      "process": true,
-      "require": true,
-      "window": true,
-      "__dirname": true
-    },
-    "overrides": [
-      {
-        "files": [
-          "src/tests/fixtures/**/*.js"
-        ],
-        "rules": {
-          "no-unused-vars": 0,
-          "no-undef": 0,
-          "no-var": 0,
-          "no-empty": 0,
-          "no-unused-labels": 0,
-          "no-cond-assign": 0,
-          "no-constant-condition": 0,
-          "constructor-super": 0,
-          "no-unreachable": 0,
-          "no-unsafe-negation": 0,
-          "getter-return": 0,
-          "no-irregular-whitespace": 0,
-          "no-redeclare": 0,
-          "no-dupe-keys": 0,
-          "no-duplicate-case": 0,
-          "no-useless-escape": 0,
-          "no-control-regex": 0,
-          "no-sparse-arrays": 0,
-          "no-debugger": 0,
-          "no-dupe-class-members": 0,
-          "no-inner-declarations": 0
-        }
-      }
+    "require": [
+      "esm"
     ]
-  }
+  },
+  "esm": "auto"
 }

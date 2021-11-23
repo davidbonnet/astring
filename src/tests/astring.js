@@ -14,7 +14,7 @@ const FIXTURES_FOLDER = joinPath(
   'fixtures',
 )
 
-const ecmaVersion = 12
+const ecmaVersion = 13
 
 const stripLocation = astravel.makeTraveler({
   go(node, state) {

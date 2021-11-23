@@ -47,3 +47,11 @@ function* a() {
 async function b() {
   class A extends (await a()) {}
 }
+class O {
+  #a = 42
+  #b() {}
+  static #c = 'C'
+  static {
+    const a = 3;
+  }
+}

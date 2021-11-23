@@ -7,11 +7,11 @@
 
 🌳 Tiny and fast JavaScript code generator from an [ESTree](https://github.com/estree/estree)-compliant AST.
 
-▶️ Checkout the [live demo](http://david.bonnet.cc/astring/demo/).
+🎁 Checkout the [live demo](https://david.bonnet.cc/astring/demo/).
 
 ### Key features
 
-- Generates JavaScript code up to [version 11 (2020)](https://tc39.github.io/ecma262/) and [finished proposals](https://github.com/tc39/proposals/blob/master/finished-proposals.md).
+- Generates JavaScript code up to [version 13 (2022)](https://tc39.github.io/ecma262/) and [finished proposals](https://github.com/tc39/proposals/blob/master/finished-proposals.md).
 - Works on [ESTree](https://github.com/estree/estree)-compliant ASTs such as the ones produced by [Meriyah](https://github.com/meriyah/meriyah) or [Acorn](https://github.com/acornjs/acorn).
 - Extendable with custom AST node handlers.
 - Considerably faster than [Bublé](https://gitlab.com/Rich-Harris/buble) (up to 5×), [Escodegen](https://github.com/estools/escodegen) (up to 10×), [Babel](https://github.com/babel/babel) (up to 50×), [UglifyJS](https://github.com/mishoo/UglifyJS2) (up to 125×), and [Prettier](https://github.com/prettier/prettier) (up to 380×).

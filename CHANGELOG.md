@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.8.1](https://github.com/davidbonnet/astring/compare/v1.8.0...v1.8.1) (2021-11-21)
+
+## [1.8.0](https://github.com/davidbonnet/astring/compare/v1.7.6...v1.8.0) (2021-11-21)
+
+
+### Features
+
+* support ES2022 ([#593](https://github.com/davidbonnet/astring/issues/593)) ([5a327d1](https://github.com/davidbonnet/astring/commit/5a327d1425cdd620377fb52b987880f8af461b62))
+
+### [1.7.6](https://github.com/davidbonnet/astring/compare/v1.7.5...v1.7.6) (2021-11-21)
+
+
+### Bug Fixes
+
+* wrong precedence of nullish operator ([#590](https://github.com/davidbonnet/astring/issues/590)) ([10fac23](https://github.com/davidbonnet/astring/commit/10fac23a010feedb26d3baaf0e74e2311504e846))
+
 ### [1.7.5](https://github.com/davidbonnet/astring/compare/v1.7.4...v1.7.5) (2021-06-02)
 
 ### [1.7.4](https://github.com/davidbonnet/astring/compare/v1.7.3...v1.7.4) (2021-04-07)
