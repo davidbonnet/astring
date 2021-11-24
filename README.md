@@ -7,7 +7,7 @@
 
 🌳 Tiny and fast JavaScript code generator from an [ESTree](https://github.com/estree/estree)-compliant AST.
 
-🎁 Checkout the [live demo](http://david.bonnet.cc/astring/demo/).
+🎁 Checkout the [live demo](https://david.bonnet.cc/astring/demo/).
 
 ### Key features
 
