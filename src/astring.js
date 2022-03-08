@@ -532,10 +532,8 @@ export const GENERATOR = {
     state.write('import ')
     const { specifiers } = node
     const { length } = specifiers
-    // TODO: Once babili is fixed, put this after condition
-    // https://github.com/babel/babili/issues/430
-    let i = 0
     if (length > 0) {
+      let i = 0
       for (; i < length; ) {
         if (i > 0) {
           state.write(', ')
