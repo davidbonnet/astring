@@ -826,6 +826,9 @@ export const GENERATOR = {
       state.write('static ')
     }
     this[node.key.type](node.key, state)
+    if (node.value == null) {
+      return
+    }
     state.write(' = ')
     this[node.value.type](node.value, state)
   },

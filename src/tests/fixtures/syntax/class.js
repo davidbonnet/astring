@@ -51,6 +51,7 @@ class O {
   #a = 42
   #b() {}
   static #c = 'C'
+  #d
   static {
     const a = 3;
   }
