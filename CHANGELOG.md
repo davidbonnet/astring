@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.8.3](https://github.com/davidbonnet/astring/compare/v1.8.2...v1.8.3) (2022-04-28)
+
+
+### Bug Fixes
+
+* add missing definitions ([9bb7bcf](https://github.com/davidbonnet/astring/commit/9bb7bcf7ab946bae3aab48b4d4b5edc72b52c208)), closes [#604](https://github.com/davidbonnet/astring/issues/604)
+
 ### [1.8.2](https://github.com/davidbonnet/astring/compare/v1.8.1...v1.8.2) (2022-04-28)
 
 
