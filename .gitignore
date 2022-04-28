@@ -7,3 +7,4 @@ dist
 local
 node_modules
 npm-debug.log
+.nova/
