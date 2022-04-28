@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.8.2](https://github.com/davidbonnet/astring/compare/v1.8.1...v1.8.2) (2022-04-28)
+
+
+### Bug Fixes
+
+* Does not handle undefined private properties ([e6b8ee6](https://github.com/davidbonnet/astring/commit/e6b8ee645d0e9fa3cc6ff4bb30d2a15e2289a88b)), closes [#609](https://github.com/davidbonnet/astring/issues/609)
+
 ### [1.8.1](https://github.com/davidbonnet/astring/compare/v1.8.0...v1.8.1) (2021-11-21)
 
 ## [1.8.0](https://github.com/davidbonnet/astring/compare/v1.7.6...v1.8.0) (2021-11-21)
