@@ -7,7 +7,7 @@ import type { Writable } from 'stream'
  */
 export interface State {
   output: string
-  write(code: string): void
+  write(code: string, node?: EstreeNode): void
   writeComments: boolean
   indent: string
   lineEnd: string
@@ -79,4 +79,11 @@ export function generate(node: Node, options?: Options<Writable>): Writable
 /**
  * Base code generator.
  */
-export const GENERATOR: Generator;
+export const GENERATOR: Generator
+
+/**
+ * Base code generator.
+ *
+ * @deprecated Use {@link GENERATOR} instead.
+ */
+export const baseGenerator: Generator
