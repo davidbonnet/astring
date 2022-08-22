@@ -8,7 +8,8 @@
   "exports": {
     "import": "./dist/astring.mjs",
     "require": "./dist/astring.js",
-    "browser": "./dist/astring.min.js"
+    "browser": "./dist/astring.min.js",
+    "types": "./astring.d.ts"
   },
   "bin": {
     "astring": "bin/astring"
