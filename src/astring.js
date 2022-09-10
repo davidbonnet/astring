@@ -8,8 +8,6 @@
 // Please use the GitHub bug tracker to report issues:
 // https://github.com/davidbonnet/astring/issues
 
-const { stringify } = JSON
-
 /* c8 ignore if */
 if (!String.prototype.repeat) {
   /* c8 ignore next */
@@ -814,11 +812,11 @@ export const GENERATOR = {
           this[node.key.type](node.key, state)
           state.write(']')
         } else {
-          this[node.key.type](node.key, state)
+          this[node.key.type](node.key, state, node)
         }
         state.write(': ')
       }
-      this[node.value.type](node.value, state)
+      this[node.value.type](node.value, state, node)
     }
   },
   PropertyDefinition(node, state) {
@@ -1010,7 +1008,7 @@ export const GENERATOR = {
   PrivateIdentifier(node, state) {
     state.write(`#${node.name}`, node)
   },
-  Literal(node, state) {
+  Literal(node, state, parent) {
     if (node.raw != null) {
       // Non-standard property
       state.write(node.raw, node)
@@ -1019,7 +1017,7 @@ export const GENERATOR = {
     } else if (node.bigint != null) {
       state.write(node.bigint + 'n', node)
     } else {
-      state.write(stringify(node.value), node)
+      state.write(state.stringify(node.value, parent), node)
     }
   },
   RegExpLiteral(node, state) {
@@ -1057,6 +1055,7 @@ class State {
     this.indentLevel =
       setup.startingIndentLevel != null ? setup.startingIndentLevel : 0
     this.writeComments = setup.comments ? setup.comments : false
+		this.stringify = setup.stringify ? setup.stringify : (value) => JSON.stringify(value)
     // Source map
     if (setup.sourceMap != null) {
       this.write =

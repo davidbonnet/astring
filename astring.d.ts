@@ -60,6 +60,10 @@ export interface Options<Output = null> {
    * Custom code generator logic.
    */
   generator?: Generator
+	/**
+	 * Custom stringifier for translating literals to code.
+	 */
+	stringify?: (value: string|number|boolean, parentNode: EstreeNode) => string
 }
 
 /**
