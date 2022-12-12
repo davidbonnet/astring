@@ -825,7 +825,13 @@ export const GENERATOR = {
     if (node.static) {
       state.write('static ')
     }
+    if (node.computed) {
+      node.write('[');
+    }
     this[node.key.type](node.key, state)
+    if (node.computed) {
+      node.write(']');
+    }
     if (node.value == null) {
       return
     }
