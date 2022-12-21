@@ -825,12 +825,22 @@ export const GENERATOR = {
     if (node.static) {
       state.write('static ')
     }
+    if (node.computed) {
+      state.write('[')
+    }
     this[node.key.type](node.key, state)
+    if (node.computed) {
+      state.write(']')
+    }
     if (node.value == null) {
+      if (node.key.type[0] !== 'F') {
+        state.write(';')
+      }
       return
     }
     state.write(' = ')
     this[node.value.type](node.value, state)
+    state.write(';')
   },
   ObjectPattern(node, state) {
     state.write('{')
