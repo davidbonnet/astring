@@ -53,7 +53,7 @@
     "@babel/preset-env": "^7.14.4",
     "acorn": "^8.6.0",
     "astravel": "^0.5.0",
-    "ava": "^3.15.0",
+    "ava": "^5.2.0",
     "babel-preset-minify": "^0.5.1",
     "benchmark": "^2.1.4",
     "buble": "^0.20.0",
