@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.8.4](https://github.com/davidbonnet/astring/compare/v1.8.3...v1.8.4) (2022-12-21)
+
+
+### Bug Fixes
+
+* static computed property ([#672](https://github.com/davidbonnet/astring/issues/672)) ([1630853](https://github.com/davidbonnet/astring/commit/16308537294bf0af26f318dc2f4a535814c3cae4))
+
 ### [1.8.3](https://github.com/davidbonnet/astring/compare/v1.8.2...v1.8.3) (2022-04-28)
 
 
