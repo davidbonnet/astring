@@ -27,10 +27,10 @@ if (!String.prototype.endsWith) {
 }
 
 const OPERATOR_PRECEDENCE = {
-  '||': 3,
+  '||': 2,
+  '??': 3,
   '&&': 4,
   '|': 5,
-  '??': 5,
   '^': 6,
   '&': 7,
   '==': 8,

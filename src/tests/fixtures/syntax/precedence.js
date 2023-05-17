@@ -9,6 +9,8 @@ g = "a" + (1 - 2) + "b";
 a = true || false && null;
 b = c == d || e != f;
 b = (c || d) ?? e;
+b = c && (d || e);
+b = c && (d ?? e);
 c = x instanceof y || x instanceof z;
 d = x == y && y != z;
 a = !false;
