@@ -6,6 +6,7 @@
   "module": "./dist/astring.mjs",
   "types": "./astring.d.ts",
   "exports": {
+    "types": "./astring.d.ts",
     "import": "./dist/astring.mjs",
     "require": "./dist/astring.js",
     "browser": "./dist/astring.min.js"
