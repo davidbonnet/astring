@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.8.5](https://github.com/davidbonnet/astring/compare/v1.8.4...v1.8.5) (2023-05-19)
+
+
+### Bug Fixes
+
+* **package:** add type conditional export ([36c0029](https://github.com/davidbonnet/astring/commit/36c00290ab8573a56dec118600721a0b87363a8b))
+* incorrect nullish coalescing operator precedence ([#694](https://github.com/davidbonnet/astring/issues/694)) ([ad9ce87](https://github.com/davidbonnet/astring/commit/ad9ce8724453bdd497290b464787dde0a86d42ec))
+
 ### [1.8.4](https://github.com/davidbonnet/astring/compare/v1.8.3...v1.8.4) (2022-12-21)
 
 
