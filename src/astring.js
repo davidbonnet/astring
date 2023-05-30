@@ -132,6 +132,14 @@ function expressionNeedsParenthesis(state, node, parentNode, isRightHand) {
     // Exponentiation operator has right-to-left associativity
     return !isRightHand
   }
+  if (
+    nodePrecedence === 13 &&
+    parentNodePrecedence === 13 &&
+    (node.operator === '??' || parentNode.operator === '??')
+  ) {
+    // Nullish coalescing and boolean operators cannot be combined
+    return true
+  }
   if (isRightHand) {
     // Parenthesis are used if both operators have the same precedence
     return (
