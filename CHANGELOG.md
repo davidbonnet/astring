@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.8.6](https://github.com/davidbonnet/astring/compare/v1.8.5...v1.8.6) (2023-05-30)
+
+
+### Bug Fixes
+
+* **nullish:** missing parenthesis ([be1aefb](https://github.com/davidbonnet/astring/commit/be1aefb7396c62b8504d15fc21891e4e9317f492)), closes [#695](https://github.com/davidbonnet/astring/issues/695)
+
 ### [1.8.5](https://github.com/davidbonnet/astring/compare/v1.8.4...v1.8.5) (2023-05-19)
 
 
