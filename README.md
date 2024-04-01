@@ -18,7 +18,7 @@
 - Supports source map generation with [Source Map](https://github.com/mozilla/source-map#sourcemapgenerator).
 - Supports comment generation with [Astravel](https://github.com/davidbonnet/astravel).
 - No dependencies and small footprint (≈ 16 KB minified, ≈ 4 KB gziped).
-- Runs on [🦕 Deno](https://deno.land).
+- Runs on [🦕 Deno](https://deno.land/x/astring).
 
 ## Contents
 
@@ -54,6 +54,12 @@ Install with the [Node Package Manager](https://www.npmjs.com/package/astring):
 
 ```bash
 npm install astring
+```
+
+Or install with [JSR](https://jsr.io/@davidbonnet/astring):
+
+```bash
+deno add @davidbonnet/astring
 ```
 
 Alternatively, checkout this repository and install the development dependencies to build the module file:
