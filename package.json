@@ -46,6 +46,10 @@
   },
   "author": "David Bonnet <david@bonnet.cc>",
   "license": "MIT",
+  "dependencies": {
+    "@types/estree": "^1.0.0",
+    "source-map": "^0.7.0"
+  },
   "devDependencies": {
     "@babel/cli": "^7.14.3",
     "@babel/core": "^7.14.3",
