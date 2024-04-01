@@ -1,9 +1,7 @@
 # Astring
 
 [![NPM Version](https://img.shields.io/npm/v/astring.svg)](https://www.npmjs.org/package/astring)
-[![Build Status](https://travis-ci.org/davidbonnet/astring.svg?branch=master)](https://travis-ci.org/davidbonnet/astring)
 [![Coverage](https://codecov.io/gh/davidbonnet/astring/branch/master/graph/badge.svg)](https://codecov.io/gh/davidbonnet/astring)
-[![devDependency Status](https://david-dm.org/davidbonnet/astring/dev-status.svg)](https://david-dm.org/davidbonnet/astring?type=dev)
 
 🌳 Tiny and fast JavaScript code generator from an [ESTree](https://github.com/estree/estree)-compliant AST.
 
@@ -19,32 +17,6 @@
 - Supports comment generation with [Astravel](https://github.com/davidbonnet/astravel).
 - No dependencies and small footprint (≈ 16 KB minified, ≈ 4 KB gziped).
 - Runs on [🦕 Deno](https://deno.land/x/astring).
-
-## Contents
-
-<!-- MarkdownTOC autolink="true" -->
-
-- [Installation](#installation)
-- [Import](#import)
-- [API](#api)
-  - [`generate(node: object, options: object): string | object`](#generatenode-object-options-object-string-%7C-object)
-  - [`GENERATOR: object`](#generator-object)
-  - [`EXPRESSIONS_PRECEDENCE: object`](#expressions_precedence-object)
-  - [`NEEDS_PARENTHESES: number`](#needs_parentheses-number)
-  - [`baseGenerator: object`](#basegenerator-object)
-- [Benchmark](#benchmark)
-  - [Generating code](#generating-code)
-  - [Parsing and generating code](#parsing-and-generating-code)
-- [Examples](#examples)
-  - [Generating code](#generating-code-1)
-  - [Generating source maps](#generating-source-maps)
-  - [Using writable streams](#using-writable-streams)
-  - [Generating comments](#generating-comments)
-  - [Extending](#extending)
-- [Command line interface](#command-line-interface)
-  - [Example](#example)
-
-<!-- /MarkdownTOC -->
 
 ## Installation
 
