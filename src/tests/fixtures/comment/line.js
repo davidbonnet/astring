@@ -1,18 +1,18 @@
-function f() {}
+function f() {} // Line comment inline function
 // Line comment for function g:
 function g() {
   // Line comment for instruction 1:
-  instruction1;
+  instruction1; // Line comment inline variable
   // Line comment for instruction 2:
   instruction2;
   instruction3;
   // Line comment for instruction 4:
   instruction4;
   instruction5;
-  switch (value) {
+  switch (value) { // Line comment inline switch
     // Line comment for case 1:
-    case 1:
-      break;
+    case 1: // Line comment inline case
+      break; // Line comment inline break
     // Line comment for case 2:
     case 2:
       // Line comment for break:
@@ -25,7 +25,7 @@ function g() {
   var point = {
     // More line comments
     // Line comment for property x:
-    x: 0,
+    x: 0, // Line comment inline property
     // Line comment for property y:
     y: 1
     // Trailing line comment of point object
