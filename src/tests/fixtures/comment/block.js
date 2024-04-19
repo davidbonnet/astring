@@ -12,9 +12,7 @@ function f() {}
 function g(a) {
   return a;
 }
-/*
-Block comment for function g.
-*/
+/* Inline block comment for function h. */
 function h() {
   /*
   Block comment inside of function g.
@@ -25,10 +23,8 @@ function h() {
   > What was that?
   */
   instruction2;
-  /*
-  Block comment for instruction 3…
-  …with several indented lines.
-  */
+  /* Block comment for instruction 3…
+  …wrapping around. */
   instruction3;
   /*
   Trailing block comment inside of function g.

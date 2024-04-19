@@ -173,13 +173,14 @@ function reindent(state, text, indent, lineEnd) {
   */
   const lines = text.split('\n')
   const end = lines.length - 1
-  state.write(lines[0].trim())
   if (end > 0) {
-    state.write(lineEnd)
+    state.write(lines[0].trimEnd() + lineEnd)
     for (let i = 1; i < end; i++) {
       state.write(indent + lines[i].trim() + lineEnd)
     }
-    state.write(indent + lines[end].trim())
+    state.write(indent + lines[end].trimStart())
+  } else {
+    state.write(lines[0])
   }
 }
 
