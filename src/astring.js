@@ -332,7 +332,7 @@ export const GENERATOR = {
     state.write(';')
   },
   IfStatement(node, state) {
-    state.write('if (')
+    state.write('if (',node)
     this[node.test.type](node.test, state)
     state.write(') ')
     this[node.consequent.type](node.consequent, state)
@@ -407,7 +407,7 @@ export const GENERATOR = {
     state.write(indent + '}')
   },
   ReturnStatement(node, state) {
-    state.write('return')
+    state.write('return',node)
     if (node.argument) {
       state.write(' ')
       this[node.argument.type](node.argument, state)
