@@ -3,3 +3,6 @@ local/*
 vendor/*
 dist/*
 src/tests/fixtures/deprecated/es5.js
+src/tests/fixtures/syntax/import.js
+src/tests/fixtures/syntax/export.js
+src/tests/fixtures/tree/es6.js

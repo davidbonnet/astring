@@ -42,6 +42,8 @@ import i4, * as i5 from "module";
 import i6, {} from "module";
 import i7, { i8, var as i9 } from "module";
 import "module";
+import * as q from "./a.json" with { type: "json" };
+import r from "./a.json" with { type: "json" };
 
 export * from "module";
 export {} from "module";
