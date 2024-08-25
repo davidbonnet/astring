@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.9.0](https://github.com/davidbonnet/astring/compare/v1.8.6...v1.9.0) (2024-08-25)
+
+
+### Features
+
+* add import-attributes support ([#712](https://github.com/davidbonnet/astring/issues/712)) ([d22c19e](https://github.com/davidbonnet/astring/commit/d22c19ee636e671a8214e062c1165cf56511b40f))
+
 ### [1.8.6](https://github.com/davidbonnet/astring/compare/v1.8.5...v1.8.6) (2023-05-30)
 
 
