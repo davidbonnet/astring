@@ -4,5 +4,7 @@ import * as d from "module";
 import e, {f as g, h as i, j} from "module";
 import {k as l, m} from "module";
 import {n, o as p} from "module";
+import * as q from "../other/a.json" with { type: "json" };
+import r from "../other/a.json" with { type: "json" };
 import("module");
 const x = import("module");

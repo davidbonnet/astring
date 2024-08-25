@@ -538,7 +538,7 @@ export const GENERATOR = {
   },
   ImportDeclaration(node, state) {
     state.write('import ')
-    const { specifiers } = node
+    const { specifiers, attributes } = node
     const { length } = specifiers
     // TODO: Once babili is fixed, put this after condition
     // https://github.com/babel/babili/issues/430
@@ -583,7 +583,22 @@ export const GENERATOR = {
       state.write(' from ')
     }
     this.Literal(node.source, state)
+
+    if (attributes && attributes.length > 0) {
+      state.write(' with { ')
+      for (let i = 0; i < attributes.length; i++) {
+        this.ImportAttribute(attributes[i], state)
+        if (i < attributes.length - 1) state.write(', ')
+      }
+
+      state.write(' }')
+    }
     state.write(';')
+  },
+  ImportAttribute(node, state) {
+    this.Identifier(node.key, state)
+    state.write(': ')
+    this.Literal(node.value, state)
   },
   ImportExpression(node, state) {
     state.write('import(')
@@ -629,6 +644,17 @@ export const GENERATOR = {
         state.write(' from ')
         this.Literal(node.source, state)
       }
+
+      if (node.attributes && node.attributes.length > 0) {
+        state.write(' with { ')
+        for (let i = 0; i < node.attributes.length; i++) {
+          this.ImportAttribute(node.attributes[i], state)
+          if (i < node.attributes.length - 1) state.write(', ')
+        }
+
+        state.write(' }')
+      }
+
       state.write(';')
     }
   },
@@ -639,6 +665,17 @@ export const GENERATOR = {
       state.write('export * from ')
     }
     this.Literal(node.source, state)
+
+    if (node.attributes && node.attributes.length > 0) {
+      state.write(' with { ')
+      for (let i = 0; i < node.attributes.length; i++) {
+        this.ImportAttribute(node.attributes[i], state)
+        if (i < node.attributes.length - 1) state.write(', ')
+      }
+
+      state.write(' }')
+    }
+
     state.write(';')
   },
   MethodDefinition(node, state) {

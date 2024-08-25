@@ -9,3 +9,4 @@ export default i = 42;
 export var j = 42;
 export let k = 42;
 export function l() {}
+export {val} from '../other/a.json' with { type: "json" };
