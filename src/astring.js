@@ -263,10 +263,13 @@ export const GENERATOR = {
     for (let i = 0; i < length; i++) {
       const statement = statements[i]
       if (writeComments && statement.comments != null) {
-        formatComments(state, statement.comments, indent, lineEnd)
+        formatComments(state, statement.comments.filter(comment => comment.end < statement.start), indent, lineEnd)
       }
       state.write(indent)
       this[statement.type](statement, state)
+      if (writeComments && statement.comments != null) {
+        formatComments(state, statement.comments.filter(comment => comment.start > statement.end), indent, lineEnd);
+      }
       state.write(lineEnd)
     }
     if (writeComments && node.trailingComments != null) {
@@ -288,10 +291,13 @@ export const GENERATOR = {
       for (let i = 0; i < length; i++) {
         const statement = statements[i]
         if (writeComments && statement.comments != null) {
-          formatComments(state, statement.comments, statementIndent, lineEnd)
+          formatComments(state, statement.comments.filter(comment => comment.end < statement.start), indent, lineEnd)
         }
         state.write(statementIndent)
         this[statement.type](statement, state)
+        if (writeComments && statement.comments != null) {
+          formatComments(state, statement.comments.filter(comment => comment.start > statement.end), indent, lineEnd);
+        }
         state.write(lineEnd)
       }
       state.write(indent)
@@ -396,10 +402,13 @@ export const GENERATOR = {
       for (let i = 0; i < consequentCount; i++) {
         const statement = consequent[i]
         if (writeComments && statement.comments != null) {
-          formatComments(state, statement.comments, statementIndent, lineEnd)
+          formatComments(state, statement.comments.filter(comment => comment.end < statement.start), statementIndent, lineEnd)
         }
         state.write(statementIndent)
         this[statement.type](statement, state)
+        if (writeComments && statement.comments != null) {
+          formatComments(state, statement.comments.filter(comment => comment.start > statement.end), indent, lineEnd);
+        }
         state.write(lineEnd)
       }
     }
@@ -813,10 +822,13 @@ export const GENERATOR = {
       for (let i = 0; ; ) {
         const property = properties[i]
         if (writeComments && property.comments != null) {
-          formatComments(state, property.comments, propertyIndent, lineEnd)
+          formatComments(state, property.comments.filter(comment => comment.end < property.start), propertyIndent, lineEnd);
         }
         state.write(propertyIndent)
         this[property.type](property, state)
+        if (writeComments && property.comments != null) {
+          formatComments(state, property.comments.filter(comment => comment.start > property.end), propertyIndent, lineEnd);
+        }
         if (++i < length) {
           state.write(comma)
         } else {
