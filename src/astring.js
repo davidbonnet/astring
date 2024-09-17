@@ -567,10 +567,11 @@ export const GENERATOR = {
         state.write('{')
         for (;;) {
           const specifier = specifiers[i]
-          const { name } = specifier.imported
-          state.write(name, specifier)
-          if (name !== specifier.local.name) {
-            state.write(' as ' + specifier.local.name)
+          const { imported, local } = specifier
+          this[imported.type](imported, state)
+          if (local.type === 'Literal' || imported.name !== local.name) {
+            state.write(' as ')
+            this[local.type](local, state)
           }
           if (++i < length) {
             state.write(', ')
@@ -626,11 +627,16 @@ export const GENERATOR = {
         { length } = specifiers
       if (length > 0) {
         for (let i = 0; ; ) {
-          const specifier = specifiers[i]
-          const { name } = specifier.local
-          state.write(name, specifier)
-          if (name !== specifier.exported.name) {
-            state.write(' as ' + specifier.exported.name)
+          const { local, exported } = specifiers[i]
+          this[local.type](local, state)
+          if (
+            local.type !== exported.type
+            || (local.type === 'Literal'
+              ? local.value !== exported.value
+              : local.name !== exported.name)
+          ) {
+            state.write(' as ')
+            this[exported.type](exported, state)
           }
           if (++i < length) {
             state.write(', ')

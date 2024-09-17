@@ -8,3 +8,4 @@ import * as q from "../other/a.json" with { type: "json" };
 import r from "../other/a.json" with { type: "json" };
 import("module");
 const x = import("module");
+import {"s" as t} from "module";
