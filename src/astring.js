@@ -666,7 +666,9 @@ export const GENERATOR = {
   },
   ExportAllDeclaration(node, state) {
     if (node.exported != null) {
-      state.write('export * as ' + node.exported.name + ' from ')
+      state.write('export * as ')
+      this[node.exported.type](node.exported, state)
+      state.write(' from ')
     } else {
       state.write('export * from ')
     }
