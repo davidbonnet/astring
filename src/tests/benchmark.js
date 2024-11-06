@@ -20,7 +20,7 @@ const SCRIPT = process.argv[1].indexOf('benchmark.js') !== -1
 
 export function benchmark(code) {
   const acornOptions = {
-    ecmaVersion: 12,
+    ecmaVersion: 19,
     sourceType: 'module',
   }
   const ast = acorn(code, acornOptions)

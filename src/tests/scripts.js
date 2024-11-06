@@ -2,8 +2,7 @@ import test from 'ava'
 import fs from 'fs'
 import path from 'path'
 import normalizeNewline from 'normalize-newline'
-import { Parser } from 'acorn'
-import { importAttributes } from 'acorn-import-attributes'
+import { parse } from 'acorn'
 import * as astravel from 'astravel'
 import glob from 'glob'
 
@@ -41,15 +40,12 @@ test('Script tests', (assert) => {
       const code = normalizeNewline(fs.readFileSync(fileName, 'utf8'))
       let ast
       try {
-        ast = Parser.extend(importAttributes).parse(code, options)
+        ast = parse(code, options)
       } catch (error) {
         return
       }
       stripLocation.go(ast)
-      const formattedAst = Parser.extend(importAttributes).parse(
-        generate(ast),
-        options,
-      )
+      const formattedAst = parse(generate(ast), options)
       stripLocation.go(formattedAst)
       assert.deepEqual(formattedAst, ast, fileName)
     } catch (error) {

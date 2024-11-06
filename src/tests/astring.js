@@ -1,8 +1,7 @@
 import fs from 'fs'
 import test from 'ava'
 import path from 'path'
-import { Parser } from 'acorn'
-import { importAttributesOrAssertions } from 'acorn-import-attributes'
+import { parse } from 'acorn'
 import * as astravel from 'astravel'
 import { pick } from 'lodash'
 
@@ -11,9 +10,7 @@ import { readFile } from './tools'
 
 const FIXTURES_FOLDER = path.join(__dirname, 'fixtures')
 
-const ecmaVersion = 13
-
-const parser = Parser.extend(importAttributesOrAssertions)
+const ecmaVersion = 16
 
 const stripLocation = astravel.makeTraveler({
   go(node, state) {
@@ -58,7 +55,7 @@ test('Syntax check', (assert) => {
   }
   files.forEach((filename) => {
     const code = readFile(path.join(dirname, filename))
-    const ast = parser.parse(code, options)
+    const ast = parse(code, options)
     assert.is(
       generate(ast),
       code,
@@ -77,9 +74,9 @@ test('Tree comparison', (assert) => {
   }
   files.forEach((filename) => {
     const code = readFile(path.join(dirname, filename))
-    const ast = parser.parse(code, options)
+    const ast = parse(code, options)
     stripLocation.go(ast)
-    const formattedAst = parser.parse(generate(ast), options)
+    const formattedAst = parse(generate(ast), options)
     stripLocation.go(formattedAst)
     assert.deepEqual(
       formattedAst,
@@ -96,7 +93,7 @@ test('Deprecated syntax check', (assert) => {
   files.forEach((filename) => {
     const code = readFile(path.join(dirname, filename))
     const version = parseInt(filename.substring(2, filename.length - 3))
-    const ast = parser.parse(code, { ecmaVersion: version })
+    const ast = parse(code, { ecmaVersion: version })
     assert.is(generate(ast), code, 'es' + version)
   })
 })
@@ -109,7 +106,7 @@ test('Output stream', (assert) => {
       this.buffer += code
     },
   }
-  const ast = parser.parse(code, {
+  const ast = parse(code, {
     ecmaVersion,
   })
   const result = generate(ast, {
@@ -128,7 +125,7 @@ test('Comment generation', (assert) => {
   files.forEach((filename) => {
     const code = readFile(path.join(dirname, filename))
     const comments = []
-    const ast = parser.parse(code, {
+    const ast = parse(code, {
       ecmaVersion,
       locations: true,
       onComment: comments,
@@ -170,7 +167,7 @@ test('Source map generation', (assert) => {
         })
       },
     }
-    const ast = parser.parse(code, options)
+    const ast = parse(code, options)
     generate(ast, {
       sourceMap,
     })
@@ -205,7 +202,7 @@ test('Source map generation with comments', (assert) => {
       },
     }
     const comments = []
-    const ast = parser.parse(code, {
+    const ast = parse(code, {
       ecmaVersion,
       comments: true,
       locations: true,
