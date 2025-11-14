@@ -1093,13 +1093,14 @@ export const baseGenerator = GENERATOR
 class State {
   constructor(options) {
     const setup = options == null ? EMPTY_OBJECT : options
-    this.output = ''
+    this.output = ['']
     // Functional options
     if (setup.output != null) {
       this.output = setup.output
       this.write = this.writeToStream
+      this.toString = this.streamToString
     } else {
-      this.output = ''
+      this.output = ['']
     }
     this.generator = setup.generator != null ? setup.generator : GENERATOR
     this.expressionsPrecedence =
@@ -1131,7 +1132,7 @@ class State {
   }
 
   write(code) {
-    this.output += code
+    this.output.push(code)
   }
 
   writeToStream(code) {
@@ -1139,7 +1140,7 @@ class State {
   }
 
   writeAndMap(code, node) {
-    this.output += code
+    this.output.push(code)
     this.map(code, node)
   }
 
@@ -1201,6 +1202,10 @@ class State {
   }
 
   toString() {
+    return this.output.join('')
+  }
+
+  streamToString() {
     return this.output
   }
 }
@@ -1221,5 +1226,5 @@ export function generate(node, options) {
   const state = new State(options)
   // Travel through the AST node and generate the code
   state.generator[node.type](node, state)
-  return state.output
+  return state.toString()
 }
