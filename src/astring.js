@@ -998,7 +998,8 @@ export const GENERATOR = {
     if (
       precedence === NEEDS_PARENTHESES ||
       precedence < state.expressionsPrecedence.CallExpression ||
-      hasCallExpression(node.callee)
+      hasCallExpression(node.callee) ||
+      node.callee.type === 'ChainExpression'
     ) {
       state.write('(')
       this[node.callee.type](node.callee, state)
@@ -1012,7 +1013,8 @@ export const GENERATOR = {
     const precedence = state.expressionsPrecedence[node.callee.type]
     if (
       precedence === NEEDS_PARENTHESES ||
-      precedence < state.expressionsPrecedence.CallExpression
+      precedence < state.expressionsPrecedence.CallExpression ||
+      node.callee.type === 'ChainExpression'
     ) {
       state.write('(')
       this[node.callee.type](node.callee, state)
@@ -1032,7 +1034,8 @@ export const GENERATOR = {
     const precedence = state.expressionsPrecedence[node.object.type]
     if (
       precedence === NEEDS_PARENTHESES ||
-      precedence < state.expressionsPrecedence.MemberExpression
+      precedence < state.expressionsPrecedence.MemberExpression ||
+      node.object.type === 'ChainExpression'
     ) {
       state.write('(')
       this[node.object.type](node.object, state)
