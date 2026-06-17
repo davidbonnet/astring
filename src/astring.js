@@ -108,6 +108,16 @@ function formatSequence(state, nodes) {
   state.write(')')
 }
 
+function isDirectivePrologueEntry(statement) {
+  // A statement keeps a directive prologue open only if it is a string literal
+  // expression statement (a directive, or a parenthesized/non-directive string).
+  return (
+    statement.type === 'ExpressionStatement' &&
+    statement.expression.type === 'Literal' &&
+    typeof statement.expression.value === 'string'
+  )
+}
+
 function expressionNeedsParenthesis(state, node, parentNode, isRightHand) {
   const nodePrecedence = state.expressionsPrecedence[node.type]
   if (nodePrecedence === NEEDS_PARENTHESES) {
@@ -260,14 +270,19 @@ export const GENERATOR = {
     }
     const statements = node.body
     const { length } = statements
+    let directivePrologue = true
     for (let i = 0; i < length; i++) {
       const statement = statements[i]
       if (writeComments && statement.comments != null) {
         formatComments(state, statement.comments, indent, lineEnd)
       }
       state.write(indent)
+      state.directivePrologue = directivePrologue
       this[statement.type](statement, state)
       state.write(lineEnd)
+      if (directivePrologue && !isDirectivePrologueEntry(statement)) {
+        directivePrologue = false
+      }
     }
     if (writeComments && node.trailingComments != null) {
       formatComments(state, node.trailingComments, indent, lineEnd)
@@ -285,14 +300,19 @@ export const GENERATOR = {
         formatComments(state, node.comments, statementIndent, lineEnd)
       }
       const { length } = statements
+      let directivePrologue = true
       for (let i = 0; i < length; i++) {
         const statement = statements[i]
         if (writeComments && statement.comments != null) {
           formatComments(state, statement.comments, statementIndent, lineEnd)
         }
         state.write(statementIndent)
+        state.directivePrologue = directivePrologue
         this[statement.type](statement, state)
         state.write(lineEnd)
+        if (directivePrologue && !isDirectivePrologueEntry(statement)) {
+          directivePrologue = false
+        }
       }
       state.write(indent)
     } else {
@@ -317,17 +337,25 @@ export const GENERATOR = {
     state.write(';')
   },
   ExpressionStatement(node, state) {
-    const precedence = state.expressionsPrecedence[node.expression.type]
+    const { expression } = node
+    const precedence = state.expressionsPrecedence[expression.type]
     if (
       precedence === NEEDS_PARENTHESES ||
-      (precedence === 3 && node.expression.left.type[0] === 'O')
+      (precedence === 3 && expression.left.type[0] === 'O') ||
+      // A string literal at the start of a directive prologue that is not a
+      // directive must be parenthesized, otherwise it would be reparsed as a
+      // directive (e.g. silently enabling strict mode or producing invalid code).
+      (state.directivePrologue &&
+        node.directive == null &&
+        expression.type === 'Literal' &&
+        typeof expression.value === 'string')
     ) {
       // Should always have parentheses or is an AssignmentExpression to an ObjectPattern
       state.write('(')
-      this[node.expression.type](node.expression, state)
+      this[expression.type](expression, state)
       state.write(')')
     } else {
-      this[node.expression.type](node.expression, state)
+      this[expression.type](expression, state)
     }
     state.write(';')
   },
